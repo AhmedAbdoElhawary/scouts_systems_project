@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scouts_system/model/FirebaseAuthentication.dart';
+import 'package:scouts_system/HomeScreen.dart';
 import 'package:scouts_system/leadersPage.dart';
-import 'package:scouts_system/studentsPage.dart';
+import 'package:scouts_system/showToast.dart';
+import 'package:scouts_system/view/students/studentsList.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -113,14 +116,21 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextButton(
         onPressed: () async {
           if (validateTextField(emailController.text) &&
-              validateTextField(passwordController.text))
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => emailController.text == "a"
-                      ? leaderPage()
-                      : new studentPage()),
-            );
+              validateTextField(passwordController.text)) {
+            FirebaseAuthentication()
+                .logIn(
+                    email: emailController.text,
+                    password: passwordController.text)
+                .then((user) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomeScreen()),
+              );
+            }).catchError((e) {
+              ToastShow().showToast(e);
+            });
+          }
         },
         child: Text(
           "LOGIN",
@@ -147,7 +157,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextButton buildSignupTextButton() {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        if (validateTextField(emailController.text) &&
+            validateTextField(passwordController.text)) {
+          FirebaseAuthentication()
+              .signUp(
+              email: emailController.text,
+              password: passwordController.text)
+              .then((user) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => emailController.text == "leader@gmail.com"
+                      ? leaderPage()
+                      : studentPage()),
+            );
+          }).catchError((e) {
+            ToastShow().showToast(e);
+          });
+        }
+      },
       child: Text(
         "SIGNUP",
         style: TextStyle(fontSize: 15, color: Colors.blue[300]),
@@ -182,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         : Icons.visibility,
                   ),
                 ),
-          errorText:userNameValidate ? "invalid ${text}" : null,
+          errorText: userNameValidate ? "invalid ${text}" : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(
               50.0,
