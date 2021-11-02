@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildDropDownButton.dart';
+import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
+import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreEvents.dart';
 import 'package:scouts_system/view/events/StudentsListInEventItem.dart';
 
@@ -13,6 +14,7 @@ class AddEventInfo extends StatefulWidget {
   bool checkForUpdate;
   String EventDocId;
   List<String> listOfYearsDropButton;
+  Map<String, List<String>> listOfSeasonsData;
 
   AddEventInfo(
       {required this.listOfYearsDropButton,
@@ -21,16 +23,16 @@ class AddEventInfo extends StatefulWidget {
       required this.dropdownValueLeader,
       required this.controlDate,
       required this.checkForUpdate,
+      required this.listOfSeasonsData,
       required this.EventDocId});
   @override
   State<AddEventInfo> createState() => _AddEventInfoState();
 }
 
 class _AddEventInfoState extends State<AddEventInfo> {
-  String dropDownYears = "2021";
-  String dropDownSeasons = "winter";
+  String? dropDownYears;
+  String? dropDownSeasons;
   var listOfLeader = List<String>.generate(10, (i) => "leader ${i + 1}");
-  List<String> listOfSeason = ["winter", "summer"];
   bool eventIdValidate = false;
   bool LocationValidate = false;
   bool userDateValidate = false;
@@ -38,7 +40,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      // appBar: AppBar(),
       body: SafeArea(
         child: Column(
           children: [
@@ -54,7 +56,6 @@ class _AddEventInfoState extends State<AddEventInfo> {
     return Container(
       width: double.infinity,
       height: 55,
-      color: Colors.blue,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,7 +74,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
         child: Text("Cancel",
             style: TextStyle(
                 fontSize: 25,
-                color: Colors.white,
+                color: Colors.black,
                 fontWeight: FontWeight.normal)),
         onPressed: () {
           Navigator.pop(context);
@@ -88,7 +89,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
           child: Text("Save",
               style: TextStyle(
                   fontSize: 25,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.normal)),
           onPressed: () async {
             if (validateTextField(widget.controlEventID.text) &&
@@ -150,36 +151,37 @@ class _AddEventInfoState extends State<AddEventInfo> {
                 buildTextFormField(
                     userDateValidate, widget.controlDate, "Date"),
                 const Divider(),
-                DropDownButton(dropDownValue:widget.dropdownValueLeader,listOfDropDown: listOfLeader),
-                const Divider(),
-                Row(children: [
-                  Expanded(
-                      child: DropDownButton(
-                          dropDownValue: dropDownYears,listOfDropDown: widget.listOfYearsDropButton)),
-                  DropDownButton(dropDownValue: dropDownSeasons,listOfDropDown: listOfSeason)
-                ]),
-                Center(
-                  child: Container(
-                    color: Colors.blue,
-                    child: TextButton(
-                        onPressed: () async {
-                          WidgetsBinding.instance!.addPostFrameCallback((_) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StudentEventPage(
-                                      eventDocId: widget.EventDocId,
-                                      year: dropDownYears,
-                                      season: dropDownSeasons)),
-                            );
-                          });
-                        },
-                        child: Text(
-                          "  students  ",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        )),
-                  ),
-                )
+                buildDropdownButton(widget.dropdownValueLeader, listOfLeader),
+                widget.EventDocId != ""
+                    ? Row(children: [
+                        Expanded(
+                            child: buildDropdownButton(
+                                dropDownYears, widget.listOfYearsDropButton)),
+                        buildDropdownButton(dropDownSeasons,
+                            widget.listOfSeasonsData[dropDownYears]),
+                      ])
+                    : const Divider(),
+                widget.EventDocId == "" ||
+                        dropDownYears == null ||
+                        dropDownSeasons == null
+                    ? ((dropDownYears == null || dropDownSeasons == null)
+                        ? buildShowMessage("season")
+                        : Column(
+                            children: [
+                              Container(child: Text("save the event first")),
+                              Container(
+                                  child: Text(
+                                      "and then you can select students !"))
+                            ],
+                          ))
+                    : BuildBlueTextButton(
+                        text: "  students  ",
+                        pop: false,
+                        moveToPage: StudentEventPage(
+                            eventDocId: widget.EventDocId,
+                            year: dropDownYears ?? "2021",
+                            season: dropDownSeasons ?? "winter"),
+                      ),
               ],
             ),
           ),
@@ -188,14 +190,50 @@ class _AddEventInfoState extends State<AddEventInfo> {
     );
   }
 
-  TextFormField buildTextFormField(
-      bool validate, TextEditingController controller, String text) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: text,
-          errorText: validate ? "invalid ${text}" : null),
+  DropdownButtonHideUnderline buildDropdownButton(
+      String? dropDownValue, List<String>? listOfDropDown) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        value: dropDownValue,
+        isExpanded: false,
+        icon: const Icon(Icons.keyboard_arrow_down_outlined),
+        iconSize: 20,
+        hint: Text("select item"),
+        elevation: 16,
+        style: const TextStyle(
+            color: Colors.black, fontSize: 17, fontWeight: FontWeight.w300),
+        onChanged: (n) {
+          setState(() {
+            dropDownValue == dropDownYears
+                ? dropDownYears = n!
+                : (dropDownValue == dropDownSeasons
+                    ? dropDownSeasons = n!
+                    : widget.dropdownValueLeader = n!);
+            // dropDownValue = n!;
+          });
+        },
+        items: buildListMap(listOfDropDown)?.toList(),
+      ),
     );
   }
+}
+
+Iterable<DropdownMenuItem<String>>? buildListMap(List<String>? list) {
+  return list?.map<DropdownMenuItem<String>>((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  });
+}
+
+TextFormField buildTextFormField(
+    bool validate, TextEditingController controller, String text) {
+  return TextFormField(
+    controller: controller,
+    decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: text,
+        errorText: validate ? "invalid ${text}" : null),
+  );
 }
