@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
+import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
 import 'package:scouts_system/view%20model/eventsGetDataFirestore.dart';
 import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 import 'package:scouts_system/view/events/selectStudentList.dart';
 
 class StudentEventPage extends StatelessWidget {
@@ -34,8 +37,10 @@ class StudentEventPage extends StatelessWidget {
           listOfAllStudents[i]["docId"])) SpecificIndexesOfStudents.add(i);
     }
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView.separated(
+      appBar: AppBar(backgroundColor:customColor() ,),
+      body: listOfStudentsSelectedThisDate.length == 0
+          ? buildShowMessage("student")
+          :  ListView.separated(
         itemCount: SpecificIndexesOfStudents.length,
         separatorBuilder: (BuildContext context, int index) => const Divider(),
         itemBuilder: (BuildContext context, int index) {
@@ -46,6 +51,7 @@ class StudentEventPage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: customColor(),
         onPressed: () async {
           List<dynamic> listOfStudents =
               context.read<SeasonsGetDataFirestore>().seasonsListOfDataStudent;
@@ -79,75 +85,7 @@ class StudentEventPage extends StatelessWidget {
     return SafeArea(
       child: InkWell(
         onTap: () async {  },
-        child: buildContainer(model, index),
-      ),
-    );
-  }
-
-  Container buildContainer(var model, int index) {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        children: [
-          buildCircleAvatarNumber(model, index),
-          buildColumnOfNameDescription(model),
-          buildColumnOfDateAndHours(model),
-        ],
-      ),
-    );
-  }
-
-  Column buildColumnOfDateAndHours(var model) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        buildText(model, "volunteeringHours"),
-        buildText(model, "date"),
-      ],
-    );
-  }
-
-  Text buildText(var model, String text) {
-    return Text(
-      "${model[text]}",
-      style: text != "name"
-          ? TextStyle(
-              fontSize: 16,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-              fontStyle: FontStyle.italic)
-          : TextStyle(fontSize: 20, color: Colors.black),
-    );
-  }
-
-  Expanded buildColumnOfNameDescription(var model) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            buildText(model, "name"),
-            buildText(model, "description"),
-          ],
-        ),
-      ),
-    );
-  }
-
-  CircleAvatar buildCircleAvatarNumber(var model, int index) {
-    return CircleAvatar(
-      radius: 25,
-      backgroundColor: Colors.blue,
-      child: ClipOval(
-        child: Text(
-          "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
-        ),
+        child:CustomContainerBody(model: model,index: index,text: "student")
       ),
     );
   }
