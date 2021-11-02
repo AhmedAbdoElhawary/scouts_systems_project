@@ -2,85 +2,87 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 import 'package:scouts_system/view/students/addStudentItem.dart';
 
-class studentPage extends StatefulWidget {
-  @override
-  State<studentPage> createState() => _studentPageState();
-}
-
-class _studentPageState extends State<studentPage> {
+class StudentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    context.read<StudentsGetDataFirestore>().getAllStudentsData();
+
+    List<QueryDocumentSnapshot> listOfStudentsData =
+        context.watch<StudentsGetDataFirestore>().StudentsListOfData;
+
     return Scaffold(
       appBar: AppBar(),
-
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection("students").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData) return new Text("There is no students");
-            final docs = snapshot.data!.docs;
-            return ListView.separated(
-              itemCount: docs.length,
+      body: listOfStudentsData.length == 0
+          ? buildShowMessage()
+          : ListView.separated(
+              itemCount: listOfStudentsData.length,
               separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+                  const Divider(),
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: buildTheItemOfTheList(docs[index], index,docs[index].id),
+                  title: buildTheItemOfTheList(listOfStudentsData[index], index,
+                      listOfStudentsData[index]["docId"], context),
                 );
               },
-            );
-          }),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => addNewStudent(
-                        controlName: TextEditingController(text: ""),
-                        index: 1,
-                        controlDescription: TextEditingController(text: ""),
-                        checkForUpdate: false,
-                        id:"",
-                        controlDate: TextEditingController(text: ""),
-                        controlVolunteeringHours: TextEditingController(text: ""),
-                      )));
+                  builder: (context) => moveToNewStudent("", "", false)));
         },
         child: Icon(Icons.add),
       ),
     );
   }
 
-  SafeArea buildTheItemOfTheList(var model, int index,String id) {
+  Center buildShowMessage() {
+    return Center(
+      child: Text(
+        "there's no event(s) !",
+        style: TextStyle(fontSize: 15, color: Colors.black),
+      ),
+    );
+  }
+
+  SafeArea buildTheItemOfTheList(
+      QueryDocumentSnapshot model, int index, String studentDocId, context) {
     return SafeArea(
       child: InkWell(
         onTap: () async {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => addNewStudent(
-                        controlName: TextEditingController(text: model["name"]),
-                        index: index,
-                        id:id,
-                        controlDescription:
-                            TextEditingController(text: model["description"]),
-                        checkForUpdate: true,
-                        controlDate: TextEditingController(text: model["date"]),
-                        controlVolunteeringHours:
-                            TextEditingController(text: model["volunteeringHours"]),
-
-                      )));
+                  builder: (context) =>
+                      moveToNewStudent(model, studentDocId, true)));
         },
         child: buildContainer(model, index),
       ),
     );
   }
 
-  Container buildContainer(var model, int index) {
+  addNewStudent moveToNewStudent(
+      var model, String studentDocId, bool checkForUpdate) {
+    return addNewStudent(
+      controlName:
+          TextEditingController(text: "${model == "" ? "" : model["name"]}"),
+      studentDocId: studentDocId,
+      controlDescription: TextEditingController(
+          text: "${model == "" ? "" : model["description"]}"),
+      checkForUpdate: checkForUpdate,
+      controlDate:
+          TextEditingController(text: "${model == "" ? "" : model["date"]}"),
+      controlVolunteeringHours: TextEditingController(
+          text: "${model == "" ? "" : model["volunteeringHours"]}"),
+    );
+  }
+
+  Container buildContainer(QueryDocumentSnapshot model, int index) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -93,7 +95,7 @@ class _studentPageState extends State<studentPage> {
     );
   }
 
-  Column buildColumnOfDateAndHours(var model) {
+  Column buildColumnOfDateAndHours(QueryDocumentSnapshot model) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -105,7 +107,7 @@ class _studentPageState extends State<studentPage> {
     );
   }
 
-  Text buildText(var model, String text) {
+  Text buildText(QueryDocumentSnapshot model, String text) {
     return Text(
       "${model[text]}",
       style: text != "name"
@@ -118,7 +120,7 @@ class _studentPageState extends State<studentPage> {
     );
   }
 
-  Expanded buildColumnOfNameDescription(var model) {
+  Expanded buildColumnOfNameDescription(QueryDocumentSnapshot model) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0),
@@ -135,7 +137,7 @@ class _studentPageState extends State<studentPage> {
     );
   }
 
-  CircleAvatar buildCircleAvatarNumber(var model, int index) {
+  CircleAvatar buildCircleAvatarNumber(QueryDocumentSnapshot model, int index) {
     return CircleAvatar(
       radius: 25,
       backgroundColor: Colors.blue,
