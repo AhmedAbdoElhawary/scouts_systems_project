@@ -2,15 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
 import 'package:scouts_system/view/seasons/eventsSeasonList.dart';
-import 'package:scouts_system/view/seasons/studentsList.dart';
+import 'package:scouts_system/view/seasons/studentsSeasonList.dart';
 
 class TwoButtonInSeason extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: customColor()),
       body: Column(
         children: [
           Container(

@@ -11,21 +11,22 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            BuildTextButton().buildTheBlueTextButton(
-                context: context, text: "students",pop: false, moveToPage: StudentPage()),
-            SizedBox(width: 10),
-            BuildTextButton().buildTheBlueTextButton(
-                context: context, text: "events",pop: false, moveToPage: EventsPage()),
-            SizedBox(width: 10),
-            BuildTextButton().buildTheBlueTextButton(
-                context: context, text: "Seasons",pop: false,moveToPage: SeasonsPage()),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              BuildBlueTextButton(
+                   text: "students",pop: false, moveToPage: StudentPage()),
+              SizedBox(width: 10),
+              BuildBlueTextButton(
+                  text: "events",pop: false, moveToPage: EventsPage()),
+              SizedBox(width: 10),
+              BuildBlueTextButton(
+                  text: "Seasons",pop: false,moveToPage: SeasonsPage()),
+            ],
+          ),
         ),
       ),
     );

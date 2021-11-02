@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
 import 'package:scouts_system/view/students/listOfMembershipsStudentPage.dart';
 
 class addNewStudent extends StatefulWidget {
@@ -34,7 +33,7 @@ class _addNewStudentState extends State<addNewStudent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      // appBar: AppBar(),
       body: SafeArea(
         child: Column(
           children: [
@@ -50,7 +49,6 @@ class _addNewStudentState extends State<addNewStudent> {
     return Container(
       width: double.infinity,
       height: 55,
-      color: Colors.blue,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +67,7 @@ class _addNewStudentState extends State<addNewStudent> {
         child: Text("Cancel",
             style: TextStyle(
                 fontSize: 25,
-                color: Colors.white,
+                color: Colors.black,
                 fontWeight: FontWeight.normal)),
         onPressed: () {
           Navigator.pop(context);
@@ -84,7 +82,7 @@ class _addNewStudentState extends State<addNewStudent> {
           child: Text("Save",
               style: TextStyle(
                   fontSize: 25,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.normal)),
           onPressed: () {
             if (validateTextField(widget.controlName.text) &&
@@ -149,36 +147,24 @@ class _addNewStudentState extends State<addNewStudent> {
                 buildTextFormField(
                     widget.controlVolunteeringHours, "Volunteering Hours"),
                 const Divider(),
-                buildCenter()
+                widget.studentDocId == ""
+                    ? Column(
+                        children: [
+                          Container(child: Text("save the student first")),
+                          Container(
+                              child: Text("and then you can select memberships !"))
+                        ],
+                      )
+                    : BuildBlueTextButton(
+                        text: "memberships",
+                        pop: false,
+                        moveToPage:
+                            ListOfMembershipsStudent(widget.studentDocId),
+                      )
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Center buildCenter() {
-    return Center(
-      child: Container(
-        color: Colors.blue,
-        child: TextButton(
-            onPressed: () async {
-              WidgetsBinding.instance!.addPostFrameCallback((_) {
-                context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ListOfMembershipsStudent(
-                          widget.studentDocId)),
-                );
-              });
-            },
-            child: Text(
-              "memberships",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            )),
       ),
     );
   }

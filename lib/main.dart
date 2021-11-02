@@ -29,11 +29,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     context.read<StudentsGetDataFirestore>().getAllStudentsData();
     context.read<EventsGetDataFirestore>().getAllEventsData();
     context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreSeasons.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
 import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
 class StudentCheckBoxMemberships extends StatefulWidget {
   String studentId;
-  StudentCheckBoxMemberships(this.studentId);
+  List<QueryDocumentSnapshot<Object?>> listOfMemberships;
+  StudentCheckBoxMemberships(this.studentId,this.listOfMemberships);
   @override
   _StudentCheckBoxMembershipsState createState() =>
       _StudentCheckBoxMembershipsState();
@@ -24,15 +27,12 @@ class _StudentCheckBoxMembershipsState
 
   @override
   Widget build(BuildContext context) {
-    context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
 
-    List<QueryDocumentSnapshot<Object?>> listOfMemberships =
-        context.watch<SeasonsGetDataFirestore>().seasonsListOfAllData;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Select Item(s)'),
-      ),
-      body: ListView.builder(
+      appBar: AppBar(backgroundColor: customColor()),
+      body:widget.listOfMemberships.length==0?
+      buildShowMessage("season"):
+      ListView.builder(
         itemBuilder: (builder, index) {
           selectedFlag[index] = selectedFlag[index] ?? false;
           bool? isSelected = selectedFlag[index];
@@ -42,13 +42,13 @@ class _StudentCheckBoxMembershipsState
               ListTile(
                 onTap: () => onTap(isSelected!, index),
                 leading: _buildSelectIcon(isSelected!),
-                title: Text("${listOfMemberships[index]["year"]}"),
-                subtitle: Text("${listOfMemberships[index]["season"]}"),
+                title: Text("${widget.listOfMemberships[index]["year"]}"),
+                subtitle: Text("${widget.listOfMemberships[index]["season"]}"),
               ),
             ],
           );
         },
-        itemCount: listOfMemberships.length,
+        itemCount: widget.listOfMemberships.length,
       ),
       floatingActionButton: _buildSelectAllButton(),
     );
@@ -64,13 +64,14 @@ class _StudentCheckBoxMembershipsState
   Widget _buildSelectIcon(bool isSelected) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-      color: Theme.of(context).primaryColor,
+      color: customColor(),
     );
   }
 
   Widget? _buildSelectAllButton() {
     if (isSelectionMode) {
       return FloatingActionButton(
+        backgroundColor: customColor(),
         onPressed: addItems,
         child: Icon(
           Icons.add,
