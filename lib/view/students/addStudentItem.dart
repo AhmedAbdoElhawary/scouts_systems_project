@@ -1,30 +1,26 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/firestore.dart';
+import 'package:provider/src/provider.dart';
+import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
+import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/view/students/listOfMembershipsStudentPage.dart';
 
 class addNewStudent extends StatefulWidget {
   TextEditingController controlName;
   TextEditingController controlDescription;
   TextEditingController controlDate;
   TextEditingController controlVolunteeringHours;
-  int index;
-  String id;
+  String studentDocId;
   bool checkForUpdate;
 
-
-
   addNewStudent(
-      {
-        required this.id,
-        required this.controlName,
+      {required this.studentDocId,
+      required this.controlName,
       required this.controlDescription,
       required this.controlVolunteeringHours,
       required this.controlDate,
-      required this.index,
-      required this.checkForUpdate
-      });
+      required this.checkForUpdate});
   @override
   State<addNewStudent> createState() => _addNewStudentState();
 }
@@ -96,21 +92,19 @@ class _addNewStudentState extends State<addNewStudent> {
                 validateTextField(widget.controlDate.text) &&
                 validateTextField(widget.controlVolunteeringHours.text)) {
               if (widget.checkForUpdate) {
-                FirestoreOperation().updateDataFirestoreStudents(
-                    name:widget.controlName.text,
-                    description:widget.controlDescription.text,
-                    volunteeringHours:widget.controlVolunteeringHours.text,
-                    date:widget.controlDate.text,
-                  id: widget.id,
-
+                addFirestoreStudents().updateDataFirestoreStudents(
+                  name: widget.controlName.text,
+                  description: widget.controlDescription.text,
+                  volunteeringHours: widget.controlVolunteeringHours.text,
+                  date: widget.controlDate.text,
+                  studentDocId: widget.studentDocId,
                 );
               } else {
-                FirestoreOperation().addDataFirestoreStudents(
-                  name:widget.controlName.text,
-                  description:widget.controlDescription.text,
-                  volunteeringHours:widget.controlVolunteeringHours.text,
-                  date:widget.controlDate.text,
-
+                addFirestoreStudents().addDataFirestoreStudents(
+                  name: widget.controlName.text,
+                  description: widget.controlDescription.text,
+                  volunteeringHours: widget.controlVolunteeringHours.text,
+                  date: widget.controlDate.text,
                 );
               }
               Navigator.pop(context);
@@ -154,10 +148,37 @@ class _addNewStudentState extends State<addNewStudent> {
                 const Divider(),
                 buildTextFormField(
                     widget.controlVolunteeringHours, "Volunteering Hours"),
+                const Divider(),
+                buildCenter()
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Center buildCenter() {
+    return Center(
+      child: Container(
+        color: Colors.blue,
+        child: TextButton(
+            onPressed: () async {
+              WidgetsBinding.instance!.addPostFrameCallback((_) {
+                context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ListOfMembershipsStudent(
+                          widget.studentDocId)),
+                );
+              });
+            },
+            child: Text(
+              "memberships",
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            )),
       ),
     );
   }
