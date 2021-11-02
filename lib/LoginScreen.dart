@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:scouts_system/model/FirebaseAuthentication.dart';
 import 'package:scouts_system/HomeScreen.dart';
 import 'package:scouts_system/leadersPage.dart';
-import 'package:scouts_system/showToast.dart';
+import 'package:scouts_system/common%20UI/showToast.dart';
 import 'package:scouts_system/view/students/studentsList.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (context) => HomeScreen()),
               );
             }).catchError((e) {
-              ToastShow().showToast(e);
+              ToastShow().showWhiteToast(e);
             });
           }
         },
@@ -170,10 +170,10 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                   builder: (context) => emailController.text == "leader@gmail.com"
                       ? leaderPage()
-                      : studentPage()),
+                      : StudentPage()),
             );
           }).catchError((e) {
-            ToastShow().showToast(e);
+            ToastShow().showWhiteToast(e);
           });
         }
       },

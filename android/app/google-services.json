@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1008843271805",
+    "project_id": "scouts-system",
+    "storage_bucket": "scouts-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008843271805:android:d3d75dded9f63801ff4b14",
+        "android_client_info": {
+          "package_name": "com.example.scouts_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1008843271805-bt2crqr7km7799vb61oek59trbqoauqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.scouts_system",
+            "certificate_hash": "83586d4e9976195ca1352a3193ea672321c4a49a"
+          }
+        },
+        {
+          "client_id": "1008843271805-05ur94v9v2j1u6doup22rj9a6ip1lavh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHe7ppPgtc0NrLNJLN0tU7G5r2IPn2Z2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1008843271805-05ur94v9v2j1u6doup22rj9a6ip1lavh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -63,7 +63,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => TwoButton()));
+                        builder: (context) => TwoButtonInSeason()));
               },
               child: ListTile(
                 title: Text(
