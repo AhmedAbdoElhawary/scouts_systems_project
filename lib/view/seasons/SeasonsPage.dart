@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
 import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
 import 'package:scouts_system/view/seasons/addYear.dart';
 import 'package:scouts_system/view/seasons/twoButtons.dart';
@@ -11,7 +13,7 @@ class SeasonsPage extends StatefulWidget {
 }
 
 class _SeasonsPageState extends State<SeasonsPage> {
-  bool _expanded = false;
+  Map<int, bool> selectedFlag = {};
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,20 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
     return Scaffold(
       body: SafeArea(
-        child: ListView.builder(
-          itemBuilder: (context, index) => buildExpansionTile(
-              a.elementAt(index), index, context, listOfSeasonsData),
-          itemCount: listOfSeasonsData.length,
-        ),
+        child: listOfSeasonsData.length == 0
+            ? buildShowMessage("year")
+            : ListView.builder(
+                itemBuilder: (context, index) {
+                  selectedFlag[index] = selectedFlag[index] ?? false;
+                  bool? isSelected = selectedFlag[index];
+                  return buildExpansionTile(a.elementAt(index), index, context,
+                      listOfSeasonsData, isSelected);
+                },
+                itemCount: listOfSeasonsData.length,
+              ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: customColor(),
         onPressed: () async {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddYear()));
@@ -38,8 +47,8 @@ class _SeasonsPageState extends State<SeasonsPage> {
     );
   }
 
-  ExpansionPanelList buildExpansionTile(
-      String year, int index, context, Map<String, List<String>> data) {
+  ExpansionPanelList buildExpansionTile(String year, int index, context,
+      Map<String, List<String>> data, bool? isSelected) {
     return ExpansionPanelList(
       children: [
         ExpansionPanel(
@@ -51,38 +60,39 @@ class _SeasonsPageState extends State<SeasonsPage> {
               ),
             );
           },
-          body: ListView.builder(
-            shrinkWrap: true,
-            itemCount: data[year]!.length,
-            itemBuilder: (context, index) => InkWell(
-              onTap: (){
-                context
-                    .read<SeasonsGetDataFirestore>()
-                    .getListOfStudentsAndEvents(year: year, season: data[year]![index]);
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TwoButtonInSeason()));
-              },
-              child: ListTile(
-                title: Text(
-                  data[year]![index],
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-          ),
-          isExpanded: _expanded,
+          body: buildListViewSeasons(data, year),
+          isExpanded: isSelected!,
           canTapOnHeader: true,
         ),
       ],
       dividerColor: Colors.grey,
       expansionCallback: (panelIndex, isExpanded) {
         setState(() {
-          _expanded = !_expanded;
+          selectedFlag[index] = !isSelected;
         });
+      },
+    );
+  }
+
+  ListView buildListViewSeasons(Map<String, List<String>> data, String year) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: data[year]!.length,
+      itemBuilder: (context, index) => InkWell(
+        onTap: () {
+          context.read<SeasonsGetDataFirestore>().getListOfStudentsAndEvents(
+              year: year, season: data[year]![index]);
+
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => TwoButtonInSeason()));
         },
+        child: ListTile(
+          title: Text(
+            data[year]![index],
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      ),
     );
   }
 }
