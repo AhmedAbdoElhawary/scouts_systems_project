@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
 import 'package:scouts_system/common%20UI/moveToThePage.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/eventsGetDataFirestore.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/events.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
 class EventsPage extends StatelessWidget {
@@ -18,8 +18,7 @@ class EventsPage extends StatelessWidget {
     List<QueryDocumentSnapshot> listOfEventsData =
         context.watch<EventsGetDataFirestore>().eventsListOfData;
 
-    Map<String, List<String>> listOfSeasonsData =
-        context.watch<SeasonsGetDataFirestore>().listOfSeasons;
+    List<Season> listOfSeasonsData = context.watch<DBSeasons>().seasons;
 
     Iterable<String> a = listOfSeasonsData.keys;
 
@@ -28,7 +27,7 @@ class EventsPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: listOfEventsData.length == 0
-            ? buildShowMessage("event")
+            ? showEmptyMessage("event")
             : ListView.separated(
                 itemCount: listOfEventsData.length,
                 separatorBuilder: (BuildContext context, int index) =>

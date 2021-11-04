@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/eventsGetDataFirestore.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/events.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 import 'package:scouts_system/view/events/selectStudentList.dart';
@@ -21,7 +21,7 @@ class StudentEventPage extends StatelessWidget {
     context.read<EventsGetDataFirestore>().getEventStudentsData(eventDocId);
 //to the next page
     context
-        .read<SeasonsGetDataFirestore>()
+        .read<DBSeasons>()
         .getListOfStudentsAndEvents(year: year, season: season);
 
     List<dynamic> listOfStudentsSelectedThisDate =
@@ -37,24 +37,28 @@ class StudentEventPage extends StatelessWidget {
           listOfAllStudents[i]["docId"])) SpecificIndexesOfStudents.add(i);
     }
     return Scaffold(
-      appBar: AppBar(backgroundColor:customColor() ,),
-      body: listOfStudentsSelectedThisDate.length == 0
-          ? buildShowMessage("student")
-          :  ListView.separated(
-        itemCount: SpecificIndexesOfStudents.length,
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: buildTheItemOfTheList(
-                listOfAllStudents[SpecificIndexesOfStudents[index]], index),
-          );
-        },
+      appBar: AppBar(
+        backgroundColor: customColor(),
       ),
+      body: listOfStudentsSelectedThisDate.length == 0
+          ? showEmptyMessage("student")
+          : ListView.separated(
+              itemCount: SpecificIndexesOfStudents.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: buildTheItemOfTheList(
+                      listOfAllStudents[SpecificIndexesOfStudents[index]],
+                      index),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: customColor(),
         onPressed: () async {
           List<dynamic> listOfStudents =
-              context.read<SeasonsGetDataFirestore>().seasonsListOfDataStudent;
+              context.read<DBSeasons>().seasonsListOfDataStudent;
           List<dynamic> listOfAllStudents =
               context.read<StudentsGetDataFirestore>().StudentsListOfData;
 
@@ -84,9 +88,9 @@ class StudentEventPage extends StatelessWidget {
   SafeArea buildTheItemOfTheList(var model, int index) {
     return SafeArea(
       child: InkWell(
-        onTap: () async {  },
-        child:CustomContainerBody(model: model,index: index,text: "student")
-      ),
+          onTap: () async {},
+          child:
+              CustomContainerBody(model: model, index: index, text: "student")),
     );
   }
 }

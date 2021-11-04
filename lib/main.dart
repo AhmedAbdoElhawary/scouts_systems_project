@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scouts_system/HomeScreen.dart';
-import 'package:scouts_system/view%20model/eventsGetDataFirestore.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/home_screen.dart';
+import 'package:scouts_system/view%20model/events.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 
 Future<void> main() async {
@@ -12,14 +12,11 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (_) => EventsGetDataFirestore()),
-        ChangeNotifierProvider(
-            create: (_) => SeasonsGetDataFirestore()),
-        ChangeNotifierProvider(
-            create: (_) => StudentsGetDataFirestore()),
+        ChangeNotifierProvider(create: (_) => EventsGetDataFirestore()),
+        ChangeNotifierProvider(create: (_) => DBSeasons()),
+        ChangeNotifierProvider(create: (_) => StudentsGetDataFirestore()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -31,14 +28,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<StudentsGetDataFirestore>().getAllStudentsData();
     context.read<EventsGetDataFirestore>().getAllEventsData();
-    context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
+    context.read<DBSeasons>().getAllSeasonsData();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Scouts App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }

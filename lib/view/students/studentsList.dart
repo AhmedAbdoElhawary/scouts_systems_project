@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
 import 'package:scouts_system/common%20UI/moveToThePage.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
@@ -20,7 +20,7 @@ class StudentPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: listOfStudentsData.length == 0
-            ? buildShowMessage("student")
+            ? showEmptyMessage("student")
             : ListView.separated(
                 itemCount: listOfStudentsData.length,
                 separatorBuilder: (BuildContext context, int index) =>
@@ -34,8 +34,8 @@ class StudentPage extends StatelessWidget {
               ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor:customColor(),
-      onPressed: () {
+        backgroundColor: customColor(),
+        onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(

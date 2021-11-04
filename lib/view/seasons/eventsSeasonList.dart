@@ -4,15 +4,15 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/eventsGetDataFirestore.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/events.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 
 class EventsSeasonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<dynamic> listOfEventsInSeason =
-        context.watch<SeasonsGetDataFirestore>().seasonsListOfDataEvent;
+        context.watch<DBSeasons>().seasonsListOfDataEvent;
 
     List<dynamic> listOfAllEvents =
         context.watch<EventsGetDataFirestore>().eventsListOfData;
@@ -26,7 +26,7 @@ class EventsSeasonList extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(backgroundColor: customColor()),
         body: listOfEventsInSeason.length == 0
-            ? buildShowMessage("event")
+            ? showEmptyMessage("event")
             : ListView.separated(
                 itemCount: IndexesOfEventsData.length,
                 separatorBuilder: (BuildContext context, int index) =>

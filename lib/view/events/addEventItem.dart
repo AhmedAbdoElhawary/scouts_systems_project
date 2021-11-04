@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
+import 'package:scouts_system/common%20UI/primary_button.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreEvents.dart';
 import 'package:scouts_system/view/events/StudentsListInEventItem.dart';
 
@@ -165,7 +165,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
                         dropDownYears == null ||
                         dropDownSeasons == null
                     ? ((dropDownYears == null || dropDownSeasons == null)
-                        ? buildShowMessage("season")
+                        ? showEmptyMessage("season")
                         : Column(
                             children: [
                               Container(child: Text("save the event first")),
@@ -174,10 +174,10 @@ class _AddEventInfoState extends State<AddEventInfo> {
                                       "and then you can select students !"))
                             ],
                           ))
-                    : BuildBlueTextButton(
+                    : PrimaryButton(
                         text: "  students  ",
                         pop: false,
-                        moveToPage: StudentEventPage(
+                        destination: StudentEventPage(
                             eventDocId: widget.EventDocId,
                             year: dropDownYears ?? "2021",
                             season: dropDownSeasons ?? "winter"),

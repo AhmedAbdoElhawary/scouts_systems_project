@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
@@ -13,14 +13,10 @@ class StudentListInSeasonsPage extends StatelessWidget {
 
   Widget build(BuildContext context) {
     List<dynamic> listOfStudentsInSeason =
-        context
-            .watch<SeasonsGetDataFirestore>()
-            .seasonsListOfDataStudent;
+        context.watch<DBSeasons>().seasonsListOfDataStudent;
 
     List<dynamic> listOfAllStudents =
-        context
-            .watch<StudentsGetDataFirestore>()
-            .StudentsListOfData;
+        context.watch<StudentsGetDataFirestore>().StudentsListOfData;
 
     List<int> IndexesOfStudentsData = [];
 
@@ -31,19 +27,18 @@ class StudentListInSeasonsPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(backgroundColor: customColor()),
         body: listOfStudentsInSeason.length == 0
-            ? buildShowMessage("student"):
-        ListView.separated(
-          itemCount: IndexesOfStudentsData.length,
-          separatorBuilder: (BuildContext context, int index) =>
-          const Divider(),
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: buildTheItemOfTheList(
-                  listOfAllStudents[IndexesOfStudentsData[index]],
-                  index),
-            );
-          },
-        ));
+            ? showEmptyMessage("student")
+            : ListView.separated(
+                itemCount: IndexesOfStudentsData.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(),
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: buildTheItemOfTheList(
+                        listOfAllStudents[IndexesOfStudentsData[index]], index),
+                  );
+                },
+              ));
   }
 
   SafeArea buildTheItemOfTheList(var model, int index) {

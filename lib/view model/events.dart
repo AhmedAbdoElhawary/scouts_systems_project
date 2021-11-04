@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:scouts_system/common%20UI/showToast.dart';
 
 class EventsGetDataFirestore extends ChangeNotifier {
+  final CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('events');
 
-  CollectionReference _collectionRef =
-FirebaseFirestore.instance.collection('events');
-
-  List<QueryDocumentSnapshot> _eventsListOfData = [];
+  final List<QueryDocumentSnapshot> _eventsListOfData = [];
 
   List<dynamic> _eventStudentsListOfData = [];
 
@@ -27,16 +26,14 @@ FirebaseFirestore.instance.collection('events');
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        _eventStudentsListOfData=documentSnapshot["students"];
+        _eventStudentsListOfData = documentSnapshot["students"];
       }
-    }).catchError((e){
+    }).catchError((e) {
       ToastShow().showWhiteToast("there's no memberships: $e");
     });
   }
 
   List<QueryDocumentSnapshot> get eventsListOfData => _eventsListOfData;
 
-  List<dynamic> get eventStudentsListOfData =>
-      _eventStudentsListOfData;
-
+  List<dynamic> get eventStudentsListOfData => _eventStudentsListOfData;
 }

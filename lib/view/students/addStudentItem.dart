@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
+import 'package:scouts_system/common%20UI/primary_button.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
 import 'package:scouts_system/view/students/listOfMembershipsStudentPage.dart';
 
@@ -152,13 +152,14 @@ class _addNewStudentState extends State<addNewStudent> {
                         children: [
                           Container(child: Text("save the student first")),
                           Container(
-                              child: Text("and then you can select memberships !"))
+                              child:
+                                  Text("and then you can select memberships !"))
                         ],
                       )
-                    : BuildBlueTextButton(
+                    : PrimaryButton(
                         text: "memberships",
                         pop: false,
-                        moveToPage:
+                        destination:
                             ListOfMembershipsStudent(widget.studentDocId),
                       )
               ],

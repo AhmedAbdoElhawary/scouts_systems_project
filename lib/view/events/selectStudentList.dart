@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
 import 'package:scouts_system/common%20UI/showToast.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreEvents.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreSeasons.dart';
@@ -31,7 +31,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     return Scaffold(
       appBar: AppBar(backgroundColor: customColor()),
       body: widget.IndexesOfStudents.length == 0
-          ? buildShowMessage("student")
+          ? showEmptyMessage("student")
           : ListView.builder(
               itemBuilder: (builder, index) {
                 selectedFlag[index] = selectedFlag[index] ?? false;

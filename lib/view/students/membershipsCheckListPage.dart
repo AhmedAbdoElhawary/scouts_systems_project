@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/src/provider.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreSeasons.dart';
 import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 
 class StudentCheckBoxMemberships extends StatefulWidget {
   String studentId;
   List<QueryDocumentSnapshot<Object?>> listOfMemberships;
-  StudentCheckBoxMemberships(this.studentId,this.listOfMemberships);
+  StudentCheckBoxMemberships(this.studentId, this.listOfMemberships);
   @override
   _StudentCheckBoxMembershipsState createState() =>
       _StudentCheckBoxMembershipsState();
@@ -27,29 +27,29 @@ class _StudentCheckBoxMembershipsState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(backgroundColor: customColor()),
-      body:widget.listOfMemberships.length==0?
-      buildShowMessage("season"):
-      ListView.builder(
-        itemBuilder: (builder, index) {
-          selectedFlag[index] = selectedFlag[index] ?? false;
-          bool? isSelected = selectedFlag[index];
+      body: widget.listOfMemberships.length == 0
+          ? showEmptyMessage("season")
+          : ListView.builder(
+              itemBuilder: (builder, index) {
+                selectedFlag[index] = selectedFlag[index] ?? false;
+                bool? isSelected = selectedFlag[index];
 
-          return Column(
-            children: [
-              ListTile(
-                onTap: () => onTap(isSelected!, index),
-                leading: _buildSelectIcon(isSelected!),
-                title: Text("${widget.listOfMemberships[index]["year"]}"),
-                subtitle: Text("${widget.listOfMemberships[index]["season"]}"),
-              ),
-            ],
-          );
-        },
-        itemCount: widget.listOfMemberships.length,
-      ),
+                return Column(
+                  children: [
+                    ListTile(
+                      onTap: () => onTap(isSelected!, index),
+                      leading: _buildSelectIcon(isSelected!),
+                      title: Text("${widget.listOfMemberships[index]["year"]}"),
+                      subtitle:
+                          Text("${widget.listOfMemberships[index]["season"]}"),
+                    ),
+                  ],
+                );
+              },
+              itemCount: widget.listOfMemberships.length,
+            ),
       floatingActionButton: _buildSelectAllButton(),
     );
   }
@@ -82,18 +82,17 @@ class _StudentCheckBoxMembershipsState
     }
   }
 
-
   Future<void> addItems() async {
     List<QueryDocumentSnapshot<Object?>> listOfMemberships =
-        Provider.of<SeasonsGetDataFirestore>(context, listen: false)
-            .seasonsListOfAllData;
+        Provider.of<DBSeasons>(context, listen: false).seasonsListOfAllData;
     for (int i = 0; i < selectedFlag.length; i++) {
       if (selectedFlag[i] == true) {
         addFirestoreStudents().addInFieldMemberships(
             seasonDocId: listOfMemberships[i]["docId"],
             studentDocId: widget.studentId);
         addFirestoreSeasons().addNewStudentInSeason(
-             studentDocId: widget.studentId,seasonDocId:listOfMemberships[i]["docId"]);
+            studentDocId: widget.studentId,
+            seasonDocId: listOfMemberships[i]["docId"]);
       }
     }
     Navigator.pop(context);

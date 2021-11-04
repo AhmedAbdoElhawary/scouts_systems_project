@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/model/FirebaseAuthentication.dart';
-import 'package:scouts_system/HomeScreen.dart';
+import 'package:scouts_system/model/firebase_auth.dart';
+import 'package:scouts_system/home_screen.dart';
 import 'package:scouts_system/leadersPage.dart';
 import 'package:scouts_system/common%20UI/showToast.dart';
 import 'package:scouts_system/view/students/studentsList.dart';
@@ -124,8 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 .then((user) {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => HomeScreen()),
               );
             }).catchError((e) {
               ToastShow().showWhiteToast(e);
@@ -162,15 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
             validateTextField(passwordController.text)) {
           FirebaseAuthentication()
               .signUp(
-              email: emailController.text,
-              password: passwordController.text)
+                  email: emailController.text,
+                  password: passwordController.text)
               .then((user) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => emailController.text == "leader@gmail.com"
-                      ? leaderPage()
-                      : StudentPage()),
+                  builder: (context) =>
+                      emailController.text == "leader@gmail.com"
+                          ? leaderPage()
+                          : StudentPage()),
             );
           }).catchError((e) {
             ToastShow().showWhiteToast(e);

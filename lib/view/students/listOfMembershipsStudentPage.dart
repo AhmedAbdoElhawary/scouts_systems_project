@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
 import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
 import 'package:scouts_system/view/students/membershipsCheckListPage.dart';
@@ -19,14 +19,10 @@ class ListOfMembershipsStudent extends StatelessWidget {
         .getStudentMembershipsData(studentId);
 
     List<dynamic> listOfMemberships =
-        context
-            .watch<StudentsGetDataFirestore>()
-            .StudentMembershipsListOfData;
+        context.watch<StudentsGetDataFirestore>().StudentMembershipsListOfData;
 
     List<dynamic> listOfAllSeasons =
-        context
-            .watch<SeasonsGetDataFirestore>()
-            .seasonsListOfAllData;
+        context.watch<DBSeasons>().seasonsListOfAllData;
 
     List<int> SpecificIndexesOfSeasonsData = [];
 
@@ -38,30 +34,30 @@ class ListOfMembershipsStudent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(backgroundColor: customColor()),
       body: SpecificIndexesOfSeasonsData.length == 0
-          ? buildShowMessage("memberships")
+          ? showEmptyMessage("memberships")
           : ListView.separated(
-        itemCount: SpecificIndexesOfSeasonsData.length,
-        separatorBuilder: (BuildContext context, int index) =>
-        const Divider(),
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: buildTheItemOfTheList(
-                listOfAllSeasons[SpecificIndexesOfSeasonsData[index]],
-                index),
-          );
-        },
-      ),
+              itemCount: SpecificIndexesOfSeasonsData.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: buildTheItemOfTheList(
+                      listOfAllSeasons[SpecificIndexesOfSeasonsData[index]],
+                      index),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: customColor(),
         onPressed: () {
           WidgetsBinding.instance!.addPostFrameCallback((_) {
             List<QueryDocumentSnapshot<Object?>> listOfMemberships =
-                context.watch<SeasonsGetDataFirestore>().seasonsListOfAllData;
+                context.watch<DBSeasons>().seasonsListOfAllData;
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        StudentCheckBoxMemberships(studentId,listOfMemberships)));
+                    builder: (context) => StudentCheckBoxMemberships(
+                        studentId, listOfMemberships)));
           });
         },
         child: Icon(Icons.add),

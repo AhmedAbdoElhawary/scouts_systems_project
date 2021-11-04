@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
-import 'package:scouts_system/view/seasons/addYear.dart';
+import 'package:scouts_system/common%20UI/empty_list_message.dart';
+import 'package:scouts_system/view%20model/seasons.dart';
+import 'package:scouts_system/view/seasons/add_year.dart';
 import 'package:scouts_system/view/seasons/twoButtons.dart';
 
 class SeasonsPage extends StatefulWidget {
@@ -17,23 +17,20 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<SeasonsGetDataFirestore>().getAllSeasonsData();
-    Map<String, List<String>> listOfSeasonsData =
-        context.watch<SeasonsGetDataFirestore>().listOfSeasons;
-    Iterable<String> a = listOfSeasonsData.keys;
+    List<Season> seasons = context.watch<DBSeasons>().seasons;
 
     return Scaffold(
       body: SafeArea(
-        child: listOfSeasonsData.length == 0
-            ? buildShowMessage("year")
+        child: seasons.isEmpty
+            ? showEmListptyMessage("year")
             : ListView.builder(
                 itemBuilder: (context, index) {
                   selectedFlag[index] = selectedFlag[index] ?? false;
                   bool? isSelected = selectedFlag[index];
-                  return buildExpansionTile(a.elementAt(index), index, context,
-                      listOfSeasonsData, isSelected);
+                  return buildExpansionTile(
+                      a.elementAt(index), index, context, seasons, isSelected);
                 },
-                itemCount: listOfSeasonsData.length,
+                itemCount: seasons.length,
               ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -42,12 +39,12 @@ class _SeasonsPageState extends State<SeasonsPage> {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddYear()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 
-  ExpansionPanelList buildExpansionTile(String year, int index, context,
+  ExpansionPanelList buildExpansionTile(Season season, int index, context,
       Map<String, List<String>> data, bool? isSelected) {
     return ExpansionPanelList(
       children: [
@@ -55,8 +52,8 @@ class _SeasonsPageState extends State<SeasonsPage> {
           headerBuilder: (context, isExpanded) {
             return ListTile(
               title: Text(
-                year,
-                style: TextStyle(color: Colors.black),
+                season.year,
+                style: const TextStyle(color: Colors.black),
               ),
             );
           },
@@ -80,7 +77,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
       itemCount: data[year]!.length,
       itemBuilder: (context, index) => InkWell(
         onTap: () {
-          context.read<SeasonsGetDataFirestore>().getListOfStudentsAndEvents(
+          context.read<DBSeasons>().getListOfStudentsAndEvents(
               year: year, season: data[year]![index]);
 
           Navigator.push(context,
@@ -89,7 +86,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
         child: ListTile(
           title: Text(
             data[year]![index],
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
           ),
         ),
       ),
