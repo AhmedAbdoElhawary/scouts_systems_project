@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:scouts_system/common%20UI/showToast.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreSeasons.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
+import 'package:scouts_system/common_ui/toast_show.dart';
+import 'package:scouts_system/model/firestore/add_seasons.dart';
 
 class AddYear extends StatefulWidget {
   @override

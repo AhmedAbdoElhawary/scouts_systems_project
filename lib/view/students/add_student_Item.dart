@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
-import 'package:scouts_system/view/students/listOfMembershipsStudentPage.dart';
+import 'package:scouts_system/common_ui/primary_button.dart';
+import 'package:scouts_system/model/firestore/add_students.dart';
+
+import 'memberships_screen.dart';
 
 class addNewStudent extends StatefulWidget {
   TextEditingController controlName;
