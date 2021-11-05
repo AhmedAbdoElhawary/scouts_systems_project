@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:scouts_system/common%20UI/CustomContainerBody.dart';
-import 'package:scouts_system/common%20UI/moveToThePage.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/studentsGetDataFirestore.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common_ui/custom_container.dart';
+import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/moveToThePage.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
+import 'package:scouts_system/view_model/students.dart';
 
 class StudentPage extends StatelessWidget {
   @override

@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
+import 'package:scouts_system/view/seasons/students_items.dart';
 
-import 'package:scouts_system/view/seasons/eventsSeasonList.dart';
-import 'package:scouts_system/view/seasons/studentsSeasonList.dart';
+import 'events_items.dart';
 
 class TwoButtonInSeason extends StatelessWidget {
   @override

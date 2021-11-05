@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
-import 'package:scouts_system/view/seasons/addYear.dart';
-import 'package:scouts_system/view/seasons/twoButtons.dart';
+import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
+import 'package:scouts_system/view/seasons/students_and_events_buttons.dart';
+import 'package:scouts_system/view_model/seasons.dart';
+
+import 'add_season_item.dart';
 
 class SeasonsPage extends StatefulWidget {
   @override
