@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:scouts_system/common%20UI/showToast.dart';
+import 'package:scouts_system/common_ui/toast_show.dart';
 
 class FirebaseAuthentication {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

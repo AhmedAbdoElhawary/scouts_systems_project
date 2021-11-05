@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
 
 class CustomContainerBody extends StatelessWidget {
   String text;
