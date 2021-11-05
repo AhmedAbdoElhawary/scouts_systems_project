@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scouts_system/view/events/addEventItem.dart';
-import 'package:scouts_system/view/students/addStudentItem.dart';
+import 'package:scouts_system/view/events/add_event_item.dart';
+import 'package:scouts_system/view/students/add_student_Item.dart';
 
 class MoveToThePage {
   AddEventInfo moveToEventInfo(

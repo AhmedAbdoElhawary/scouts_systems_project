@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/view/events/eventsList.dart';
-import 'package:scouts_system/view/seasons/SeasonsPage.dart';
-import 'package:scouts_system/view/students/studentsList.dart';
+import 'package:scouts_system/view/events/events_screen.dart';
+import 'package:scouts_system/view/seasons/seasons_screen.dart';
+import 'package:scouts_system/view/students/students_screen.dart';
+
+import 'common_ui/primary_button.dart';
 
 class HomeScreen extends StatelessWidget {
   @override

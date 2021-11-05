@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/src/provider.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreSeasons.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
-import 'package:scouts_system/view%20model/seasonsGetDataFirestore.dart';
-import 'package:scouts_system/common%20UI/CustomWidgetMethods.dart';
+import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/primary_color.dart';
+import 'package:scouts_system/model/firestore/add_seasons.dart';
+import 'package:scouts_system/model/firestore/add_students.dart';
+import 'package:scouts_system/view_model/seasons.dart';
 
 class StudentCheckBoxMemberships extends StatefulWidget {
   String studentId;

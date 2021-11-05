@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/model/FirebaseAuthentication.dart';
-import 'package:scouts_system/HomeScreen.dart';
-import 'package:scouts_system/leadersPage.dart';
-import 'package:scouts_system/common%20UI/showToast.dart';
-import 'package:scouts_system/view/students/studentsList.dart';
+import 'package:scouts_system/view/students/students_screen.dart';
+
+import 'common_ui/toast_show.dart';
+import 'home_screen.dart';
+import 'leader_screen.dart';
+import 'model/firebase_authentication.dart';
+
 
 class LoginScreen extends StatefulWidget {
   @override
