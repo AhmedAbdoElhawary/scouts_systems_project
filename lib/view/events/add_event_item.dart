@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreEvents.dart';
-import 'package:scouts_system/view/events/StudentsListInEventItem.dart';
+import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/primary_button.dart';
+import 'package:scouts_system/model/firestore/add_events.dart';
+import 'package:scouts_system/view/events/students_items.dart';
 
 class AddEventInfo extends StatefulWidget {
   TextEditingController controlEventID;
