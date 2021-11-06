@@ -1,171 +1,215 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreStudents.dart';
-import 'package:scouts_system/view/students/listOfMembershipsStudentPage.dart';
+import 'package:provider/src/provider.dart';
+import 'package:scouts_system/model/firestore/add_students.dart';
+import 'package:scouts_system/view_model/seasons.dart';
+import 'package:scouts_system/view_model/students.dart';
+import 'memberships_screen.dart';
 
-class addNewStudent extends StatefulWidget {
-  TextEditingController controlName;
-  TextEditingController controlDescription;
-  TextEditingController controlDate;
-  TextEditingController controlVolunteeringHours;
+class studentInformationScreen extends StatefulWidget {
+  TextEditingController controllerOfName;
+  TextEditingController controllerOfDescription;
+  TextEditingController controllerOfBirthdate;
+  TextEditingController controllerOfHours;
   String studentDocId;
   bool checkForUpdate;
-
-  addNewStudent(
-      {required this.studentDocId,
-      required this.controlName,
-      required this.controlDescription,
-      required this.controlVolunteeringHours,
-      required this.controlDate,
-      required this.checkForUpdate});
+  studentInformationScreen(
+      {this.studentDocId = "",
+      required this.controllerOfBirthdate,
+      required this.controllerOfDescription,
+      required this.controllerOfHours,
+      required this.controllerOfName,
+      this.checkForUpdate = false});
   @override
-  State<addNewStudent> createState() => _addNewStudentState();
+  State<studentInformationScreen> createState() =>
+      _studentInformationScreenState();
 }
 
-class _addNewStudentState extends State<addNewStudent> {
+class _studentInformationScreenState extends State<studentInformationScreen> {
   bool userNameValidate = false;
-  bool userDesValidate = false;
-  bool userDateValidate = false;
-  bool userVolValidate = false;
+  bool userDescriptionValidate = false;
+  bool userBirthdateValidate = false;
+  bool userHoursValidate = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            buildContainerOfFields(),
-            buildContainerOfUnderButtons(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Container buildContainerOfUnderButtons(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 55,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+      appBar: AppBar(),
+      body: Column(
         children: [
-          buildCancelButton(context),
-          buildSaveButton(context),
+          buildTextFields(),
+          buildSaveAndCancelButtons(context),
         ],
       ),
     );
   }
 
-  Expanded buildCancelButton(BuildContext context) {
-    return Expanded(
-      child: TextButton(
-        child: Text("Cancel",
-            style: TextStyle(
-                fontSize: 25,
-                color: Colors.black,
-                fontWeight: FontWeight.normal)),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+  Container buildSaveAndCancelButtons(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 55,
+      child: buildRowOfButtons(context),
     );
   }
 
-  Expanded buildSaveButton(BuildContext context) {
+  Row buildRowOfButtons(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        buttonOfCancel(context),
+        buttonOfSave(context),
+      ],
+    );
+  }
+
+  Expanded buttonOfCancel(BuildContext context) {
     return Expanded(
       child: TextButton(
-          child: Text("Save",
-              style: TextStyle(
-                  fontSize: 25,
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal)),
-          onPressed: () {
-            if (validateTextField(widget.controlName.text) &&
-                validateTextField(widget.controlDescription.text) &&
-                validateTextField(widget.controlDate.text) &&
-                validateTextField(widget.controlVolunteeringHours.text)) {
-              if (widget.checkForUpdate) {
-                addFirestoreStudents().updateDataFirestoreStudents(
-                  name: widget.controlName.text,
-                  description: widget.controlDescription.text,
-                  volunteeringHours: widget.controlVolunteeringHours.text,
-                  date: widget.controlDate.text,
-                  studentDocId: widget.studentDocId,
-                );
-              } else {
-                addFirestoreStudents().addDataFirestoreStudents(
-                  name: widget.controlName.text,
-                  description: widget.controlDescription.text,
-                  volunteeringHours: widget.controlVolunteeringHours.text,
-                  date: widget.controlDate.text,
-                );
-              }
-              Navigator.pop(context);
-            }
-          }),
+          child: textOfCancel(), onPressed: () => Navigator.pop(context)),
     );
+  }
+
+  Text textOfCancel() {
+    return const Text("Cancel",
+        style: TextStyle(
+            fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
+  }
+
+  Expanded buttonOfSave(BuildContext context) {
+    return Expanded(
+      child: TextButton(child: textOfSave(), onPressed: () => onPressedSave()),
+    );
+  }
+
+  Text textOfSave() {
+    return Text("Save",
+        style: TextStyle(
+            fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
+  }
+
+  onPressedSave() {
+    //Check for => are text fields empty or not ?
+    //He can't add or update if them empty.
+    if (validateTextField(widget.controllerOfName.text) &&
+            validateTextField(widget.controllerOfDescription.text) &&
+            validateTextField(widget.controllerOfBirthdate.text) &&
+            widget.checkForUpdate
+        ? validateTextField(widget.controllerOfHours.text)
+        : true) {
+      StudentsLogic provider=context.read<StudentsLogic>();
+      //To delete the old data to start to modifying the students with updates
+      provider.studentsListCleared();
+      //To rebuild the students page(previous screen) by notifyListeners in the provider
+      provider.preparingStudents();
+      widget.checkForUpdate ? updateStudent() : addStudent();
+      Navigator.pop(context);
+    }
   }
 
   bool validateTextField(String userInput) {
     if (userInput.isEmpty) {
       setState(() {
         userNameValidate = true;
-        userDesValidate = true;
-        userDateValidate = true;
-        userVolValidate = true;
+        userDescriptionValidate = true;
+        userBirthdateValidate = true;
+        userHoursValidate = true;
       });
       return false;
     }
     setState(() {
       userNameValidate = false;
-      userDesValidate = false;
-      userDateValidate = false;
-      userVolValidate = false;
+      userDescriptionValidate = false;
+      userBirthdateValidate = false;
+      userHoursValidate = false;
     });
     return true;
   }
 
-  Expanded buildContainerOfFields() {
+  updateStudent() {
+    FirestoreStudents().updateStudent(
+      name: widget.controllerOfName.text,
+      description: widget.controllerOfDescription.text,
+      volunteeringHours: widget.controllerOfHours.text,
+      date: widget.controllerOfBirthdate.text,
+      studentDocId: widget.studentDocId,
+    );
+  }
+
+  addStudent() {
+    FirestoreStudents().addStudent(
+      name: widget.controllerOfName.text,
+      description: widget.controllerOfDescription.text,
+      volunteeringHours: widget.controllerOfHours.text,
+      date: widget.controllerOfBirthdate.text,
+    );
+  }
+
+  Expanded buildTextFields() {
     return Expanded(
       child: Container(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                buildTextFormField(widget.controlName, "Name"),
-                const Divider(),
-                buildTextFormField(widget.controlDescription, "Description"),
-                const Divider(),
-                buildTextFormField(widget.controlDate, "Date"),
-                const Divider(),
-                buildTextFormField(
-                    widget.controlVolunteeringHours, "Volunteering Hours"),
-                const Divider(),
-                widget.studentDocId == ""
-                    ? Column(
-                        children: [
-                          Container(child: Text("save the student first")),
-                          Container(
-                              child: Text("and then you can select memberships !"))
-                        ],
-                      )
-                    : BuildBlueTextButton(
-                        text: "memberships",
-                        pop: false,
-                        moveToPage:
-                            ListOfMembershipsStudent(widget.studentDocId),
-                      )
-              ],
-            ),
+            child: buildTextFieldsColumn(),
           ),
         ),
       ),
+    );
+  }
+
+  Column buildTextFieldsColumn() {
+    return Column(
+      //I can't replace divider with (space between) or any something else
+      children: [
+        const Divider(),
+        buildTextFormField(widget.controllerOfName, "Name"),
+        const Divider(),
+        buildTextFormField(widget.controllerOfDescription, "Description"),
+        const Divider(),
+        buildTextFormField(widget.controllerOfBirthdate, "Birthdate"),
+        const Divider(),
+        widget.checkForUpdate
+            ? buildTextFormField(widget.controllerOfHours, "Volunteering Hours")
+            : Divider(),
+        widget.checkForUpdate ? showMembershipsButton() : emptyMessage(),
+      ],
+    );
+  }
+
+  ElevatedButton showMembershipsButton() {
+    return ElevatedButton(
+        onPressed: () => onPressedMemberships(), child: membershipsText());
+  }
+
+  Text membershipsText() {
+    return Text(
+      "memberships",
+      style: TextStyle(fontSize: 20, color: Colors.white),
+    );
+  }
+
+  onPressedMemberships() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      //get memberships ready
+      SeasonsLogic provider = context.read<SeasonsLogic>();
+      provider.stateOfFetching = StateOfMemberships.initial;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MembershipsOfStudent(widget.studentDocId)));
+    });
+  }
+
+  Column emptyMessage() {
+    return Column(
+      children: [
+        Container(child: Text("save the student first")),
+        Container(child: Text("and then you can select memberships !"))
+      ],
     );
   }
 
