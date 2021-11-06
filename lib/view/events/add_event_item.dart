@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common%20UI/buildTheBlueTextButton.dart';
-import 'package:scouts_system/common%20UI/showTheTextMessage.dart';
-import 'package:scouts_system/model/add%20data%20firestore/addFirestoreEvents.dart';
-import 'package:scouts_system/view/events/StudentsListInEventItem.dart';
+import 'package:scouts_system/common_ui/primary_button.dart';
+import 'package:scouts_system/model/firestore/add_events.dart';
+import 'package:scouts_system/view/events/students_items.dart';
+import 'package:scouts_system/view_model/seasons.dart';
 
 class AddEventInfo extends StatefulWidget {
   TextEditingController controlEventID;
@@ -12,52 +12,48 @@ class AddEventInfo extends StatefulWidget {
   TextEditingController controlDate;
   String dropdownValueLeader;
   bool checkForUpdate;
-  String EventDocId;
-  List<String> listOfYearsDropButton;
-  Map<String, List<String>> listOfSeasonsData;
-
+  String eventDocId;
+  List<SeasonsFormat> seasonsFormat;
   AddEventInfo(
-      {required this.listOfYearsDropButton,
-      required this.controlEventID,
+      {required this.controlEventID,
+      required this.seasonsFormat,
       required this.controlLocation,
       required this.dropdownValueLeader,
       required this.controlDate,
       required this.checkForUpdate,
-      required this.listOfSeasonsData,
-      required this.EventDocId});
+      required this.eventDocId});
   @override
   State<AddEventInfo> createState() => _AddEventInfoState();
 }
 
 class _AddEventInfoState extends State<AddEventInfo> {
-  String? dropDownYears;
-  String? dropDownSeasons;
+  String seasonDocId = "";
+  String? dropDownSeason;
   var listOfLeader = List<String>.generate(10, (i) => "leader ${i + 1}");
   bool eventIdValidate = false;
-  bool LocationValidate = false;
+  bool locationValidate = false;
   bool userDateValidate = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
+      appBar: AppBar(),
       body: SafeArea(
         child: Column(
           children: [
             buildContainerOfFields(),
-            buildContainerOfUnderButtons(context),
+            buildContainerOfButtons(context),
           ],
         ),
       ),
     );
   }
 
-  Container buildContainerOfUnderButtons(BuildContext context) {
+  Container buildContainerOfButtons(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 55,
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -71,49 +67,53 @@ class _AddEventInfoState extends State<AddEventInfo> {
   Expanded buildCancelButton(BuildContext context) {
     return Expanded(
       child: TextButton(
-        child: Text("Cancel",
-            style: TextStyle(
-                fontSize: 25,
-                color: Colors.black,
-                fontWeight: FontWeight.normal)),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+          child: TextOfCancel(), onPressed: () => Navigator.pop(context)),
     );
+  }
+
+  Text TextOfCancel() {
+    return Text("Cancel",
+        style: TextStyle(
+            fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
   Expanded buildSaveButton(BuildContext context) {
     return Expanded(
-      child: TextButton(
-          child: Text("Save",
-              style: TextStyle(
-                  fontSize: 25,
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal)),
-          onPressed: () async {
-            if (validateTextField(widget.controlEventID.text) &&
-                validateTextField(widget.controlLocation.text) &&
-                validateTextField(widget.controlDate.text)) {
-              if (!widget.checkForUpdate) {
-                addFirestoreEvents().addDataFirestoreEvents(
-                  eventId: widget.controlEventID.text,
-                  location: widget.controlLocation.text,
-                  date: widget.controlDate.text,
-                  leader: widget.dropdownValueLeader,
-                );
-              } else {
-                addFirestoreEvents().updateDataFirestoreEvents(
-                  eventId: widget.controlEventID.text,
-                  location: widget.controlLocation.text,
-                  date: widget.controlDate.text,
-                  leader: widget.dropdownValueLeader,
-                  eventDocId: widget.EventDocId,
-                );
-              }
-              Navigator.pop(context);
-            }
-          }),
+      child: TextButton(child: TextOfSave(), onPressed: () => onPressedSave()),
+    );
+  }
+
+  Text TextOfSave() {
+    return Text("Save",
+        style: TextStyle(
+            fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
+  }
+
+  onPressedSave() async {
+    if (validateTextField(widget.controlEventID.text) &&
+        validateTextField(widget.controlLocation.text) &&
+        validateTextField(widget.controlDate.text)) {
+      widget.checkForUpdate ? updateEvent() : addEvent();
+      Navigator.pop(context);
+    }
+  }
+
+  addEvent() {
+    FirestoreEvents().addEvent(
+      eventId: widget.controlEventID.text,
+      location: widget.controlLocation.text,
+      date: widget.controlDate.text,
+      leader: widget.dropdownValueLeader,
+    );
+  }
+
+  updateEvent() {
+    FirestoreEvents().updateEvent(
+      eventId: widget.controlEventID.text,
+      location: widget.controlLocation.text,
+      date: widget.controlDate.text,
+      leader: widget.dropdownValueLeader,
+      eventDocId: widget.eventDocId,
     );
   }
 
@@ -121,14 +121,14 @@ class _AddEventInfoState extends State<AddEventInfo> {
     if (userInput.isEmpty) {
       setState(() {
         eventIdValidate = true;
-        LocationValidate = true;
+        locationValidate = true;
         userDateValidate = true;
       });
       return false;
     }
     setState(() {
       eventIdValidate = false;
-      LocationValidate = false;
+      locationValidate = false;
       userDateValidate = false;
     });
     return true;
@@ -141,48 +141,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                buildTextFormField(
-                    eventIdValidate, widget.controlEventID, "ID"),
-                const Divider(),
-                buildTextFormField(
-                    LocationValidate, widget.controlLocation, "Location"),
-                const Divider(),
-                buildTextFormField(
-                    userDateValidate, widget.controlDate, "Date"),
-                const Divider(),
-                buildDropdownButton(widget.dropdownValueLeader, listOfLeader),
-                widget.EventDocId != ""
-                    ? Row(children: [
-                        Expanded(
-                            child: buildDropdownButton(
-                                dropDownYears, widget.listOfYearsDropButton)),
-                        buildDropdownButton(dropDownSeasons,
-                            widget.listOfSeasonsData[dropDownYears]),
-                      ])
-                    : const Divider(),
-                widget.EventDocId == "" ||
-                        dropDownYears == null ||
-                        dropDownSeasons == null
-                    ? ((dropDownYears == null || dropDownSeasons == null)
-                        ? buildShowMessage("season")
-                        : Column(
-                            children: [
-                              Container(child: Text("save the event first")),
-                              Container(
-                                  child: Text(
-                                      "and then you can select students !"))
-                            ],
-                          ))
-                    : BuildBlueTextButton(
-                        text: "  students  ",
-                        pop: false,
-                        moveToPage: StudentEventPage(
-                            eventDocId: widget.EventDocId,
-                            year: dropDownYears ?? "2021",
-                            season: dropDownSeasons ?? "winter"),
-                      ),
-              ],
+              children: childrenOfColumn(),
             ),
           ),
         ),
@@ -190,8 +149,36 @@ class _AddEventInfoState extends State<AddEventInfo> {
     );
   }
 
-  DropdownButtonHideUnderline buildDropdownButton(
-      String? dropDownValue, List<String>? listOfDropDown) {
+  List<Widget> childrenOfColumn() {
+    return [
+      buildTextFormField(eventIdValidate, widget.controlEventID, "ID"),
+      const Divider(),
+      buildTextFormField(locationValidate, widget.controlLocation, "Location"),
+      const Divider(),
+      buildTextFormField(userDateValidate, widget.controlDate, "Date"),
+      const Divider(),
+      buildDropdownButton(widget.dropdownValueLeader),
+      widget.checkForUpdate ? buildDropdownButton(dropDownSeason) : Divider(),
+      widget.checkForUpdate && seasonDocId != ""
+          ? PrimaryButton(
+              text: "Students",
+              moveToPage: StudentsEventPage(
+                  eventDocId: widget.eventDocId, seasonDocId: seasonDocId))
+          : emptyMessage(),
+    ];
+  }
+
+  Column emptyMessage() {
+    return Column(
+      children: [
+        Container(child: Text("Save the event first")),
+        Container(child: Text("And then you can select students !"))
+      ],
+    );
+  }
+
+//I can't make it smaller
+  DropdownButtonHideUnderline buildDropdownButton(String? dropDownValue) {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         value: dropDownValue,
@@ -204,26 +191,35 @@ class _AddEventInfoState extends State<AddEventInfo> {
             color: Colors.black, fontSize: 17, fontWeight: FontWeight.w300),
         onChanged: (n) {
           setState(() {
-            dropDownValue == dropDownYears
-                ? dropDownYears = n!
-                : (dropDownValue == dropDownSeasons
-                    ? dropDownSeasons = n!
-                    : widget.dropdownValueLeader = n!);
-            // dropDownValue = n!;
+            if (widget.checkForUpdate && dropDownValue == dropDownSeason) {
+              dropDownSeason = n!;
+              seasonDocId = dropDownSeason!;
+            } else
+              widget.dropdownValueLeader = n!;
           });
         },
-        items: buildListMap(listOfDropDown)?.toList(),
+        items: widget.checkForUpdate && dropDownValue == dropDownSeason
+            ? ListMapOfSeasons(widget.seasonsFormat)?.toList()
+            : ListMapOfLeaders(listOfLeader)?.toList(),
       ),
     );
   }
 }
 
-Iterable<DropdownMenuItem<String>>? buildListMap(List<String>? list) {
+Iterable<DropdownMenuItem<String>>? ListMapOfLeaders(List<String>? list) {
   return list?.map<DropdownMenuItem<String>>((String value) {
     return DropdownMenuItem<String>(
       value: value,
       child: Text(value),
     );
+  });
+}
+
+Iterable<DropdownMenuItem<String>>? ListMapOfSeasons(
+    List<SeasonsFormat>? list) {
+  return list?.map<DropdownMenuItem<String>>((SeasonsFormat value) {
+    return DropdownMenuItem<String>(
+        value: value.seasonDocId, child: Text(value.season));
   });
 }
 
