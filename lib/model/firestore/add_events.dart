@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
-import 'package:scouts_system/common%20UI/showToast.dart';
+import 'package:scouts_system/common_ui/toast_show.dart';
 
-class addFirestoreEvents{
-  var _firestoreCollectionEvents = FirebaseFirestore.instance.collection('events');
-  addDataFirestoreEvents({
+class FirestoreEvents{
+  final _firestoreCollectionEvents = FirebaseFirestore.instance.collection('events');
+  addEvent({
     required String leader,
     required String location,
     required String date,
@@ -26,7 +26,7 @@ class addFirestoreEvents{
             (error) => ToastShow().showRedToast("Failed to update event: $error"));
   }
 
-  updateDataFirestoreEvents(
+  updateEvent(
       {required String leader,
         required String location,
         required String date,
@@ -45,7 +45,7 @@ class addFirestoreEvents{
         .catchError(
             (error) => ToastShow().showRedToast("Failed to update event: $error"));
   }
-  addInFieldStudents({required String studentDocId, required String eventDocId}){
+  addStudentsInEvent({required String studentDocId, required String eventDocId}){
     _firestoreCollectionEvents
         .doc(eventDocId)
         .update({
