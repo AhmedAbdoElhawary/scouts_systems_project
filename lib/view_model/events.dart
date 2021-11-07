@@ -20,12 +20,12 @@ enum StateOfEvents { initial, loading, loaded }
 enum StateOfSpecificEvents { initial, loading, loaded }
 
 class EventsLogic extends ChangeNotifier {
-  CollectionReference _collectionRef =
-  FirebaseFirestore.instance.collection('events');
+  final CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('events');
 
-  List<Events> _eventsList = [];
+  final List<Events> _eventsList = [];
 
-  List<Events> _specificEvents = [];
+  final List<Events> _specificEvents = [];
 
   StateOfEvents stateOfFetching = StateOfEvents.initial;
 
@@ -57,7 +57,7 @@ class EventsLogic extends ChangeNotifier {
     stateOfSpecificEvents = StateOfSpecificEvents.loading;
     for (int i = 0; i < eventsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
-      await _collectionRef.doc(eventsDocIds[i]).get();
+          await _collectionRef.doc(eventsDocIds[i]).get();
       addInSpecificEvents(snap);
     }
     stateOfSpecificEvents = StateOfSpecificEvents.loaded;

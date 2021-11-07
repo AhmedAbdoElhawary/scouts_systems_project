@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/custom_container_students.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/students.dart';
-import 'add_student_Item.dart';
+
+import 'add_student.dart';
 
 class StudentsPage extends StatelessWidget {
+  const StudentsPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     StudentsLogic provider = context.watch<StudentsLogic>();
     if (provider.studentsList.isEmpty &&
         provider.stateOfFetching != StateOfStudents.loading) {
       provider.preparingStudents();
-      return CircularProgress();
+      return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
     }
@@ -44,14 +48,15 @@ class StudentsPage extends StatelessWidget {
 
   FloatingActionButton buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
-        onPressed: () => onPressedFloating(context), child: Icon(Icons.add));
+        onPressed: () => onPressedFloating(context),
+        child: const Icon(Icons.add));
   }
 
   onPressedFloating(BuildContext context) {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => studentInformationScreen(
+            builder: (context) => StudentInformationScreen(
                 //default value(i can't make them with the constructor)
                 // -------------------------------------->
                 controllerOfName: TextEditingController(text: ""),
@@ -70,11 +75,10 @@ class StudentsPage extends StatelessWidget {
   }
 
   onTapItem(BuildContext context, Students studentInfo) {
-
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => studentInformationScreen(
+            builder: (context) => StudentInformationScreen(
                 controllerOfName: TextEditingController(text: studentInfo.name),
                 controllerOfDescription:
                     TextEditingController(text: studentInfo.description),

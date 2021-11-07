@@ -7,7 +7,9 @@ import 'events_items.dart';
 class TwoButtonInSeason extends StatelessWidget {
   final List<dynamic> studentsDocId;
   final List<dynamic> eventsDocId;
-  TwoButtonInSeason({required this.eventsDocId, required this.studentsDocId});
+  const TwoButtonInSeason(
+      {Key? key, required this.eventsDocId, required this.studentsDocId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,8 +29,8 @@ class TwoButtonInSeason extends StatelessWidget {
     );
   }
 
-  Container buildContainer(BuildContext context, String text, Widget page) {
-    return Container(
+  SizedBox buildContainer(BuildContext context, String text, Widget page) {
+    return SizedBox(
         width: double.infinity,
         child: TextButton(
           child: buildText(text),
@@ -43,7 +45,7 @@ class TwoButtonInSeason extends StatelessWidget {
   Text buildText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 15, color: Colors.black),
+      style: const TextStyle(fontSize: 15, color: Colors.black),
     );
   }
 }

@@ -23,13 +23,13 @@ class StudentsLogic extends ChangeNotifier {
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('students');
 
-  List<Students> _studentsList = [];
+  final List<Students> _studentsList = [];
 
-  List<Students> _selectedStudents = [];
+  final List<Students> _selectedStudents = [];
 
-  List<Students> _remainingStudents = [];
+  final List<Students> _remainingStudents = [];
 
-  List<Students> _specificStudents = [];
+  final List<Students> _specificStudents = [];
 
   StateOfStudents stateOfFetching = StateOfStudents.initial;
   StateOfSelectedStudents stateOfSelectedFetching =
@@ -43,7 +43,6 @@ class StudentsLogic extends ChangeNotifier {
     QuerySnapshot snap = await _collectionRef.get();
     for (int i = 0; i < snap.docs.length; i++) {
       QueryDocumentSnapshot data = snap.docs[i];
-      print(i);
       _studentsList.add(Students(
           name: data["name"],
           description: data["description"],
@@ -121,7 +120,6 @@ class StudentsLogic extends ChangeNotifier {
             .get();
     return listOfMemberships["students"];
   }
-
 
   List<Students> get specificStudents => _specificStudents;
 

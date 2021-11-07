@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 
+// ignore: must_be_immutable
 class StudentCheckBoxMemberships extends StatefulWidget {
   String studentDocId;
-  StudentCheckBoxMemberships(this.studentDocId);
+  StudentCheckBoxMemberships(this.studentDocId, {Key? key}) : super(key: key);
   @override
   _StudentCheckBoxMembershipsState createState() =>
       _StudentCheckBoxMembershipsState();
@@ -21,13 +23,13 @@ class _StudentCheckBoxMembershipsState
   @override
   Widget build(BuildContext context) {
     SeasonsLogic provider = context.watch<SeasonsLogic>();
-      return buildScaffold(provider.remainingMemberships);
+    return buildScaffold(provider.remainingMemberships);
   }
 
   Scaffold buildScaffold(List<Memberships> seasonsList) {
     return Scaffold(
       appBar: AppBar(),
-      body:seasonsList.isEmpty
+      body: seasonsList.isEmpty
           ? emptyMessage("season")
           : buildListView(seasonsList),
       floatingActionButton: _buildSelectAllButton(seasonsList),
@@ -45,16 +47,17 @@ class _StudentCheckBoxMembershipsState
           ],
         );
       },
-      itemCount:seasonsList.length,
+      itemCount: seasonsList.length,
     );
   }
 
-  ListTile buildListTile(bool? isSelected, int index,List<Memberships> seasonsList) {
+  ListTile buildListTile(
+      bool? isSelected, int index, List<Memberships> seasonsList) {
     return ListTile(
       onTap: () => onTap(isSelected!, index),
       leading: _buildSelectIcon(isSelected!),
-      title: Text("${seasonsList[index].year}"),
-      subtitle: Text("${seasonsList[index].seasonType}"),
+      title: Text(seasonsList[index].year),
+      subtitle: Text(seasonsList[index].seasonType),
     );
   }
 
@@ -75,7 +78,7 @@ class _StudentCheckBoxMembershipsState
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: () => addItems(seasonsList),
-        child: Icon(
+        child: const Icon(
           Icons.add,
         ),
       );
@@ -96,7 +99,8 @@ class _StudentCheckBoxMembershipsState
       }
     }
     context.read<SeasonsLogic>().preparingMemberships(widget.studentDocId);
-    context.read<SeasonsLogic>().stateOfFetchingMemberships == StateOfMemberships.initial;
+    context.read<SeasonsLogic>().stateOfFetchingMemberships ==
+        StateOfMemberships.initial;
     Navigator.pop(context);
   }
 }

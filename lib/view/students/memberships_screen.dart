@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'memberships_check_list_screen.dart';
 
+// ignore: must_be_immutable
 class MembershipsOfStudent extends StatelessWidget {
   String studentDocId;
-  MembershipsOfStudent(this.studentDocId);
+  MembershipsOfStudent(this.studentDocId, {Key? key}) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.studentMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
       provider.preparingMemberships(studentDocId);
-      return CircularProgress();
+      return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
     }
@@ -37,7 +40,8 @@ class MembershipsOfStudent extends StatelessWidget {
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          title: buildTheItemOfTheList(provider.studentMemberships[index], index),
+          title:
+              buildTheItemOfTheList(provider.studentMemberships[index], index),
         );
       },
     );
@@ -46,7 +50,7 @@ class MembershipsOfStudent extends StatelessWidget {
   FloatingActionButton buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => onPressedFloating(context),
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 
@@ -66,8 +70,8 @@ class MembershipsOfStudent extends StatelessWidget {
     );
   }
 
-  Container buildContainer(Memberships membership, int index) {
-    return Container(
+  SizedBox buildContainer(Memberships membership, int index) {
+    return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
@@ -101,7 +105,7 @@ class MembershipsOfStudent extends StatelessWidget {
   Text buildText(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
           fontWeight: FontWeight.w500,
@@ -115,7 +119,7 @@ class MembershipsOfStudent extends StatelessWidget {
       child: ClipOval(
         child: Text(
           "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
+          style: const TextStyle(fontSize: 25, color: Colors.white),
         ),
       ),
     );

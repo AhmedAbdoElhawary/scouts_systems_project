@@ -5,7 +5,7 @@ enum SeasonType { summer, winter }
 
 enum StateOfMemberships { initial, loaded, loading }
 
-enum StateOfSeasons{initial, loaded, loading}
+enum StateOfSeasons { initial, loaded, loading }
 
 class Season {
   final String year;
@@ -22,9 +22,9 @@ class Season {
 }
 
 class SeasonsFormat {
-   String season;
-   String seasonDocId;
-  SeasonsFormat({required this.seasonDocId,required this.season});
+  String season;
+  String seasonDocId;
+  SeasonsFormat({required this.seasonDocId, required this.season});
 }
 
 class Memberships {
@@ -36,39 +36,41 @@ class Memberships {
 }
 
 class SeasonsLogic extends ChangeNotifier {
-  CollectionReference _collectionRef =
+  final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('seasons');
 
-  List<Season> _seasonsList = [];
+  final List<Season> _seasonsList = [];
 
-  List<SeasonsFormat> _seasonsOfDropButton = [];
+  final List<SeasonsFormat> _seasonsOfDropButton = [];
 
-  List<Memberships> _studentMemberships = [];
+  final List<Memberships> _studentMemberships = [];
 
-  List<Memberships> _remainingMemberships = [];
+  final List<Memberships> _remainingMemberships = [];
 
   StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
 
-  StateOfSeasons stateOfFetchingSeasons=StateOfSeasons.initial;
+  StateOfSeasons stateOfFetchingSeasons = StateOfSeasons.initial;
 
   preparingSeasons() async {
     _seasonsList.clear();
     _seasonsOfDropButton.clear();
-    stateOfFetchingSeasons=StateOfSeasons.loading;
+    stateOfFetchingSeasons = StateOfSeasons.loading;
     QuerySnapshot querySnapshot = await _collectionRef.get();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       QueryDocumentSnapshot data = querySnapshot.docs[i];
       addInSeasonsList(data);
       addInSeasonFormat(data);
     }
-    stateOfFetchingSeasons=StateOfSeasons.loaded;
+    stateOfFetchingSeasons = StateOfSeasons.loaded;
     notifyListeners();
   }
-  addInSeasonFormat(QueryDocumentSnapshot data){
+
+  addInSeasonFormat(QueryDocumentSnapshot data) {
     _seasonsOfDropButton.add(SeasonsFormat(
         seasonDocId: data["docId"],
         season: "${data["year"]} , ${data["season"]}"));
   }
+
   addInSeasonsList(QueryDocumentSnapshot data) {
     _seasonsList.add(Season(
         year: data["year"],
@@ -85,15 +87,18 @@ class SeasonsLogic extends ChangeNotifier {
     //get the list of ids of memberships
     List<dynamic> docIds = await membershipsDocIds(studentDocId);
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    print("memberships cleared");
+    looping(docIds, querySnapshot);
+    stateOfFetchingMemberships = StateOfMemberships.loaded;
+    notifyListeners();
+  }
+
+  looping(List<dynamic> docIds, QuerySnapshot querySnapshot) {
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       QueryDocumentSnapshot data = querySnapshot.docs[i];
       docIds.contains(data.id)
           ? addInStudentMembershipsList(data)
           : addInRemainingMembershipsList(data);
     }
-    stateOfFetchingMemberships = StateOfMemberships.loaded;
-    notifyListeners();
   }
 
   addInStudentMembershipsList(QueryDocumentSnapshot data) {
