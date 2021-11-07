@@ -13,7 +13,7 @@ class MoveToThePage {
     return AddEventInfo(
       controlEventID: TextEditingController(text: model.eventId),
       controlLocation: TextEditingController(text: model.location),
-      controlDate: TextEditingController(text: model.date),
+      controlEventDay: TextEditingController(text: model.eventDay),
       dropdownValueLeader: model.leader,
       checkForUpdate: checkForUpdate,
       eventDocId: eventDocId,

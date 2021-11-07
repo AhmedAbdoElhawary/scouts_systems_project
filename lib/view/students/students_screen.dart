@@ -61,7 +61,7 @@ class StudentsPage extends StatelessWidget {
                 // -------------------------------------->
                 controllerOfName: TextEditingController(text: ""),
                 controllerOfDescription: TextEditingController(text: ""),
-                controllerOfBirthdate: TextEditingController(text: ""),
+                birthdate: "Select Date",
                 controllerOfHours: TextEditingController(text: ""))));
     // --------------------------------------->
   }
@@ -82,8 +82,7 @@ class StudentsPage extends StatelessWidget {
                 controllerOfName: TextEditingController(text: studentInfo.name),
                 controllerOfDescription:
                     TextEditingController(text: studentInfo.description),
-                controllerOfBirthdate:
-                    TextEditingController(text: studentInfo.birthdate),
+                birthdate: studentInfo.birthdate,
                 controllerOfHours:
                     TextEditingController(text: studentInfo.volunteeringHours),
                 studentDocId: studentInfo.docId,

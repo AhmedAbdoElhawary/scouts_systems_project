@@ -31,7 +31,7 @@ class CustomContainerEvents extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         buildText(model.leader),
-        buildText(model.date),
+        buildText(model.eventDay),
       ],
     );
   }

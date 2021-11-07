@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Events {
-  String date;
+  String eventDay;
   String location;
   String eventId;
   String eventDocId;
@@ -10,7 +10,7 @@ class Events {
   Events(
       {this.eventDocId = "",
       this.eventId = "",
-      this.date = "",
+      this.eventDay = "",
       this.leader = "",
       this.location = ""});
 }
@@ -45,7 +45,7 @@ class EventsLogic extends ChangeNotifier {
 
   addInEventsList(QueryDocumentSnapshot data) {
     _eventsList.add(Events(
-        date: data["date"],
+        eventDay: data["date"],
         location: data["location"],
         leader: data["leader"],
         eventDocId: data["docId"],
@@ -66,7 +66,7 @@ class EventsLogic extends ChangeNotifier {
 
   addInSpecificEvents(DocumentSnapshot<Object?> snap) {
     _specificEvents.add(Events(
-        date: snap.get("date"),
+        eventDay: snap.get("date"),
         leader: snap.get("leader"),
         eventDocId: snap.get("docId"),
         eventId: snap.get("id"),
