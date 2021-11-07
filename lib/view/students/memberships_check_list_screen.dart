@@ -96,7 +96,7 @@ class _StudentCheckBoxMembershipsState
       }
     }
     context.read<SeasonsLogic>().preparingMemberships(widget.studentDocId);
-    context.read<SeasonsLogic>().stateOfFetching == StateOfMemberships.initial;
+    context.read<SeasonsLogic>().stateOfFetchingMemberships == StateOfMemberships.initial;
     Navigator.pop(context);
   }
 }
