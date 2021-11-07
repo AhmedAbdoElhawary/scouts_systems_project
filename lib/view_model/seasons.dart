@@ -5,18 +5,20 @@ enum SeasonType { summer, winter }
 
 enum StateOfMemberships { initial, loaded, loading }
 
+enum StateOfSeasons{initial, loaded, loading}
+
 class Season {
   final String year;
   final String seasonType;
   final String seasonDocId;
-  final List<dynamic> studentsDocId;
-  final List<dynamic> eventsDocId;
+  final List<dynamic> studentsDocIds;
+  final List<dynamic> eventsDocIds;
   Season(
       {required this.year,
       required this.seasonType,
       required this.seasonDocId,
-      required this.eventsDocId,
-      required this.studentsDocId});
+      required this.eventsDocIds,
+      required this.studentsDocIds});
 }
 
 class SeasonsFormat {
@@ -45,32 +47,39 @@ class SeasonsLogic extends ChangeNotifier {
 
   List<Memberships> _remainingMemberships = [];
 
-  StateOfMemberships stateOfFetching = StateOfMemberships.initial;
+  StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
+
+  StateOfSeasons stateOfFetchingSeasons=StateOfSeasons.initial;
 
   preparingSeasons() async {
+    _seasonsList.clear();
+    _seasonsOfDropButton.clear();
+    stateOfFetchingSeasons=StateOfSeasons.loading;
     QuerySnapshot querySnapshot = await _collectionRef.get();
-
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       QueryDocumentSnapshot data = querySnapshot.docs[i];
       addInSeasonsList(data);
-      print(i);
-      _seasonsOfDropButton.add(SeasonsFormat(
-          seasonDocId: data["docId"],
-          season: "${data["year"]} , ${data["season"]}"));
+      addInSeasonFormat(data);
     }
+    stateOfFetchingSeasons=StateOfSeasons.loaded;
     notifyListeners();
+  }
+  addInSeasonFormat(QueryDocumentSnapshot data){
+    _seasonsOfDropButton.add(SeasonsFormat(
+        seasonDocId: data["docId"],
+        season: "${data["year"]} , ${data["season"]}"));
   }
   addInSeasonsList(QueryDocumentSnapshot data) {
     _seasonsList.add(Season(
         year: data["year"],
         seasonType: data["season"],
         seasonDocId: data["docId"],
-        studentsDocId: data["students"],
-        eventsDocId: data["events"]));
+        studentsDocIds: data["students"],
+        eventsDocIds: data["events"]));
   }
 
   preparingMemberships(String studentDocId) async {
-    stateOfFetching = StateOfMemberships.loading;
+    stateOfFetchingMemberships = StateOfMemberships.loading;
     _studentMemberships.clear();
     _remainingMemberships.clear();
     //get the list of ids of memberships
@@ -83,7 +92,7 @@ class SeasonsLogic extends ChangeNotifier {
           ? addInStudentMembershipsList(data)
           : addInRemainingMembershipsList(data);
     }
-    stateOfFetching = StateOfMemberships.loaded;
+    stateOfFetchingMemberships = StateOfMemberships.loaded;
     notifyListeners();
   }
 
@@ -104,18 +113,6 @@ class SeasonsLogic extends ChangeNotifier {
             .doc(studentDocId)
             .get();
     return listOfMemberships["memberships"];
-  }
-
-  seasonsListCleared() {
-    _seasonsList.clear();
-  }
-
-  membershipsListCleared() {
-    _studentMemberships.clear();
-  }
-
-  remainingMembershipsCleared() {
-    _remainingMemberships.clear();
   }
 
   List<SeasonsFormat> get seasonsOfDropButton => _seasonsOfDropButton;
