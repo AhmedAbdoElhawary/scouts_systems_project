@@ -101,8 +101,6 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
         ? validateTextField(widget.controllerOfHours.text)
         : true) {
       StudentsLogic provider=context.read<StudentsLogic>();
-      //To delete the old data to start to modifying the students with updates
-      provider.studentsListCleared();
       //To rebuild the students page(previous screen) by notifyListeners in the provider
       provider.preparingStudents();
       widget.checkForUpdate ? updateStudent() : addStudent();
@@ -196,7 +194,7 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       //get memberships ready
       SeasonsLogic provider = context.read<SeasonsLogic>();
-      provider.stateOfFetching = StateOfMemberships.initial;
+      provider.stateOfFetchingMemberships = StateOfMemberships.initial;
       Navigator.push(
           context,
           MaterialPageRoute(
