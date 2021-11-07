@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/custom_container.dart';
+import 'package:scouts_system/common_ui/custom_container_students.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
-import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 import 'add_student_Item.dart';
 
@@ -67,16 +66,12 @@ class StudentsPage extends StatelessWidget {
       Students studentInfo, int index, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(context, studentInfo),
-      child: CustomContainer(index: index, model: studentInfo),
+      child: CustomContainerStudents(index: index, modelStudents: studentInfo),
     );
   }
 
   onTapItem(BuildContext context, Students studentInfo) {
-    //clear lists from previous data
-    context.read<SeasonsLogic>().membershipsListCleared();
-    context.read<SeasonsLogic>().seasonsListCleared();
-    context.read<SeasonsLogic>().remainingMembershipsCleared();
-    //------------------------------->
+
     return Navigator.push(
         context,
         MaterialPageRoute(
