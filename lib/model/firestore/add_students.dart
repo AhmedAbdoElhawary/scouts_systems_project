@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
 import 'package:scouts_system/common_ui/toast_show.dart';
 
-class addFirestoreStudents{
-  var _firestoreCollectionStudents = FirebaseFirestore.instance.collection('students');
-  addDataFirestoreStudents({
+class FirestoreStudents{
+  final _firestoreCollectionStudents = FirebaseFirestore.instance.collection('students');
+  addStudent({
     required String name,
     required String description,
     required String date,
@@ -25,8 +25,8 @@ class addFirestoreStudents{
         .catchError(
             (error) => ToastShow().showWhiteToast("Failed to update user: $error"));
   }
-
-  updateDataFirestoreStudents(
+  
+  updateStudent(
       {required String name,
         required String description,
         required String date,
@@ -40,12 +40,13 @@ class addFirestoreStudents{
       "date": date,
       'volunteeringHours': volunteeringHours,
     })
-        .then((value) => ToastShow().showWhiteToast("user updates"))
+        .then((value) {
+      ToastShow().showWhiteToast("user updates");
         .catchError(
             (error) => ToastShow().showWhiteToast("Failed to update user: $error"));
   }
-
-  addInFieldMemberships({required String seasonDocId, required String studentDocId}){
+              
+  addMembership({required String seasonDocId, required String studentDocId}){
     _firestoreCollectionStudents
         .doc(studentDocId)
         .update({
@@ -55,35 +56,4 @@ class addFirestoreStudents{
         .catchError(
             (error) => ToastShow().showWhiteToast("Failed to add membership in user -> $error"));
   }
-
-  // deleteDataFirestore(
-  //     {required String id,
-  //       required var model,
-  //       required bool fromUpdate}) async {
-  //   String filePath = model["image"].replaceAll(RegExp(r'(\?alt).*'), '');
-  //
-  //   List split = filePath.split("data%2F");
-  //
-  //   FirebaseStorage.instance
-  //       .ref("data")
-  //       .child(split[1])
-  //       .delete()
-  //       .then((_) => ToastShow()
-  //       .showToast('Successfully deleted $filePath storage item'))
-  //       .catchError((_) {
-  //     ToastShow().showToast("image not exist in the firebase storage");
-  //   });
-  //
-  //   if (!fromUpdate) {
-  //     _firestoreCollectionStudents
-  //         .doc(id)
-  //         .delete()
-  //         .then((value) => ToastShow().showToast("deleting successfully"))
-  //         .catchError((e) =>
-  //         ToastShow().showToast("$e \nerror while deleting the element"));
-  //     ToastShow().showToast(id);
-  //   }
-  // }
-
-
 }

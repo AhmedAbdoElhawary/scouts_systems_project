@@ -9,7 +9,6 @@ import 'home_screen.dart';
 import 'leader_screen.dart';
 import 'model/firebase_authentication.dart';
 
-
 class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -172,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                   builder: (context) => emailController.text == "leader@gmail.com"
                       ? leaderPage()
-                      : StudentPage()),
+                      : StudentsPage()),
             );
           }).catchError((e) {
             ToastShow().showWhiteToast(e);

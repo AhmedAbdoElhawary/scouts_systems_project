@@ -1,58 +1,125 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class SeasonsGetDataFirestore extends ChangeNotifier {
+enum SeasonType { summer, winter }
+
+enum StateOfMemberships { initial, loaded, loading }
+
+enum StateOfSeasons{initial, loaded, loading}
+
+class Season {
+  final String year;
+  final String seasonType;
+  final String seasonDocId;
+  final List<dynamic> studentsDocIds;
+  final List<dynamic> eventsDocIds;
+  Season(
+      {required this.year,
+      required this.seasonType,
+      required this.seasonDocId,
+      required this.eventsDocIds,
+      required this.studentsDocIds});
+}
+
+class SeasonsFormat {
+   String season;
+   String seasonDocId;
+  SeasonsFormat({required this.seasonDocId,required this.season});
+}
+
+class Memberships {
+  final String year;
+  final String seasonType;
+  final String docId;
+  Memberships(
+      {required this.year, required this.seasonType, required this.docId});
+}
+
+class SeasonsLogic extends ChangeNotifier {
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('seasons');
 
-  List<QueryDocumentSnapshot> _seasonsListOfAllData = [];
-  Map<String, List<String>> _listOfSeasons = {};
+  List<Season> _seasonsList = [];
 
-  List<dynamic> _seasonsListOfDataStudent = [];
-  List<dynamic> _seasonsListOfDataEvent = [];
+  List<SeasonsFormat> _seasonsOfDropButton = [];
 
-  getAllSeasonsData() async {
+  List<Memberships> _studentMemberships = [];
+
+  List<Memberships> _remainingMemberships = [];
+
+  StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
+
+  StateOfSeasons stateOfFetchingSeasons=StateOfSeasons.initial;
+
+  preparingSeasons() async {
+    _seasonsList.clear();
+    _seasonsOfDropButton.clear();
+    stateOfFetchingSeasons=StateOfSeasons.loading;
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    _seasonsListOfAllData.clear();
-    _listOfSeasons.clear();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       QueryDocumentSnapshot data = querySnapshot.docs[i];
-      _seasonsListOfAllData.add(data);
-
-      //get ready to seasons screen
-      if (_listOfSeasons.containsKey(data["year"])) {
-        List<String>? list = _listOfSeasons[data["year"]];
-        list!.add(data["season"]);
-        _listOfSeasons[data["year"]] = list;
-      } else {
-        _listOfSeasons[data["year"]] = [data["season"]];
-      }
+      addInSeasonsList(data);
+      addInSeasonFormat(data);
     }
+    stateOfFetchingSeasons=StateOfSeasons.loaded;
+    notifyListeners();
+  }
+  addInSeasonFormat(QueryDocumentSnapshot data){
+    _seasonsOfDropButton.add(SeasonsFormat(
+        seasonDocId: data["docId"],
+        season: "${data["year"]} , ${data["season"]}"));
+  }
+  addInSeasonsList(QueryDocumentSnapshot data) {
+    _seasonsList.add(Season(
+        year: data["year"],
+        seasonType: data["season"],
+        seasonDocId: data["docId"],
+        studentsDocIds: data["students"],
+        eventsDocIds: data["events"]));
+  }
+
+  preparingMemberships(String studentDocId) async {
+    stateOfFetchingMemberships = StateOfMemberships.loading;
+    _studentMemberships.clear();
+    _remainingMemberships.clear();
+    //get the list of ids of memberships
+    List<dynamic> docIds = await membershipsDocIds(studentDocId);
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    print("memberships cleared");
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      QueryDocumentSnapshot data = querySnapshot.docs[i];
+      docIds.contains(data.id)
+          ? addInStudentMembershipsList(data)
+          : addInRemainingMembershipsList(data);
+    }
+    stateOfFetchingMemberships = StateOfMemberships.loaded;
     notifyListeners();
   }
 
-  getListOfStudentsAndEvents(
-      {required String year, required String season}) async {
-    QuerySnapshot resultOfYear = await _collectionRef
-        .where("year", isEqualTo: year)
-        .where("season", isEqualTo: season)
-        .get();
-
-    final List<DocumentSnapshot> documentsYear = resultOfYear.docs;
-
-    if (documentsYear.length > 0) {
-      _seasonsListOfDataStudent = documentsYear[0]["students"];
-      _seasonsListOfDataEvent = documentsYear[0]["events"];
-    }
-
-    notifyListeners();
+  addInStudentMembershipsList(QueryDocumentSnapshot data) {
+    _studentMemberships.add(Memberships(
+        year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
-  Map<String, List<String>> get listOfSeasons => _listOfSeasons;
+  addInRemainingMembershipsList(QueryDocumentSnapshot data) {
+    _remainingMemberships.add(Memberships(
+        year: data["year"], seasonType: data["season"], docId: data["docId"]));
+  }
 
-  List<dynamic> get seasonsListOfDataStudent => _seasonsListOfDataStudent;
+  Future<List<dynamic>> membershipsDocIds(String studentDocId) async {
+    DocumentSnapshot<Map<String, dynamic>> listOfMemberships =
+        await FirebaseFirestore.instance
+            .collection('students')
+            .doc(studentDocId)
+            .get();
+    return listOfMemberships["memberships"];
+  }
 
-  List<dynamic> get seasonsListOfDataEvent => _seasonsListOfDataEvent;
+  List<SeasonsFormat> get seasonsOfDropButton => _seasonsOfDropButton;
 
-  List<QueryDocumentSnapshot> get seasonsListOfAllData => _seasonsListOfAllData;
+  List<Memberships> get remainingMemberships => _remainingMemberships;
+
+  List<Memberships> get studentMemberships => _studentMemberships;
+
+  List<Season> get seasonsList => _seasonsList;
 }

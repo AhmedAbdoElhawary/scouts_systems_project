@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
-import 'package:scouts_system/common_ui/primary_color.dart';
-import 'package:scouts_system/common_ui/toast_show.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
+import 'package:scouts_system/view_model/students.dart';
 
 class SelectStudentsList extends StatefulWidget {
-  List<int> IndexesOfStudents;
-  List<dynamic> listOfAllStudents;
-  String year;
-  String season;
+  String seasonDocId;
   String eventDocId;
+  List<Students> remainingStudents;
   SelectStudentsList(
-      {required this.eventDocId,
-      required this.year,
-      required this.season,
-      required this.IndexesOfStudents,
-      required this.listOfAllStudents});
+      {required this.remainingStudents,
+      required this.eventDocId,
+      required this.seasonDocId});
 
   @override
   _SelectStudentsListState createState() => _SelectStudentsListState();
@@ -29,29 +25,32 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: customColor()),
-      body: widget.IndexesOfStudents.length == 0
-          ? buildShowMessage("student")
-          : ListView.builder(
-              itemBuilder: (builder, index) {
-                selectedFlag[index] = selectedFlag[index] ?? false;
-                bool? isSelected = selectedFlag[index];
-                return ListTile(
-                  onTap: () => onTap(isSelected!, index),
-                  leading: _buildSelectIcon(
-                      isSelected!,
-                      widget.listOfAllStudents[widget.IndexesOfStudents[index]],
-                      index),
-                  title: Text(
-                      "${widget.listOfAllStudents[widget.IndexesOfStudents[index]]['name']}"),
-                  subtitle: Text(
-                      "${widget.listOfAllStudents[widget.IndexesOfStudents[index]]['description']}"),
-                );
-              },
-              itemCount: widget.IndexesOfStudents.length,
-            ),
+      appBar: AppBar(),
+      body: widget.remainingStudents.isEmpty
+          ? emptyMessage("student")
+          : buildListView(),
       floatingActionButton: _buildSelectAllButton(),
     );
+  }
+
+  ListView buildListView() {
+    return ListView.builder(
+      itemBuilder: (builder, index) {
+        selectedFlag[index] = selectedFlag[index] ?? false;
+        bool? isSelected = selectedFlag[index];
+        return buildListTile(isSelected, index);
+      },
+      itemCount: widget.remainingStudents.length,
+    );
+  }
+
+  ListTile buildListTile(bool? isSelected, int index) {
+    return ListTile(
+        onTap: () => onTap(isSelected!, index),
+        leading: _buildSelectIcon(isSelected!, index),
+        title: Text("${widget.remainingStudents[index].name}"),
+        subtitle: Text("${widget.remainingStudents[index].description}"),
+      );
   }
 
   void onTap(bool isSelected, int index) {
@@ -61,17 +60,15 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     });
   }
 
-  Widget _buildSelectIcon(bool isSelected, var data, int index) {
+  Widget _buildSelectIcon(bool isSelected, int index) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-      color: customColor(),
     );
   }
 
   Widget? _buildSelectAllButton() {
     if (isSelectionMode) {
       return FloatingActionButton(
-        backgroundColor: customColor(),
         onPressed: addItems,
         child: Icon(
           Icons.add,
@@ -82,24 +79,35 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     }
   }
 
-  Future<void> addItems() async {
+  addItems() {
     for (int i = 0; i < selectedFlag.length; i++) {
-      if (widget.listOfAllStudents[widget.IndexesOfStudents[i]].exists) {
-        if (selectedFlag[i] == true) {
-          addFirestoreEvents().addInFieldStudents(
-              studentDocId: widget
-                  .listOfAllStudents[widget.IndexesOfStudents[i]]["docId"],
-              eventDocId: widget.eventDocId);
-        }
-      } else {
-        ToastShow().showWhiteToast("user not exist !");
+      if (selectedFlag[i]=true) {
+        addStudentsInEvent(i);
+        addEventInSeason();
       }
     }
-    addFirestoreSeasons().addNewEventInSeason(
-        year: widget.year,
-        season: widget.season,
-        eventDocId: widget.eventDocId);
-
+    //to clear the previous data
+    StudentsLogic provider = context.read<StudentsLogic>();
+    provider.preparingStudentsInEvent(
+        eventDocId: widget.eventDocId, seasonDocId: widget.seasonDocId);
+    provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
+    //------------------------->
     Navigator.pop(context);
   }
+
+  addEventInSeason() {
+    FirestoreSeasons().addEventInSeason(
+          seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
+  }
+
+  addStudentsInEvent(int i) {
+    FirestoreEvents().addStudentsInEvent(
+          studentDocId: widget.remainingStudents[i].docId,
+          eventDocId: widget.eventDocId);
+  }
+
+  getReadyTheData(){
+
+  }
+
 }
