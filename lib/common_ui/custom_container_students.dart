@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scouts_system/view_model/students.dart';
 
-class CustomContainer extends StatelessWidget {
-  Students model;
+class CustomContainerStudents extends StatelessWidget {
+  Students modelStudents;
   int index;
 
-  CustomContainer({Key? key, required this.index, required this.model})
+  CustomContainerStudents({Key? key, required this.index, required this.modelStudents})
       : super(key: key);
 
   @override
@@ -16,8 +16,8 @@ class CustomContainer extends StatelessWidget {
       child: Row(
         children: [
           buildCircleAvatarNumber(index),
-          buildNameAndDescription(model),
-          buildDateAndHours(model),
+          buildNameAndDescription(modelStudents),
+          buildDateAndHours(modelStudents),
         ],
       ),
     );
