@@ -1,26 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 import 'memberships_screen.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class StudentInformationScreen extends StatefulWidget {
   TextEditingController controllerOfName;
   TextEditingController controllerOfDescription;
-  TextEditingController controllerOfBirthdate;
+  String birthdate;
   TextEditingController controllerOfHours;
   String studentDocId;
   bool checkForUpdate;
   StudentInformationScreen(
       {Key? key,
       this.studentDocId = "",
-      required this.controllerOfBirthdate,
+      required this.birthdate,
       required this.controllerOfDescription,
       required this.controllerOfHours,
       required this.controllerOfName,
@@ -34,8 +35,9 @@ class StudentInformationScreen extends StatefulWidget {
 class _StudentInformationScreenState extends State<StudentInformationScreen> {
   bool userNameValidate = false;
   bool userDescriptionValidate = false;
-  bool userBirthdateValidate = false;
   bool userHoursValidate = false;
+  DateTime? date;
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +102,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     //He can't add or update if them empty.
     if (validateTextField(widget.controllerOfName.text) &&
             validateTextField(widget.controllerOfDescription.text) &&
-            validateTextField(widget.controllerOfBirthdate.text) &&
-            widget.checkForUpdate
-        ? validateTextField(widget.controllerOfHours.text)
-        : true) {
+        validateTextField(widget.controllerOfHours.text)
+        ) {
       StudentsLogic provider = context.read<StudentsLogic>();
       //To rebuild the students page(previous screen) by notifyListeners in the provider
       provider.preparingStudents();
@@ -117,7 +117,6 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       setState(() {
         userNameValidate = true;
         userDescriptionValidate = true;
-        userBirthdateValidate = true;
         userHoursValidate = true;
       });
       return false;
@@ -125,7 +124,6 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     setState(() {
       userNameValidate = false;
       userDescriptionValidate = false;
-      userBirthdateValidate = false;
       userHoursValidate = false;
     });
     return true;
@@ -136,7 +134,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       name: widget.controllerOfName.text,
       description: widget.controllerOfDescription.text,
       volunteeringHours: widget.controllerOfHours.text,
-      date: widget.controllerOfBirthdate.text,
+      date:getText(),
       studentDocId: widget.studentDocId,
     );
   }
@@ -146,7 +144,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       name: widget.controllerOfName.text,
       description: widget.controllerOfDescription.text,
       volunteeringHours: widget.controllerOfHours.text,
-      date: widget.controllerOfBirthdate.text,
+      date: getText(),
     );
   }
 
@@ -169,8 +167,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         buildTextFormField(widget.controllerOfName, "Name"),
         const Divider(),
         buildTextFormField(widget.controllerOfDescription, "Description"),
-        const Divider(),
-        buildTextFormField(widget.controllerOfBirthdate, "Birthdate"),
+        containerOfPickDate(),
         const Divider(),
         widget.checkForUpdate
             ? buildTextFormField(widget.controllerOfHours, "Volunteering Hours")
@@ -178,6 +175,81 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         widget.checkForUpdate ? showMembershipsButton() : emptyMessage(),
       ],
     );
+  }
+
+  Column containerOfPickDate() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        textOfBirthdate(),
+        containerOfDate(),
+      ],
+    );
+  }
+
+  InkWell containerOfDate() {
+    return InkWell(
+      onTap: () => pickDate(context),
+      child: container(),
+    );
+  }
+
+  Container container() {
+    return Container(
+        width: double.infinity,
+        height: 60,
+        decoration: boxDecoration(),
+        child: buildRow());
+  }
+
+  Row buildRow() {
+    return Row(
+      children: [buildExpandedDate(), Icon(Icons.eleven_mp)],
+    );
+  }
+
+  Expanded buildExpandedDate() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('${getText()}',
+            style: TextStyle(color: Colors.black), textAlign: TextAlign.start),
+      ),
+    );
+  }
+
+  BoxDecoration boxDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(6),
+      color: Color.fromRGBO(104, 104, 104, 0.10588235294117647),
+    );
+  }
+
+  Padding textOfBirthdate() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: Text("birthdate"),
+    );
+  }
+
+  String getText() {
+    if (date == null) {
+      return widget.birthdate;
+    } else {
+      return DateFormat('MM/dd/yyyy').format(date!);
+    }
+  }
+
+  Future pickDate(BuildContext context) async {
+    final initialDate = DateTime(DateTime.now().year - 5);
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: date ?? initialDate,
+      firstDate: DateTime(DateTime.now().year - 150),
+      lastDate: DateTime(DateTime.now().year - 5),
+    );
+    if (newDate == null) return;
+    setState(() => date = newDate);
   }
 
   ElevatedButton showMembershipsButton() {

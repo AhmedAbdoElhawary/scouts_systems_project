@@ -9,7 +9,7 @@ import 'package:scouts_system/view_model/seasons.dart';
 class AddEventInfo extends StatefulWidget {
   TextEditingController controlEventID;
   TextEditingController controlLocation;
-  TextEditingController controlDate;
+  TextEditingController controlEventDay;
   String dropdownValueLeader;
   bool checkForUpdate;
   String eventDocId;
@@ -20,7 +20,7 @@ class AddEventInfo extends StatefulWidget {
       required this.seasonsFormat,
       required this.controlLocation,
       required this.dropdownValueLeader,
-      required this.controlDate,
+      required this.controlEventDay,
       required this.checkForUpdate,
       required this.eventDocId})
       : super(key: key);
@@ -94,7 +94,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
   onPressedSave() async {
     if (validateTextField(widget.controlEventID.text) &&
         validateTextField(widget.controlLocation.text) &&
-        validateTextField(widget.controlDate.text)) {
+        validateTextField(widget.controlEventDay.text)) {
       widget.checkForUpdate ? updateEvent() : addEvent();
       Navigator.pop(context);
     }
@@ -104,7 +104,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
     FirestoreEvents().addEvent(
       eventId: widget.controlEventID.text,
       location: widget.controlLocation.text,
-      date: widget.controlDate.text,
+      date: widget.controlEventDay.text,
       leader: widget.dropdownValueLeader,
     );
   }
@@ -113,7 +113,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
     FirestoreEvents().updateEvent(
       eventId: widget.controlEventID.text,
       location: widget.controlLocation.text,
-      date: widget.controlDate.text,
+      date: widget.controlEventDay.text,
       leader: widget.dropdownValueLeader,
       eventDocId: widget.eventDocId,
     );
@@ -155,7 +155,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
       const Divider(),
       buildTextFormField(locationValidate, widget.controlLocation, "Location"),
       const Divider(),
-      buildTextFormField(userDateValidate, widget.controlDate, "Date"),
+      buildTextFormField(userDateValidate, widget.controlEventDay, "Event Day"),
       const Divider(),
       buildDropdownButton(widget.dropdownValueLeader),
       widget.checkForUpdate
