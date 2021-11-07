@@ -76,4 +76,3 @@ class EventsLogic extends ChangeNotifier {
   List<Events> get specificEvents => _specificEvents;
 
   List<Events> get eventsList => _eventsList;
-}

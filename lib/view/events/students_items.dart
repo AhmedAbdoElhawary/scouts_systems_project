@@ -32,7 +32,7 @@ class StudentsEventPage extends StatelessWidget {
     floatingActionButton: buildFloatingActionButton(provider,context),
   );
   }
-
+  
   FloatingActionButton buildFloatingActionButton(StudentsLogic provider,BuildContext context) {
     return FloatingActionButton(
     onPressed: () async {

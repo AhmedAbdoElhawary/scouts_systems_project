@@ -36,4 +36,3 @@ class PrimaryButton extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => moveToPage));
   }
   }
-

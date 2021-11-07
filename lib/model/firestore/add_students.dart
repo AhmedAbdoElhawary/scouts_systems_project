@@ -25,7 +25,7 @@ class FirestoreStudents{
         .catchError(
             (error) => ToastShow().showWhiteToast("Failed to update user: $error"));
   }
-
+  
   updateStudent(
       {required String name,
         required String description,
@@ -42,11 +42,10 @@ class FirestoreStudents{
     })
         .then((value) {
       ToastShow().showWhiteToast("user updates");
-    })
         .catchError(
             (error) => ToastShow().showWhiteToast("Failed to update user: $error"));
   }
-
+              
   addMembership({required String seasonDocId, required String studentDocId}){
     _firestoreCollectionStudents
         .doc(studentDocId)

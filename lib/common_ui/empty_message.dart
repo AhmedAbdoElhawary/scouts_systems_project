@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 Center emptyMessage(String text) {
   return Center(
     child: Column(

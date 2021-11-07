@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
 import 'package:scouts_system/common_ui/toast_show.dart';
-
 class FirestoreEvents{
   final _firestoreCollectionEvents = FirebaseFirestore.instance.collection('events');
   addEvent({
@@ -45,6 +44,7 @@ class FirestoreEvents{
         .catchError(
             (error) => ToastShow().showRedToast("Failed to update event: $error"));
   }
+  
   addStudentsInEvent({required String studentDocId, required String eventDocId}){
     _firestoreCollectionEvents
         .doc(eventDocId)
