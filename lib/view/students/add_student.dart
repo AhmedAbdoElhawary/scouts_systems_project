@@ -2,32 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 import 'memberships_screen.dart';
 
-class studentInformationScreen extends StatefulWidget {
+// ignore: must_be_immutable
+class StudentInformationScreen extends StatefulWidget {
   TextEditingController controllerOfName;
   TextEditingController controllerOfDescription;
   TextEditingController controllerOfBirthdate;
   TextEditingController controllerOfHours;
   String studentDocId;
   bool checkForUpdate;
-  studentInformationScreen(
-      {this.studentDocId = "",
+  StudentInformationScreen(
+      {Key? key,
+      this.studentDocId = "",
       required this.controllerOfBirthdate,
       required this.controllerOfDescription,
       required this.controllerOfHours,
       required this.controllerOfName,
-      this.checkForUpdate = false});
+      this.checkForUpdate = false})
+      : super(key: key);
   @override
-  State<studentInformationScreen> createState() =>
-      _studentInformationScreenState();
+  State<StudentInformationScreen> createState() =>
+      _StudentInformationScreenState();
 }
 
-class _studentInformationScreenState extends State<studentInformationScreen> {
+class _StudentInformationScreenState extends State<StudentInformationScreen> {
   bool userNameValidate = false;
   bool userDescriptionValidate = false;
   bool userBirthdateValidate = false;
@@ -46,8 +50,8 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
     );
   }
 
-  Container buildSaveAndCancelButtons(BuildContext context) {
-    return Container(
+  SizedBox buildSaveAndCancelButtons(BuildContext context) {
+    return SizedBox(
       width: double.infinity,
       height: 55,
       child: buildRowOfButtons(context),
@@ -86,7 +90,7 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
   }
 
   Text textOfSave() {
-    return Text("Save",
+    return const Text("Save",
         style: TextStyle(
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
@@ -100,7 +104,7 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
             widget.checkForUpdate
         ? validateTextField(widget.controllerOfHours.text)
         : true) {
-      StudentsLogic provider=context.read<StudentsLogic>();
+      StudentsLogic provider = context.read<StudentsLogic>();
       //To rebuild the students page(previous screen) by notifyListeners in the provider
       provider.preparingStudents();
       widget.checkForUpdate ? updateStudent() : addStudent();
@@ -148,12 +152,10 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
 
   Expanded buildTextFields() {
     return Expanded(
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: buildTextFieldsColumn(),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: buildTextFieldsColumn(),
         ),
       ),
     );
@@ -172,7 +174,7 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
         const Divider(),
         widget.checkForUpdate
             ? buildTextFormField(widget.controllerOfHours, "Volunteering Hours")
-            : Divider(),
+            : const Divider(),
         widget.checkForUpdate ? showMembershipsButton() : emptyMessage(),
       ],
     );
@@ -184,7 +186,7 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
   }
 
   Text membershipsText() {
-    return Text(
+    return const Text(
       "memberships",
       style: TextStyle(fontSize: 20, color: Colors.white),
     );
@@ -204,9 +206,9 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
 
   Column emptyMessage() {
     return Column(
-      children: [
-        Container(child: Text("save the student first")),
-        Container(child: Text("and then you can select memberships !"))
+      children: const [
+        Text("save the student first"),
+        Text("and then you can select memberships !")
       ],
     );
   }
@@ -216,9 +218,9 @@ class _studentInformationScreenState extends State<studentInformationScreen> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           labelText: text,
-          errorText: userNameValidate ? "invalid ${text}" : null),
+          errorText: userNameValidate ? "invalid $text" : null),
     );
   }
 }
