@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/custom_container.dart';
+import 'package:scouts_system/common_ui/custom_container_students.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view/events/select-students.dart';
 import 'package:scouts_system/view_model/students.dart';
@@ -66,7 +66,7 @@ class StudentsEventPage extends StatelessWidget {
     return SafeArea(
       child: InkWell(
         onTap: () async {  },
-        child:CustomContainer(model: model,index: index)
+        child:CustomContainerStudents(modelStudents: model,index: index)
       ),
     );
   }
