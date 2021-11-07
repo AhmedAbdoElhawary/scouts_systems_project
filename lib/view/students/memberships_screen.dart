@@ -14,7 +14,7 @@ class MembershipsOfStudent extends StatelessWidget {
   Widget build(BuildContext context) {
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.studentMemberships.isEmpty &&
-        provider.stateOfFetching != StateOfMemberships.loaded) {
+        provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
       provider.preparingMemberships(studentDocId);
       return CircularProgress();
     } else {
