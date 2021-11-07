@@ -2,18 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/toast_show.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 
 class AddYear extends StatefulWidget {
+  const AddYear({Key? key}) : super(key: key);
+
   @override
   State<AddYear> createState() => _AddYearState();
 }
 
 class _AddYearState extends State<AddYear> {
-  TextEditingController _controller = TextEditingController(text: "");
+  final TextEditingController _controller = TextEditingController(text: "");
 
   List<String> seasonsList = ["winter", "summer", "autumn", "spring"];
 
@@ -42,11 +45,11 @@ class _AddYearState extends State<AddYear> {
   Row buildRow() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       fieldOfYears(),
-      DropdownButtonSeasons(),
+      dropdownButtonSeasons(),
     ]);
   }
 
-  DropdownButtonHideUnderline DropdownButtonSeasons() {
+  DropdownButtonHideUnderline dropdownButtonSeasons() {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         value: seasonSelected,
@@ -70,7 +73,7 @@ class _AddYearState extends State<AddYear> {
     return Expanded(
       child: TextFormField(
         controller: _controller,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "year",
         ),
@@ -101,7 +104,7 @@ class _AddYearState extends State<AddYear> {
   }
 
   Text textOfAdd() {
-    return Text(
+    return const Text(
       "   add   ",
       style: TextStyle(fontSize: 20, color: Colors.white),
     );

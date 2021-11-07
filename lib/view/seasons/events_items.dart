@@ -1,24 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/custom_container_events.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/events.dart';
 
+// ignore: must_be_immutable
 class EventsSeasonList extends StatelessWidget {
   List<dynamic> eventsDocIds;
-  EventsSeasonList({required this.eventsDocIds});
+  EventsSeasonList({Key? key, required this.eventsDocIds}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     EventsLogic provider = context.watch<EventsLogic>();
     if (provider.specificEvents.isEmpty &&
         provider.stateOfSpecificEvents != StateOfSpecificEvents.loaded) {
       provider.preparingSpecificEvents(eventsDocIds);
-      return CircularProgress();
-    } else
+      return const CircularProgress();
+    } else {
       return buildScaffold(provider);
+    }
   }
 
   Scaffold buildScaffold(EventsLogic provider) {

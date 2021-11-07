@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 
+// ignore: must_be_immutable
 class SelectStudentsList extends StatefulWidget {
   String seasonDocId;
   String eventDocId;
   List<Students> remainingStudents;
   SelectStudentsList(
-      {required this.remainingStudents,
+      {Key? key,
+      required this.remainingStudents,
       required this.eventDocId,
-      required this.seasonDocId});
+      required this.seasonDocId})
+      : super(key: key);
 
   @override
   _SelectStudentsListState createState() => _SelectStudentsListState();
@@ -46,11 +50,11 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
 
   ListTile buildListTile(bool? isSelected, int index) {
     return ListTile(
-        onTap: () => onTap(isSelected!, index),
-        leading: _buildSelectIcon(isSelected!, index),
-        title: Text("${widget.remainingStudents[index].name}"),
-        subtitle: Text("${widget.remainingStudents[index].description}"),
-      );
+      onTap: () => onTap(isSelected!, index),
+      leading: _buildSelectIcon(isSelected!, index),
+      title: Text(widget.remainingStudents[index].name),
+      subtitle: Text(widget.remainingStudents[index].description),
+    );
   }
 
   void onTap(bool isSelected, int index) {
@@ -70,7 +74,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: addItems,
-        child: Icon(
+        child: const Icon(
           Icons.add,
         ),
       );
@@ -81,7 +85,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
 
   addItems() {
     for (int i = 0; i < selectedFlag.length; i++) {
-      if (selectedFlag[i]=true) {
+      if (selectedFlag[i] = true) {
         addStudentsInEvent(i);
         addEventInSeason();
       }
@@ -97,17 +101,14 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
 
   addEventInSeason() {
     FirestoreSeasons().addEventInSeason(
-          seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
+        seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
   }
 
   addStudentsInEvent(int i) {
     FirestoreEvents().addStudentsInEvent(
-          studentDocId: widget.remainingStudents[i].docId,
-          eventDocId: widget.eventDocId);
+        studentDocId: widget.remainingStudents[i].docId,
+        eventDocId: widget.eventDocId);
   }
 
-  getReadyTheData(){
-
-  }
-
+  getReadyTheData() {}
 }

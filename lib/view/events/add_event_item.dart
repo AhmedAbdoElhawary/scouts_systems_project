@@ -5,6 +5,7 @@ import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/view/events/students_items.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 
+// ignore: must_be_immutable
 class AddEventInfo extends StatefulWidget {
   TextEditingController controlEventID;
   TextEditingController controlLocation;
@@ -14,13 +15,15 @@ class AddEventInfo extends StatefulWidget {
   String eventDocId;
   List<SeasonsFormat> seasonsFormat;
   AddEventInfo(
-      {required this.controlEventID,
+      {Key? key,
+      required this.controlEventID,
       required this.seasonsFormat,
       required this.controlLocation,
       required this.dropdownValueLeader,
       required this.controlDate,
       required this.checkForUpdate,
-      required this.eventDocId});
+      required this.eventDocId})
+      : super(key: key);
   @override
   State<AddEventInfo> createState() => _AddEventInfoState();
 }
@@ -48,8 +51,8 @@ class _AddEventInfoState extends State<AddEventInfo> {
     );
   }
 
-  Container buildContainerOfButtons(BuildContext context) {
-    return Container(
+  SizedBox buildContainerOfButtons(BuildContext context) {
+    return SizedBox(
       width: double.infinity,
       height: 55,
       child: Row(
@@ -66,24 +69,24 @@ class _AddEventInfoState extends State<AddEventInfo> {
   Expanded buildCancelButton(BuildContext context) {
     return Expanded(
       child: TextButton(
-          child: TextOfCancel(), onPressed: () => Navigator.pop(context)),
+          child: textOfCancel(), onPressed: () => Navigator.pop(context)),
     );
   }
 
-  Text TextOfCancel() {
-    return Text("Cancel",
+  Text textOfCancel() {
+    return const Text("Cancel",
         style: TextStyle(
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
   Expanded buildSaveButton(BuildContext context) {
     return Expanded(
-      child: TextButton(child: TextOfSave(), onPressed: () => onPressedSave()),
+      child: TextButton(child: textOfSave(), onPressed: () => onPressedSave()),
     );
   }
 
-  Text TextOfSave() {
-    return Text("Save",
+  Text textOfSave() {
+    return const Text("Save",
         style: TextStyle(
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
@@ -135,13 +138,11 @@ class _AddEventInfoState extends State<AddEventInfo> {
 
   Expanded buildContainerOfFields() {
     return Expanded(
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: childrenOfColumn(),
-            ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: childrenOfColumn(),
           ),
         ),
       ),
@@ -157,7 +158,9 @@ class _AddEventInfoState extends State<AddEventInfo> {
       buildTextFormField(userDateValidate, widget.controlDate, "Date"),
       const Divider(),
       buildDropdownButton(widget.dropdownValueLeader),
-      widget.checkForUpdate ? buildDropdownButton(dropDownSeason) : Divider(),
+      widget.checkForUpdate
+          ? buildDropdownButton(dropDownSeason)
+          : const Divider(),
       widget.checkForUpdate && seasonDocId != ""
           ? PrimaryButton(
               text: "Students",
@@ -169,9 +172,9 @@ class _AddEventInfoState extends State<AddEventInfo> {
 
   Column emptyMessage() {
     return Column(
-      children: [
-        Container(child: Text("Save the event first")),
-        Container(child: Text("And then you can select students !"))
+      children: const [
+        Text("Save the event first"),
+        Text("And then you can select students !")
       ],
     );
   }
@@ -184,7 +187,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
         isExpanded: false,
         icon: const Icon(Icons.keyboard_arrow_down_outlined),
         iconSize: 20,
-        hint: Text("select item"),
+        hint: const Text("select item"),
         elevation: 16,
         style: const TextStyle(
             color: Colors.black, fontSize: 17, fontWeight: FontWeight.w300),
@@ -193,19 +196,20 @@ class _AddEventInfoState extends State<AddEventInfo> {
             if (widget.checkForUpdate && dropDownValue == dropDownSeason) {
               dropDownSeason = n!;
               seasonDocId = dropDownSeason!;
-            } else
+            } else {
               widget.dropdownValueLeader = n!;
+            }
           });
         },
         items: widget.checkForUpdate && dropDownValue == dropDownSeason
-            ? ListMapOfSeasons(widget.seasonsFormat)?.toList()
-            : ListMapOfLeaders(listOfLeader)?.toList(),
+            ? listMapOfSeasons(widget.seasonsFormat)?.toList()
+            : listMapOfLeaders(listOfLeader)?.toList(),
       ),
     );
   }
 }
 
-Iterable<DropdownMenuItem<String>>? ListMapOfLeaders(List<String>? list) {
+Iterable<DropdownMenuItem<String>>? listMapOfLeaders(List<String>? list) {
   return list?.map<DropdownMenuItem<String>>((String value) {
     return DropdownMenuItem<String>(
       value: value,
@@ -214,7 +218,7 @@ Iterable<DropdownMenuItem<String>>? ListMapOfLeaders(List<String>? list) {
   });
 }
 
-Iterable<DropdownMenuItem<String>>? ListMapOfSeasons(
+Iterable<DropdownMenuItem<String>>? listMapOfSeasons(
     List<SeasonsFormat>? list) {
   return list?.map<DropdownMenuItem<String>>((SeasonsFormat value) {
     return DropdownMenuItem<String>(
@@ -227,8 +231,8 @@ TextFormField buildTextFormField(
   return TextFormField(
     controller: controller,
     decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: text,
-        errorText: validate ? "invalid ${text}" : null),
+        errorText: validate ? "invalid $text" : null),
   );
 }

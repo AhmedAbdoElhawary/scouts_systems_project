@@ -8,16 +8,16 @@ class MoveToThePage {
       {required Events model,
       String eventDocId = "",
       bool checkForUpdate = false,
-        required List<SeasonsFormat> seasonsFormat,
-        required BuildContext context}) {
+      required List<SeasonsFormat> seasonsFormat,
+      required BuildContext context}) {
     return AddEventInfo(
-      controlEventID: TextEditingController(text: "${model.eventId}"),
-      controlLocation: TextEditingController(text: "${model.location}"),
-      controlDate: TextEditingController(text: "${model.date}"),
-      dropdownValueLeader: "${model.leader}",
+      controlEventID: TextEditingController(text: model.eventId),
+      controlLocation: TextEditingController(text: model.location),
+      controlDate: TextEditingController(text: model.date),
+      dropdownValueLeader: model.leader,
       checkForUpdate: checkForUpdate,
       eventDocId: eventDocId,
-      seasonsFormat:seasonsFormat,
+      seasonsFormat: seasonsFormat,
     );
   }
 }

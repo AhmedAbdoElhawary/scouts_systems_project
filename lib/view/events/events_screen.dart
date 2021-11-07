@@ -11,6 +11,8 @@ import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 
 class EventsPage extends StatelessWidget {
+  const EventsPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     EventsLogic provider = context.watch<EventsLogic>();
@@ -19,9 +21,10 @@ class EventsPage extends StatelessWidget {
         provider.stateOfFetching != StateOfEvents.loaded) {
       provider.preparingEvents();
       context.read<SeasonsLogic>().preparingSeasons();
-      return CircularProgress();
-    } else
+      return const CircularProgress();
+    } else {
       return buildScaffold(context, provider);
+    }
   }
 
   Scaffold buildScaffold(BuildContext context, EventsLogic provider) {
@@ -47,7 +50,7 @@ class EventsPage extends StatelessWidget {
                     model: Events(leader: "leader 1"),
                     seasonsFormat: [])));
       },
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 

@@ -2,16 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scouts_system/view_model/students.dart';
 
+// ignore: must_be_immutable
 class CustomContainerStudents extends StatelessWidget {
   Students modelStudents;
   int index;
 
-  CustomContainerStudents({Key? key, required this.index, required this.modelStudents})
+  CustomContainerStudents(
+      {Key? key, required this.index, required this.modelStudents})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
@@ -38,7 +40,7 @@ class CustomContainerStudents extends StatelessWidget {
   Text buildText(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
           fontWeight: FontWeight.w500,
@@ -68,7 +70,7 @@ class CustomContainerStudents extends StatelessWidget {
       child: ClipOval(
         child: Text(
           "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
+          style: const TextStyle(fontSize: 25, color: Colors.white),
         ),
       ),
     );

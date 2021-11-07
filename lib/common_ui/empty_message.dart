@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 Center emptyMessage(String text) {
   return Center(
     child: Column(
@@ -6,9 +7,9 @@ Center emptyMessage(String text) {
       children: [
         Text(
           "There's no $text(s).",
-          style: TextStyle(fontSize: 15, color: Colors.black),
+          style: const TextStyle(fontSize: 15, color: Colors.black),
         ),
-        Text(
+        const Text(
           "Try to add one !",
           style: TextStyle(fontSize: 15, color: Colors.black),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
@@ -11,24 +12,24 @@ import 'package:scouts_system/view_model/students.dart';
 import 'add_season_item.dart';
 
 class SeasonsPage extends StatefulWidget {
+  const SeasonsPage({Key? key}) : super(key: key);
+
   @override
   State<SeasonsPage> createState() => _SeasonsPageState();
 }
 
 class _SeasonsPageState extends State<SeasonsPage> {
-
   @override
   Widget build(BuildContext context) {
-
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.seasonsList.isEmpty &&
         provider.stateOfFetchingSeasons != StateOfSeasons.loaded) {
       provider.preparingSeasons();
-      return CircularProgress();
-    } else
-    return buildScaffold(context,provider);
+      return const CircularProgress();
+    } else {
+      return buildScaffold(context, provider);
+    }
   }
-
 
   Scaffold buildScaffold(BuildContext context, SeasonsLogic provider) {
     return Scaffold(
@@ -46,11 +47,9 @@ class _SeasonsPageState extends State<SeasonsPage> {
     return FloatingActionButton(
       onPressed: () async {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AddYear()));
+            context, MaterialPageRoute(builder: (context) => const AddYear()));
       },
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 
@@ -77,8 +76,12 @@ class _SeasonsPageState extends State<SeasonsPage> {
       child: InkWell(
         onTap: () {
           //to clear the previous data
-          context.read<EventsLogic>().preparingSpecificEvents(model.eventsDocIds);
-          context.read<StudentsLogic>().preparingSpecificStudents(studentsDocIds:model.studentsDocIds);
+          context
+              .read<EventsLogic>()
+              .preparingSpecificEvents(model.eventsDocIds);
+          context
+              .read<StudentsLogic>()
+              .preparingSpecificStudents(studentsDocIds: model.studentsDocIds);
           context.read<StudentsLogic>().stateOfSpecificFetching =
               StateOfSpecificStudents.initial;
           context.read<EventsLogic>().stateOfSpecificEvents =
@@ -96,11 +99,13 @@ class _SeasonsPageState extends State<SeasonsPage> {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => TwoButtonInSeason(eventsDocId: model.eventsDocIds,studentsDocId: model.studentsDocIds)));
+            builder: (context) => TwoButtonInSeason(
+                eventsDocId: model.eventsDocIds,
+                studentsDocId: model.studentsDocIds)));
   }
 
-  container(int index, Season model) {
-    return Container(
+  SizedBox container(int index, Season model) {
+    return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
@@ -126,7 +131,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
   Text buildText(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
           fontWeight: FontWeight.w500,
@@ -141,9 +146,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildText(model.year)
-          ],
+          children: [buildText(model.year)],
         ),
       ),
     );
@@ -155,7 +158,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
       child: ClipOval(
         child: Text(
           "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
+          style: const TextStyle(fontSize: 25, color: Colors.white),
         ),
       ),
     );
