@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
+import 'package:scouts_system/common_ui/custom_container_events.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/common_ui/move_to_page.dart';
 import 'package:scouts_system/view_model/events.dart';
@@ -15,7 +16,7 @@ class EventsPage extends StatelessWidget {
     EventsLogic provider = context.watch<EventsLogic>();
 
     if (provider.eventsList.isEmpty &&
-        provider.stateOfFetching != StateOfEvents.loading) {
+        provider.stateOfFetching != StateOfEvents.loaded) {
       provider.preparingEvents();
       context.read<SeasonsLogic>().preparingSeasons();
       return CircularProgress();
@@ -72,16 +73,12 @@ class EventsPage extends StatelessWidget {
     return SafeArea(
       child: InkWell(
         onTap: () {
-          //to clear the previous data
-          context.read<StudentsLogic>().selectedStudentsCleared();
-          context.read<StudentsLogic>().remainingStudentsCleared();
           context.read<StudentsLogic>().stateOfSelectedFetching =
               StateOfSelectedStudents.initial;
-          //------------------------->
 
           buildPush(context, model, eventDocId);
         },
-        child: container(index, model),
+        child: CustomContainerEvents(index: index, modelEvents: model),
       ),
     );
   }
@@ -96,69 +93,5 @@ class EventsPage extends StatelessWidget {
                 checkForUpdate: true,
                 seasonsFormat: context.read<SeasonsLogic>().seasonsOfDropButton,
                 context: context)));
-  }
-
-  container(int index, Events model) {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        children: [
-          buildCircleAvatarNumber(index),
-          buildNameAndDescription(model),
-          buildDateAndHours(model),
-        ],
-      ),
-    );
-  }
-
-  Column buildDateAndHours(Events model) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        buildText(model.date),
-        buildText(model.leader),
-      ],
-    );
-  }
-
-  Text buildText(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-          fontSize: 16,
-          color: Colors.black54,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.italic),
-    );
-  }
-
-  Expanded buildNameAndDescription(Events model) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildText(model.eventId),
-            buildText(model.location),
-          ],
-        ),
-      ),
-    );
-  }
-
-  CircleAvatar buildCircleAvatarNumber(int index) {
-    return CircleAvatar(
-      radius: 25,
-      child: ClipOval(
-        child: Text(
-          "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
-        ),
-      ),
-    );
   }
 }
