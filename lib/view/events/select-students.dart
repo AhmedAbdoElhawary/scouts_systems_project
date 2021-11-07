@@ -88,8 +88,6 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     }
     //to clear the previous data
     StudentsLogic provider = context.read<StudentsLogic>();
-    provider.selectedStudentsCleared();
-    provider.remainingStudentsCleared();
     provider.preparingStudentsInEvent(
         eventDocId: widget.eventDocId, seasonDocId: widget.seasonDocId);
     provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
