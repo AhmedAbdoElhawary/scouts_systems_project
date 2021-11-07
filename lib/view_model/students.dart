@@ -17,6 +17,7 @@ class Students {
 
 enum StateOfStudents { initial, loaded, loading }
 enum StateOfSelectedStudents { initial, loaded, loading }
+enum StateOfSpecificStudents { initial, loaded, loading }
 
 class StudentsLogic extends ChangeNotifier {
   final CollectionReference _collectionRef =
@@ -28,11 +29,16 @@ class StudentsLogic extends ChangeNotifier {
 
   List<Students> _remainingStudents = [];
 
-  StateOfStudents stateOfFetching = StateOfStudents.initial;
+  List<Students> _specificStudents = [];
 
-  StateOfSelectedStudents stateOfSelectedFetching = StateOfSelectedStudents.initial;
+  StateOfStudents stateOfFetching = StateOfStudents.initial;
+  StateOfSelectedStudents stateOfSelectedFetching =
+      StateOfSelectedStudents.initial;
+  StateOfSpecificStudents stateOfSpecificFetching =
+      StateOfSpecificStudents.initial;
 
   preparingStudents() async {
+    _studentsList.clear();
     stateOfFetching = StateOfStudents.loading;
     QuerySnapshot snap = await _collectionRef.get();
     for (int i = 0; i < snap.docs.length; i++) {
@@ -49,11 +55,36 @@ class StudentsLogic extends ChangeNotifier {
     notifyListeners();
   }
 
+  preparingSpecificStudents({required List<dynamic> studentsDocIds}) async {
+    _specificStudents.clear();
+    stateOfSpecificFetching = StateOfSpecificStudents.loading;
+    for (int i = 0; i < studentsDocIds.length; i++) {
+      DocumentSnapshot<Object?> snap =
+          await _collectionRef.doc(studentsDocIds[i]).get();
+      _specificStudents.add(Students(
+          name: snap.get("name"),
+          docId: snap.get("docId"),
+          description: snap.get("description"),
+          birthdate: snap.get("date"),
+          volunteeringHours: snap.get("volunteeringHours")));
+    }
+    stateOfSpecificFetching = StateOfSpecificStudents.loaded;
+  }
+
   preparingStudentsInEvent(
       {required String seasonDocId, required String eventDocId}) async {
-    stateOfSelectedFetching=StateOfSelectedStudents.loading;
+    _selectedStudents.clear();
+    _remainingStudents.clear();
+    stateOfSelectedFetching = StateOfSelectedStudents.loading;
     List<dynamic> studentsIdsSeason = await studentsDocIdsInSeason(seasonDocId);
     List<dynamic> studentsDocIdsEvent = await studentsDocIdsInEvent(eventDocId);
+    looping(studentsIdsSeason, studentsDocIdsEvent);
+    stateOfSelectedFetching = StateOfSelectedStudents.loaded;
+    notifyListeners();
+  }
+
+  looping(List<dynamic> studentsIdsSeason,
+      List<dynamic> studentsDocIdsEvent) async {
     for (int i = 0; i < studentsIdsSeason.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsIdsSeason[i]).get();
@@ -62,9 +93,6 @@ class StudentsLogic extends ChangeNotifier {
           ? _selectedStudents.add(student)
           : _remainingStudents.add(student);
     }
-    stateOfSelectedFetching=StateOfSelectedStudents.loaded;
-    notifyListeners();
-
   }
 
   Students getTheStudent(DocumentSnapshot<Object?> snap) {
@@ -94,17 +122,8 @@ class StudentsLogic extends ChangeNotifier {
     return listOfMemberships["students"];
   }
 
-  studentsListCleared() {
-    _studentsList.clear();
-  }
 
-  selectedStudentsCleared(){
-    _selectedStudents.clear();
-  }
-
-  remainingStudentsCleared(){
-    _remainingStudents.clear();
-  }
+  List<Students> get specificStudents => _specificStudents;
 
   List<Students> get selectedStudents => _selectedStudents;
 
