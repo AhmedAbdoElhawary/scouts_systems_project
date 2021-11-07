@@ -21,7 +21,7 @@ enum StateOfSpecificEvents { initial, loading, loaded }
 
 class EventsLogic extends ChangeNotifier {
   CollectionReference _collectionRef =
-      FirebaseFirestore.instance.collection('events');
+  FirebaseFirestore.instance.collection('events');
 
   List<Events> _eventsList = [];
 
@@ -43,7 +43,7 @@ class EventsLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  addInEventsList(QueryDocumentSnapshot data){
+  addInEventsList(QueryDocumentSnapshot data) {
     _eventsList.add(Events(
         date: data["date"],
         location: data["location"],
@@ -51,17 +51,17 @@ class EventsLogic extends ChangeNotifier {
         eventDocId: data["docId"],
         eventId: data["id"]));
   }
+
   preparingSpecificEvents(List<dynamic> eventsDocIds) async {
     _specificEvents.clear();
     stateOfSpecificEvents = StateOfSpecificEvents.loading;
     for (int i = 0; i < eventsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
-          await _collectionRef.doc(eventsDocIds[i]).get();
+      await _collectionRef.doc(eventsDocIds[i]).get();
       addInSpecificEvents(snap);
     }
     stateOfSpecificEvents = StateOfSpecificEvents.loaded;
     notifyListeners();
-
   }
 
   addInSpecificEvents(DocumentSnapshot<Object?> snap) {
@@ -76,3 +76,4 @@ class EventsLogic extends ChangeNotifier {
   List<Events> get specificEvents => _specificEvents;
 
   List<Events> get eventsList => _eventsList;
+}
