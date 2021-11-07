@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:scouts_system/view_model/events.dart';
 
+// ignore: must_be_immutable
 class CustomContainerEvents extends StatelessWidget {
   Events modelEvents;
   int index;
 
-  CustomContainerEvents({Key? key, required this.index, required this.modelEvents})
+  CustomContainerEvents(
+      {Key? key, required this.index, required this.modelEvents})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
@@ -37,7 +39,7 @@ class CustomContainerEvents extends StatelessWidget {
   Text buildText(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
           fontWeight: FontWeight.w500,
@@ -67,7 +69,7 @@ class CustomContainerEvents extends StatelessWidget {
       child: ClipOval(
         child: Text(
           "${index + 1}",
-          style: TextStyle(fontSize: 25, color: Colors.white),
+          style: const TextStyle(fontSize: 25, color: Colors.white),
         ),
       ),
     );

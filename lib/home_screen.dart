@@ -8,9 +8,10 @@ import 'package:scouts_system/view/students/students_screen.dart';
 import 'common_ui/primary_button.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -18,10 +19,9 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              PrimaryButton(moveToPage: StudentsPage(), text: "Students"),
-              PrimaryButton(moveToPage: EventsPage(), text: "Events"),
-              PrimaryButton(moveToPage: SeasonsPage(), text: "Seasons"),
-
+              PrimaryButton(moveToPage: const StudentsPage(), text: "Students"),
+              PrimaryButton(moveToPage: const EventsPage(), text: "Events"),
+              PrimaryButton(moveToPage: const SeasonsPage(), text: "Seasons"),
             ],
           ),
         ),

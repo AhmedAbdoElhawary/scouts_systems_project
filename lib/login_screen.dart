@@ -10,6 +10,8 @@ import 'leader_screen.dart';
 import 'model/firebase_authentication.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -50,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Text buildLoginText() {
-    return Text(
+    return const Text(
       "Login",
       style: TextStyle(
           fontSize: 45, color: Colors.white, fontWeight: FontWeight.w300),
@@ -71,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.black54.withOpacity(0.2),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
         ),
@@ -82,11 +84,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Column buildColumnOfField() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         buildTextFormFieldInfo(emailController, "Email"),
-        SizedBox(height: 20),
         buildTextFormFieldInfo(passwordController, "Password"),
-        SizedBox(height: 20),
         buildLoginTextButton(),
         buildSignupTextButton(),
       ],
@@ -103,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Colors.black54.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
@@ -125,15 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 .then((user) {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             }).catchError((e) {
               ToastShow().showWhiteToast(e);
             });
           }
         },
-        child: Text(
+        child: const Text(
           "LOGIN",
           style: TextStyle(fontSize: 15, color: Colors.white),
         ),
@@ -163,15 +163,16 @@ class _LoginScreenState extends State<LoginScreen> {
             validateTextField(passwordController.text)) {
           FirebaseAuthentication()
               .signUp(
-              email: emailController.text,
-              password: passwordController.text)
+                  email: emailController.text,
+                  password: passwordController.text)
               .then((user) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => emailController.text == "leader@gmail.com"
-                      ? leaderPage()
-                      : StudentsPage()),
+                  builder: (context) =>
+                      emailController.text == "leader@gmail.com"
+                          ? const LeaderPage()
+                          : const StudentsPage()),
             );
           }).catchError((e) {
             ToastShow().showWhiteToast(e);
@@ -190,16 +191,17 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       cursorColor: Colors.blue,
       obscureText: text == "Email" ? false : visibilityPassword,
-      style: TextStyle(height: 0.8, fontSize: 14),
+      style: const TextStyle(height: 0.8, fontSize: 14),
       controller: controller,
       decoration: InputDecoration(
-          fillColor: Color.fromRGBO(146, 191, 215, 0.23529411764705882),
+          fillColor: const Color.fromRGBO(146, 191, 215, 0.23529411764705882),
           filled: true,
           prefixIcon: text == "Email"
-              ? Icon(Icons.person_pin, size: 30)
-              : Icon(Icons.lock, size: 25),
+              ? const Icon(Icons.person_pin, size: 30)
+              : const Icon(Icons.lock, size: 25),
           suffixIcon: text == "Email"
-              ? Icon(Icons.person_pin, color: Color.fromRGBO(2, 2, 2, 0.0))
+              ? const Icon(Icons.person_pin,
+                  color: Color.fromRGBO(2, 2, 2, 0.0))
               : IconButton(
                   onPressed: () {
                     setState(() {
@@ -212,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         : Icons.visibility,
                   ),
                 ),
-          errorText: userNameValidate ? "invalid ${text}" : null,
+          errorText: userNameValidate ? "invalid $text" : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(
               50.0,

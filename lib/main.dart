@@ -13,7 +13,7 @@ Future<void> main() async {
     ChangeNotifierProvider(create: (_) => StudentsLogic()),
     ChangeNotifierProvider(create: (_) => SeasonsLogic()),
     ChangeNotifierProvider(create: (_) => EventsLogic()),
-  ], child: MyApp()));
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -21,14 +21,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
