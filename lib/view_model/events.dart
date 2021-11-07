@@ -8,14 +8,16 @@ class Events {
   String eventDocId;
   String leader;
   Events(
-      { this.eventDocId="",
-       this.eventId="",
-       this.date="",
-       this.leader="",
-       this.location=""});
+      {this.eventDocId = "",
+      this.eventId = "",
+      this.date = "",
+      this.leader = "",
+      this.location = ""});
 }
 
 enum StateOfEvents { initial, loading, loaded }
+
+enum StateOfSpecificEvents { initial, loading, loaded }
 
 class EventsLogic extends ChangeNotifier {
   CollectionReference _collectionRef =
@@ -23,24 +25,55 @@ class EventsLogic extends ChangeNotifier {
 
   List<Events> _eventsList = [];
 
-  StateOfEvents stateOfFetching=StateOfEvents.initial;
+  List<Events> _specificEvents = [];
+
+  StateOfEvents stateOfFetching = StateOfEvents.initial;
+
+  StateOfSpecificEvents stateOfSpecificEvents = StateOfSpecificEvents.initial;
 
   preparingEvents() async {
-    stateOfFetching=StateOfEvents.loading;
+    _eventsList.clear();
+    stateOfFetching = StateOfEvents.loading;
     QuerySnapshot snap = await _collectionRef.get();
     for (int i = 0; i < snap.docs.length; i++) {
       QueryDocumentSnapshot data = snap.docs[i];
-      _eventsList.add(Events(
-          date: data["date"],
-          location: data["location"],
-          leader: data["leader"],
-          eventDocId: data["docId"],
-          eventId: data["id"]));
+      addInEventsList(data);
     }
-    stateOfFetching=StateOfEvents.loaded;
+    stateOfFetching = StateOfEvents.loaded;
     notifyListeners();
   }
 
-  List<Events> get eventsList => _eventsList;
+  addInEventsList(QueryDocumentSnapshot data){
+    _eventsList.add(Events(
+        date: data["date"],
+        location: data["location"],
+        leader: data["leader"],
+        eventDocId: data["docId"],
+        eventId: data["id"]));
+  }
+  preparingSpecificEvents(List<dynamic> eventsDocIds) async {
+    _specificEvents.clear();
+    stateOfSpecificEvents = StateOfSpecificEvents.loading;
+    for (int i = 0; i < eventsDocIds.length; i++) {
+      DocumentSnapshot<Object?> snap =
+          await _collectionRef.doc(eventsDocIds[i]).get();
+      addInSpecificEvents(snap);
+    }
+    stateOfSpecificEvents = StateOfSpecificEvents.loaded;
+    notifyListeners();
 
+  }
+
+  addInSpecificEvents(DocumentSnapshot<Object?> snap) {
+    _specificEvents.add(Events(
+        date: snap.get("date"),
+        leader: snap.get("leader"),
+        eventDocId: snap.get("docId"),
+        eventId: snap.get("id"),
+        location: snap.get("location")));
+  }
+
+  List<Events> get specificEvents => _specificEvents;
+
+  List<Events> get eventsList => _eventsList;
 }
