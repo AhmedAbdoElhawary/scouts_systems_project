@@ -119,6 +119,12 @@ class SeasonsLogic extends ChangeNotifier {
             .get();
     return listOfMemberships["memberships"];
   }
+  studentMembershipsCleared(){
+    _studentMemberships.clear();
+  }
+  remainingMembershipsCleared() {
+    _remainingMemberships.clear();
+  }
 
   List<SeasonsFormat> get seasonsOfDropButton => _seasonsOfDropButton;
 
