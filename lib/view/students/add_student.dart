@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
@@ -269,6 +268,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       //get memberships ready
       SeasonsLogic provider = context.read<SeasonsLogic>();
       provider.stateOfFetchingMemberships = StateOfMemberships.initial;
+      provider.remainingMembershipsCleared();
+      provider.studentMembershipsCleared();
       Navigator.push(
           context,
           MaterialPageRoute(
