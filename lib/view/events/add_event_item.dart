@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:scouts_system/common_ui/primary_button.dart';
+import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/view/events/students_items.dart';
+import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
+import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class AddEventInfo extends StatefulWidget {
@@ -96,6 +99,11 @@ class _AddEventInfoState extends State<AddEventInfo> {
         validateTextField(widget.controlLocation.text) &&
         validateTextField(widget.controlEventDay.text)) {
       widget.checkForUpdate ? updateEvent() : addEvent();
+
+      EventsLogic provider = context.read<EventsLogic>();
+      provider.stateOfFetching = StateOfEvents.initial;
+      provider.preparingEvents();
+      context.read<SeasonsLogic>().preparingSeasons();
       Navigator.pop(context);
     }
   }
@@ -162,12 +170,35 @@ class _AddEventInfoState extends State<AddEventInfo> {
           ? buildDropdownButton(dropDownSeason)
           : const Divider(),
       widget.checkForUpdate && seasonDocId != ""
-          ? PrimaryButton(
-              text: "Students",
-              moveToPage: StudentsEventPage(
-                  eventDocId: widget.eventDocId, seasonDocId: seasonDocId))
+          ? ElevatedButton(
+              onPressed: () {
+                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                  StudentsLogic provider = context.read<StudentsLogic>();
+                  provider.selectedStudentsCleared();
+                  provider.stateOfSelectedFetching =
+                      StateOfSelectedStudents.initial;
+                  buildPush(
+                      context,
+                      StudentsEventPage(
+                          eventDocId: widget.eventDocId,
+                          seasonDocId: seasonDocId));
+                });
+              },
+              child: buildTextOfButton("Students"))
           : emptyMessage(),
     ];
+  }
+
+  Text buildTextOfButton(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 20, color: Colors.white),
+    );
+  }
+
+  Future<dynamic> buildPush(BuildContext context, Widget page) {
+    return Navigator.push(
+        context, MaterialPageRoute(builder: (context) => page));
   }
 
   Column emptyMessage() {
