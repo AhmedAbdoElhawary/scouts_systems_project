@@ -49,7 +49,6 @@ class StudentsEventPage extends StatelessWidget {
                 builder: (context) => SelectStudentsList(
                       seasonDocId: seasonDocId,
                       eventDocId: eventDocId,
-                      remainingStudents: provider.remainingStudents,
                     )));
       },
       child: const Icon(Icons.add),

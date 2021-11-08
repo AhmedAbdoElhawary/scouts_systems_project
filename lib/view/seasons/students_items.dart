@@ -16,7 +16,7 @@ class StudentSeasonsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     StudentsLogic provider = context.watch<StudentsLogic>();
-    if (provider.specificStudents.isEmpty &&
+    if (studentsDocIds.isNotEmpty&&provider.specificStudents.isEmpty &&
         provider.stateOfSpecificFetching != StateOfSpecificStudents.loaded) {
       provider.preparingSpecificStudents(studentsDocIds: studentsDocIds);
       return const CircularProgress();
