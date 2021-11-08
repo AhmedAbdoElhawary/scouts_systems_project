@@ -10,12 +10,8 @@ import 'package:scouts_system/view_model/students.dart';
 class SelectStudentsList extends StatefulWidget {
   String seasonDocId;
   String eventDocId;
-  List<Students> remainingStudents;
   SelectStudentsList(
-      {Key? key,
-      required this.remainingStudents,
-      required this.eventDocId,
-      required this.seasonDocId})
+      {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
 
   @override
@@ -28,32 +24,38 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
 
   @override
   Widget build(BuildContext context) {
+    StudentsLogic provider = context.watch<StudentsLogic>();
+    return buildScaffold(provider.remainingStudents);
+  }
+
+  Scaffold buildScaffold(List<Students> remainingStudents) {
     return Scaffold(
       appBar: AppBar(),
-      body: widget.remainingStudents.isEmpty
+      body: remainingStudents.isEmpty
           ? emptyMessage("student")
-          : buildListView(),
-      floatingActionButton: _buildSelectAllButton(),
+          : buildListView(remainingStudents),
+      floatingActionButton: _buildSelectAllButton(remainingStudents),
     );
   }
 
-  ListView buildListView() {
+  ListView buildListView(List<Students> remainingStudents) {
     return ListView.builder(
       itemBuilder: (builder, index) {
         selectedFlag[index] = selectedFlag[index] ?? false;
         bool? isSelected = selectedFlag[index];
-        return buildListTile(isSelected, index);
+        return buildListTile(remainingStudents, isSelected, index);
       },
-      itemCount: widget.remainingStudents.length,
+      itemCount: remainingStudents.length,
     );
   }
 
-  ListTile buildListTile(bool? isSelected, int index) {
+  ListTile buildListTile(
+      List<Students> remainingStudents, bool? isSelected, int index) {
     return ListTile(
       onTap: () => onTap(isSelected!, index),
       leading: _buildSelectIcon(isSelected!, index),
-      title: Text(widget.remainingStudents[index].name),
-      subtitle: Text(widget.remainingStudents[index].description),
+      title: Text(remainingStudents[index].name),
+      subtitle: Text(remainingStudents[index].description),
     );
   }
 
@@ -70,10 +72,10 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     );
   }
 
-  Widget? _buildSelectAllButton() {
+  Widget? _buildSelectAllButton(List<Students> remainingStudents) {
     if (isSelectionMode) {
       return FloatingActionButton(
-        onPressed: addItems,
+        onPressed: () => addItems(remainingStudents),
         child: const Icon(
           Icons.add,
         ),
@@ -83,14 +85,18 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     }
   }
 
-  addItems() {
+  addItems(List<Students> remainingStudents) {
     for (int i = 0; i < selectedFlag.length; i++) {
-      if (selectedFlag[i] = true) {
-        addStudentsInEvent(i);
-        addEventInSeason();
+      if (selectedFlag[i] == true) {
+        FirestoreEvents().addStudentsInEvent(
+            studentDocId: remainingStudents[i].docId,
+            eventDocId: widget.eventDocId);
+        print("${remainingStudents[i].docId} added");
       }
     }
-    //to clear the previous data
+    addEventInSeason();
+
+    //to update the previous data
     StudentsLogic provider = context.read<StudentsLogic>();
     provider.preparingStudentsInEvent(
         eventDocId: widget.eventDocId, seasonDocId: widget.seasonDocId);
@@ -103,12 +109,4 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     FirestoreSeasons().addEventInSeason(
         seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
   }
-
-  addStudentsInEvent(int i) {
-    FirestoreEvents().addStudentsInEvent(
-        studentDocId: widget.remainingStudents[i].docId,
-        eventDocId: widget.eventDocId);
-  }
-
-  getReadyTheData() {}
 }
