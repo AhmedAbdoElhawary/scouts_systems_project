@@ -71,6 +71,8 @@ class EventsLogic extends ChangeNotifier {
         eventDocId: snap.get("docId"),
         eventId: snap.get("id"),
         location: snap.get("location")));
+    notifyListeners();
+
   }
 
   List<Events> get specificEvents => _specificEvents;

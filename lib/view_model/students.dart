@@ -68,6 +68,7 @@ class StudentsLogic extends ChangeNotifier {
           volunteeringHours: snap.get("volunteeringHours")));
     }
     stateOfSpecificFetching = StateOfSpecificStudents.loaded;
+    notifyListeners();
   }
 
   preparingStudentsInEvent(
