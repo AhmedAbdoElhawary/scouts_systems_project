@@ -16,7 +16,7 @@ class StudentsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     StudentsLogic provider = context.watch<StudentsLogic>();
     if (provider.studentsList.isEmpty &&
-        provider.stateOfFetching != StateOfStudents.loading) {
+        provider.stateOfFetching != StateOfStudents.loaded) {
       provider.preparingStudents();
       return const CircularProgress();
     } else {

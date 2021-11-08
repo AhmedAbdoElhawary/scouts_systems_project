@@ -38,7 +38,6 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   bool userHoursValidate = false;
   DateTime? date;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,8 +101,9 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     //He can't add or update if them empty.
     if (validateTextField(widget.controllerOfName.text) &&
             validateTextField(widget.controllerOfDescription.text) &&
-        validateTextField(widget.controllerOfHours.text)
-        ) {
+            widget.checkForUpdate
+        ? validateTextField(widget.controllerOfHours.text)
+        : true) {
       StudentsLogic provider = context.read<StudentsLogic>();
       //To rebuild the students page(previous screen) by notifyListeners in the provider
       provider.preparingStudents();
@@ -134,7 +134,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       name: widget.controllerOfName.text,
       description: widget.controllerOfDescription.text,
       volunteeringHours: widget.controllerOfHours.text,
-      date:getText(),
+      date: getText(),
       studentDocId: widget.studentDocId,
     );
   }

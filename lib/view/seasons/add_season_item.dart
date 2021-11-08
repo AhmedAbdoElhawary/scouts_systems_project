@@ -83,7 +83,8 @@ class _AddYearState extends State<AddYear> {
 
   Container buildAddTextButton(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10), color: Colors.blue),
       child: TextButton(onPressed: () => onPressedAdd(), child: textOfAdd()),
     );
   }
