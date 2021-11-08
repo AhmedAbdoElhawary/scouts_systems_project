@@ -92,6 +92,7 @@ class StudentsLogic extends ChangeNotifier {
           ? _selectedStudents.add(student)
           : _remainingStudents.add(student);
     }
+    notifyListeners();
   }
 
   Students getTheStudent(DocumentSnapshot<Object?> snap) {
@@ -104,21 +105,28 @@ class StudentsLogic extends ChangeNotifier {
   }
 
   Future<List<dynamic>> studentsDocIdsInSeason(String seasonDocId) async {
-    DocumentSnapshot<Map<String, dynamic>> listOfMemberships =
+    DocumentSnapshot<Map<String, dynamic>> remainingMemberships =
         await FirebaseFirestore.instance
             .collection('seasons')
             .doc(seasonDocId)
             .get();
-    return listOfMemberships["students"];
+    return remainingMemberships["students"];
   }
 
   Future<List<dynamic>> studentsDocIdsInEvent(String eventDocId) async {
-    DocumentSnapshot<Map<String, dynamic>> listOfMemberships =
+    DocumentSnapshot<Map<String, dynamic>> selectedMemberships =
         await FirebaseFirestore.instance
             .collection('events')
             .doc(eventDocId)
             .get();
-    return listOfMemberships["students"];
+    return selectedMemberships["students"];
+  }
+
+  studentsListCleared(){
+    _studentsList.clear();
+  }
+  selectedStudentsCleared(){
+    _selectedStudents.clear();
   }
 
   List<Students> get specificStudents => _specificStudents;
