@@ -43,15 +43,19 @@ class StudentsLogic extends ChangeNotifier {
     QuerySnapshot snap = await _collectionRef.get();
     for (int i = 0; i < snap.docs.length; i++) {
       QueryDocumentSnapshot data = snap.docs[i];
-      _studentsList.add(Students(
-          name: data["name"],
-          description: data["description"],
-          birthdate: data["date"],
-          volunteeringHours: data["volunteeringHours"],
-          docId: data["docId"]));
+      _studentsList.add(mainStudent(data));
     }
     stateOfFetching = StateOfStudents.loaded;
     notifyListeners();
+  }
+
+  Students mainStudent(QueryDocumentSnapshot<Object?> data) {
+    return Students(
+        name: data["name"],
+        description: data["description"],
+        birthdate: data["date"],
+        volunteeringHours: data["volunteeringHours"],
+        docId: data["docId"]);
   }
 
   preparingSpecificStudents({required List<dynamic> studentsDocIds}) async {
@@ -60,12 +64,7 @@ class StudentsLogic extends ChangeNotifier {
     for (int i = 0; i < studentsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsDocIds[i]).get();
-      _specificStudents.add(Students(
-          name: snap.get("name"),
-          docId: snap.get("docId"),
-          description: snap.get("description"),
-          birthdate: snap.get("date"),
-          volunteeringHours: snap.get("volunteeringHours")));
+      getTheStudent(snap);
     }
     stateOfSpecificFetching = StateOfSpecificStudents.loaded;
     notifyListeners();

@@ -90,17 +90,25 @@ class _StudentCheckBoxMembershipsState
   Future<void> addItems(List<Memberships> seasonsList) async {
     for (int i = 0; i < selectedFlag.length; i++) {
       if (selectedFlag[i] == true) {
-        FirestoreStudents().addMembership(
-            seasonDocId: seasonsList[i].docId,
-            studentDocId: widget.studentDocId);
-        FirestoreSeasons().addStudentInSeason(
-            studentDocId: widget.studentDocId,
-            seasonDocId: seasonsList[i].docId);
+        addMembership(seasonsList[i].docId);
+        addStudentInSeason(seasonsList[i].docId);
       }
     }
+    //to rebuild the previous screen
     context.read<SeasonsLogic>().preparingMemberships(widget.studentDocId);
     context.read<SeasonsLogic>().stateOfFetchingMemberships ==
         StateOfMemberships.initial;
+    //----------------------------->
     Navigator.pop(context);
+  }
+
+  addMembership(String seasonDocId) {
+    FirestoreStudents().addMembership(
+        seasonDocId: seasonDocId, studentDocId: widget.studentDocId);
+  }
+
+  addStudentInSeason(String seasonDocId) {
+    FirestoreSeasons().addStudentInSeason(
+        studentDocId: widget.studentDocId, seasonDocId: seasonDocId);
   }
 }

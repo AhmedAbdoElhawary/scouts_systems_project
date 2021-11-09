@@ -94,7 +94,6 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
       }
     }
     addEventInSeason();
-
     //to update the previous data
     StudentsLogic provider = context.read<StudentsLogic>();
     provider.preparingStudentsInEvent(

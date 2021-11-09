@@ -100,11 +100,12 @@ class _AddEventInfoState extends State<AddEventInfo> {
         validateTextField(widget.controlLocation.text) &&
         validateTextField(widget.controlEventDay.text)) {
       widget.checkForUpdate ? updateEvent() : addEvent();
-
+      //to update data in the previous page
       EventsLogic provider = context.read<EventsLogic>();
       provider.stateOfFetching = StateOfEvents.initial;
       provider.preparingEvents();
       context.read<SeasonsLogic>().preparingSeasons();
+      //--------------------------------->
       Navigator.pop(context);
     }
   }
