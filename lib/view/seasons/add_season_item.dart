@@ -17,8 +17,8 @@ class AddYear extends StatefulWidget {
 
 class _AddYearState extends State<AddYear> {
   final TextEditingController _controller = TextEditingController(text: "");
-
-  List<String> seasonsList = ["winter", "summer", "autumn", "spring"];
+//if you want to add another season ,just add it here
+  List<String> seasonsList = ["winter", "summer"];
 
   String seasonSelected = "winter";
 

@@ -91,7 +91,6 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
         FirestoreEvents().addStudentsInEvent(
             studentDocId: remainingStudents[i].docId,
             eventDocId: widget.eventDocId);
-        print("${remainingStudents[i].docId} added");
       }
     }
     addEventInSeason();

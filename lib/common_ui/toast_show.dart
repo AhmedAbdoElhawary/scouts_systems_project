@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class ToastShow{
+class ToastShow {
   Future<bool?> showWhiteToast(var toast) {
     return Fluttertoast.showToast(
         msg: toast,
@@ -11,6 +11,7 @@ class ToastShow{
         backgroundColor: Colors.white,
         textColor: Colors.black);
   }
+
   Future<bool?> showRedToast(var toast) {
     return Fluttertoast.showToast(
         msg: toast,

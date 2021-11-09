@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
 import 'package:scouts_system/common_ui/toast_show.dart';
+
 class FirestoreSeasons {
   final _firestoreCollectionSeasons =
       FirebaseFirestore.instance.collection('seasons');
@@ -31,8 +32,7 @@ class FirestoreSeasons {
         .update({
           'events': FieldValue.arrayUnion([eventDocId]),
         })
-        .then(
-            (value) => ToastShow().showWhiteToast("event added in season !"))
+        .then((value) => ToastShow().showWhiteToast("event added in season !"))
         .catchError((error) => ToastShow()
             .showRedToast("fFailed to add event in season ->$error"));
   }

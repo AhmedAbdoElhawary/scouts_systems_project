@@ -15,7 +15,8 @@ class EventsSeasonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     EventsLogic provider = context.watch<EventsLogic>();
-    if (eventsDocIds.isNotEmpty&&provider.specificEvents.isEmpty &&
+    if (eventsDocIds.isNotEmpty &&
+        provider.specificEvents.isEmpty &&
         provider.stateOfSpecificEvents != StateOfSpecificEvents.loaded) {
       provider.preparingSpecificEvents(eventsDocIds);
       return const CircularProgress();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
@@ -203,7 +204,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   Row buildRow() {
     return Row(
-      children: [buildExpandedDate(), Icon(Icons.eleven_mp)],
+      children: [buildExpandedDate(), const Icon(Icons.eleven_mp)],
     );
   }
 
@@ -211,8 +212,9 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text('${getText()}',
-            style: TextStyle(color: Colors.black), textAlign: TextAlign.start),
+        child: Text(getText(),
+            style: const TextStyle(color: Colors.black),
+            textAlign: TextAlign.start),
       ),
     );
   }
@@ -220,13 +222,13 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   BoxDecoration boxDecoration() {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(6),
-      color: Color.fromRGBO(104, 104, 104, 0.10588235294117647),
+      color: const Color.fromRGBO(104, 104, 104, 0.10588235294117647),
     );
   }
 
   Padding textOfBirthdate() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
+    return const Padding(
+      padding: EdgeInsets.only(left: 10),
       child: Text("birthdate"),
     );
   }
@@ -270,6 +272,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       provider.stateOfFetchingMemberships = StateOfMemberships.initial;
       provider.remainingMembershipsCleared();
       provider.studentMembershipsCleared();
+      //------------------->
       Navigator.push(
           context,
           MaterialPageRoute(

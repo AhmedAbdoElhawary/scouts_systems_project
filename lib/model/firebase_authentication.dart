@@ -14,8 +14,8 @@ class FirebaseAuthentication {
   }
 
   Future<User> logIn({required String email, required String password}) async {
-    UserCredential result =
-    await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
     final User user = result.user!;
 
     return user;
@@ -26,5 +26,4 @@ class FirebaseAuthentication {
 
     ToastShow().showWhiteToast('sign out !');
   }
-
 }

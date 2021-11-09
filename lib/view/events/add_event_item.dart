@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/view/events/students_items.dart';
@@ -170,23 +171,24 @@ class _AddEventInfoState extends State<AddEventInfo> {
           ? buildDropdownButton(dropDownSeason)
           : const Divider(),
       widget.checkForUpdate && seasonDocId != ""
-          ? ElevatedButton(
-              onPressed: () {
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
-                  StudentsLogic provider = context.read<StudentsLogic>();
-                  provider.selectedStudentsCleared();
-                  provider.stateOfSelectedFetching =
-                      StateOfSelectedStudents.initial;
-                  buildPush(
-                      context,
-                      StudentsEventPage(
-                          eventDocId: widget.eventDocId,
-                          seasonDocId: seasonDocId));
-                });
-              },
-              child: buildTextOfButton("Students"))
+          ? studentsButton()
           : emptyMessage(),
     ];
+  }
+
+  ElevatedButton studentsButton() {
+    return ElevatedButton(
+        onPressed: () => onPressedButton(),
+        child: buildTextOfButton("Students"));
+  }
+
+  onPressedButton() {
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      StudentsLogic provider = context.read<StudentsLogic>();
+      provider.selectedStudentsCleared();
+      provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
+      buildPush();
+    });
   }
 
   Text buildTextOfButton(String text) {
@@ -196,9 +198,12 @@ class _AddEventInfoState extends State<AddEventInfo> {
     );
   }
 
-  Future<dynamic> buildPush(BuildContext context, Widget page) {
+  Future<dynamic> buildPush() {
     return Navigator.push(
-        context, MaterialPageRoute(builder: (context) => page));
+        context,
+        MaterialPageRoute(
+            builder: (context) => StudentsEventPage(
+                eventDocId: widget.eventDocId, seasonDocId: seasonDocId)));
   }
 
   Column emptyMessage() {

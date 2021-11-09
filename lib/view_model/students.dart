@@ -123,10 +123,11 @@ class StudentsLogic extends ChangeNotifier {
     return selectedMemberships["students"];
   }
 
-  studentsListCleared(){
+  studentsListCleared() {
     _studentsList.clear();
   }
-  selectedStudentsCleared(){
+
+  selectedStudentsCleared() {
     _selectedStudents.clear();
   }
 

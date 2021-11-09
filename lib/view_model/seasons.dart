@@ -119,9 +119,11 @@ class SeasonsLogic extends ChangeNotifier {
             .get();
     return listOfMemberships["memberships"];
   }
-  studentMembershipsCleared(){
+
+  studentMembershipsCleared() {
     _studentMemberships.clear();
   }
+
   remainingMembershipsCleared() {
     _remainingMemberships.clear();
   }
