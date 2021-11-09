@@ -84,10 +84,8 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   onTapItem(Season model, String seasonDocId) {
     //to clear the previous data in the next pages
-    context.read<EventsLogic>().preparingSpecificEvents(model.eventsDocIds);
-    context
-        .read<StudentsLogic>()
-        .preparingSpecificStudents(studentsDocIds: model.studentsDocIds);
+    context.read<EventsLogic>()..specificEventsCleared();
+    context.read<StudentsLogic>().specificStudentsCleared();
     context.read<StudentsLogic>().stateOfSpecificFetching =
         StateOfSpecificStudents.initial;
     context.read<EventsLogic>().stateOfSpecificEvents =
