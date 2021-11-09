@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/primary_container_events.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/events.dart';
 
@@ -51,7 +51,12 @@ class EventsSeasonList extends StatelessWidget {
     );
   }
 
-  PrimaryContainerEvents listTitleItem(Events model, int index) {
-    return PrimaryContainerEvents(index: index, modelEvents: model);
+  PrimaryContainer listTitleItem(Events model, int index) {
+    return PrimaryContainer(
+        index: index,
+        rightTopText: model.eventId,
+        rightBottomText: model.leader,
+        leftTopText: model.location,
+        leftBottomText: model.eventDay);
   }
 }
