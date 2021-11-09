@@ -4,41 +4,41 @@ import 'package:flutter/widgets.dart';
 import 'package:scouts_system/view/seasons/students_items.dart';
 import 'events_items.dart';
 
-class TwoButtonInSeason extends StatelessWidget {
+class TwoButtonsPage extends StatelessWidget {
   final List<dynamic> studentsDocId;
   final List<dynamic> eventsDocId;
-  const TwoButtonInSeason(
+  const TwoButtonsPage(
       {Key? key, required this.eventsDocId, required this.studentsDocId})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: buildColumn(context),
+      body: columnOfButtons(context),
     );
   }
 
-  Column buildColumn(BuildContext context) {
+  Column columnOfButtons(BuildContext context) {
     return Column(
       children: [
-        buildContainer(
+        containerOfItem(
             context, "events", EventsSeasonList(eventsDocIds: eventsDocId)),
-        buildContainer(context, "students",
+        containerOfItem(context, "students",
             StudentSeasonsPage(studentsDocIds: studentsDocId))
       ],
     );
   }
 
-  SizedBox buildContainer(BuildContext context, String text, Widget page) {
+  SizedBox containerOfItem(BuildContext context, String text, Widget page) {
     return SizedBox(
         width: double.infinity,
         child: TextButton(
           child: buildText(text),
-          onPressed: () => onPressed(context, page),
+          onPressed: () => onPressedButton(context, page),
         ));
   }
 
-  onPressed(BuildContext context, Widget page) {
+  onPressedButton(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 

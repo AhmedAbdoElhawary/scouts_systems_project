@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/custom_container_students.dart';
+import 'package:scouts_system/common_ui/primary_container_students.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view/events/select_students.dart';
 import 'package:scouts_system/view_model/students.dart';
@@ -18,11 +18,13 @@ class StudentsEventPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      //fetching data
     StudentsLogic provider = context.watch<StudentsLogic>();
     if (provider.selectedStudents.isEmpty &&
         provider.stateOfSelectedFetching != StateOfSelectedStudents.loaded) {
       provider.preparingStudentsInEvent(
           eventDocId: eventDocId, seasonDocId: seasonDocId);
+      //------------>
       return const CircularProgress();
     } else {
       return buildScaffold(provider, context);
@@ -34,12 +36,12 @@ class StudentsEventPage extends StatelessWidget {
       appBar: AppBar(),
       body: provider.selectedStudents.isEmpty
           ? emptyMessage("student")
-          : buildListView(provider),
-      floatingActionButton: buildFloatingActionButton(provider, context),
+          : listView(provider),
+      floatingActionButton: floatingActionButton(provider, context),
     );
   }
 
-  FloatingActionButton buildFloatingActionButton(
+  FloatingActionButton floatingActionButton(
       StudentsLogic provider, BuildContext context) {
     return FloatingActionButton(
       onPressed: () => onPressedFloating(context),
@@ -57,23 +59,23 @@ class StudentsEventPage extends StatelessWidget {
                 )));
   }
 
-  ListView buildListView(StudentsLogic provider) {
+  ListView listView(StudentsLogic provider) {
     return ListView.separated(
       itemCount: provider.selectedStudents.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          title: buildTheItemOfTheList(provider.selectedStudents[index], index),
+          title: listTitleItem(provider.selectedStudents[index], index),
         );
       },
     );
   }
 
-  SafeArea buildTheItemOfTheList(Students model, int index) {
+  SafeArea listTitleItem(Students model, int index) {
     return SafeArea(
       child: InkWell(
           onTap: () async {},
-          child: CustomContainerStudents(modelStudents: model, index: index)),
+          child: PrimaryContainerStudents(modelStudents: model, index: index)),
     );
   }
 }

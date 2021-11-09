@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/custom_container_students.dart';
+import 'package:scouts_system/common_ui/primary_container_students.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/students.dart';
 
@@ -29,24 +29,24 @@ class StudentsPage extends StatelessWidget {
       appBar: AppBar(),
       body: provider.studentsList.isEmpty
           ? emptyMessage("students")
-          : buildListView(context, provider.studentsList),
-      floatingActionButton: buildFloatingActionButton(context),
+          : listView(context, provider.studentsList),
+      floatingActionButton: floatingActionButton(context),
     );
   }
 
-  ListView buildListView(BuildContext context, List<Students> studentsList) {
+  ListView listView(BuildContext context, List<Students> studentsList) {
     return ListView.separated(
       itemCount: studentsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          title: buildStudentItem(studentsList[index], index, context),
+          title: studentItem(studentsList[index], index, context),
         );
       },
     );
   }
 
-  FloatingActionButton buildFloatingActionButton(BuildContext context) {
+  FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
         onPressed: () => onPressedFloating(context),
         child: const Icon(Icons.add));
@@ -54,10 +54,10 @@ class StudentsPage extends StatelessWidget {
 
   onPressedFloating(BuildContext context) {
     return Navigator.push(context,
-        MaterialPageRoute(builder: (context) => onPressedStudentInfoScreen()));
+        MaterialPageRoute(builder: (context) => studentInfoScreenFloating()));
   }
 
-  StudentInformationScreen onPressedStudentInfoScreen() {
+  StudentInformationScreen studentInfoScreenFloating() {
     return StudentInformationScreen(
         //default value(i can't make them with the constructor)
         controllerOfName: TextEditingController(text: ""),
@@ -67,11 +67,11 @@ class StudentsPage extends StatelessWidget {
         // -------------------------------------->
   }
 
-  InkWell buildStudentItem(
+  InkWell studentItem(
       Students studentInfo, int index, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(context, studentInfo),
-      child: CustomContainerStudents(index: index, modelStudents: studentInfo),
+      child: PrimaryContainerStudents(index: index, modelStudents: studentInfo),
     );
   }
 
@@ -79,10 +79,10 @@ class StudentsPage extends StatelessWidget {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => onTapStudentInfoScreen(studentInfo)));
+            builder: (context) => studentInfoScreenItem(studentInfo)));
   }
 
-  StudentInformationScreen onTapStudentInfoScreen(Students studentInfo) {
+  StudentInformationScreen studentInfoScreenItem(Students studentInfo) {
     return StudentInformationScreen(
         controllerOfName: TextEditingController(text: studentInfo.name),
         controllerOfDescription:
