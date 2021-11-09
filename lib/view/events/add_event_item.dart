@@ -10,7 +10,7 @@ import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
-class AddEventInfo extends StatefulWidget {
+class EventInfoPage extends StatefulWidget {
   TextEditingController controlEventID;
   TextEditingController controlLocation;
   TextEditingController controlEventDay;
@@ -18,7 +18,7 @@ class AddEventInfo extends StatefulWidget {
   bool checkForUpdate;
   String eventDocId;
   List<SeasonsFormat> seasonsFormat;
-  AddEventInfo(
+  EventInfoPage(
       {Key? key,
       required this.controlEventID,
       required this.seasonsFormat,
@@ -29,10 +29,10 @@ class AddEventInfo extends StatefulWidget {
       required this.eventDocId})
       : super(key: key);
   @override
-  State<AddEventInfo> createState() => _AddEventInfoState();
+  State<EventInfoPage> createState() => _EventInfoPageState();
 }
 
-class _AddEventInfoState extends State<AddEventInfo> {
+class _EventInfoPageState extends State<EventInfoPage> {
   String seasonDocId = "";
   String? dropDownSeason;
   var listOfLeader = List<String>.generate(10, (i) => "leader ${i + 1}");
@@ -47,15 +47,15 @@ class _AddEventInfoState extends State<AddEventInfo> {
       body: SafeArea(
         child: Column(
           children: [
-            buildContainerOfFields(),
-            buildContainerOfButtons(context),
+            containerOfFields(),
+            containerOfButtons(context),
           ],
         ),
       ),
     );
   }
 
-  SizedBox buildContainerOfButtons(BuildContext context) {
+  SizedBox containerOfButtons(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 55,
@@ -63,14 +63,14 @@ class _AddEventInfoState extends State<AddEventInfo> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          buildCancelButton(context),
-          buildSaveButton(context),
+          buttonOfCancel(context),
+          buttonOfSave(context),
         ],
       ),
     );
   }
 
-  Expanded buildCancelButton(BuildContext context) {
+  Expanded buttonOfCancel(BuildContext context) {
     return Expanded(
       child: TextButton(
           child: textOfCancel(), onPressed: () => Navigator.pop(context)),
@@ -83,7 +83,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
-  Expanded buildSaveButton(BuildContext context) {
+  Expanded buttonOfSave(BuildContext context) {
     return Expanded(
       child: TextButton(child: textOfSave(), onPressed: () => onPressedSave()),
     );
@@ -146,7 +146,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
     return true;
   }
 
-  Expanded buildContainerOfFields() {
+  Expanded containerOfFields() {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -161,15 +161,15 @@ class _AddEventInfoState extends State<AddEventInfo> {
 
   List<Widget> childrenOfColumn() {
     return [
-      buildTextFormField(eventIdValidate, widget.controlEventID, "ID"),
+      textFormField(eventIdValidate, widget.controlEventID, "ID"),
       const Divider(),
-      buildTextFormField(locationValidate, widget.controlLocation, "Location"),
+      textFormField(locationValidate, widget.controlLocation, "Location"),
       const Divider(),
-      buildTextFormField(userDateValidate, widget.controlEventDay, "Event Day"),
+      textFormField(userDateValidate, widget.controlEventDay, "Event Day"),
       const Divider(),
-      buildDropdownButton(widget.dropdownValueLeader),
+      dropdownButton(widget.dropdownValueLeader),
       widget.checkForUpdate
-          ? buildDropdownButton(dropDownSeason)
+          ? dropdownButton(dropDownSeason)
           : const Divider(),
       widget.checkForUpdate && seasonDocId != ""
           ? studentsButton()
@@ -180,7 +180,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
   ElevatedButton studentsButton() {
     return ElevatedButton(
         onPressed: () => onPressedButton(),
-        child: buildTextOfButton("Students"));
+        child: textOfStudents("Students"));
   }
 
   onPressedButton() {
@@ -188,18 +188,18 @@ class _AddEventInfoState extends State<AddEventInfo> {
       StudentsLogic provider = context.read<StudentsLogic>();
       provider.selectedStudentsCleared();
       provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
-      buildPush();
+      moveToStudentsEventPage();
     });
   }
 
-  Text buildTextOfButton(String text) {
+  Text textOfStudents(String text) {
     return Text(
       text,
       style: const TextStyle(fontSize: 20, color: Colors.white),
     );
   }
 
-  Future<dynamic> buildPush() {
+  Future<dynamic> moveToStudentsEventPage() {
     return Navigator.push(
         context,
         MaterialPageRoute(
@@ -217,7 +217,7 @@ class _AddEventInfoState extends State<AddEventInfo> {
   }
 
 //I can't make it smaller
-  DropdownButtonHideUnderline buildDropdownButton(String? dropDownValue) {
+  DropdownButtonHideUnderline dropdownButton(String? dropDownValue) {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         value: dropDownValue,
@@ -263,7 +263,7 @@ Iterable<DropdownMenuItem<String>>? listMapOfSeasons(
   });
 }
 
-TextFormField buildTextFormField(
+TextFormField textFormField(
     bool validate, TextEditingController controller, String text) {
   return TextFormField(
     controller: controller,

@@ -23,9 +23,9 @@ class FirestoreEvents {
           'id': eventId,
           "students": [],
         })
-        .then((value) => ToastShow().showWhiteToast("event added !"))
+        .then((value) => ToastShow().whiteToast("event added !"))
         .catchError((error) =>
-            ToastShow().showRedToast("Failed to update event: $error"));
+            ToastShow().redToast("Failed to update event: $error"));
   }
 
   updateEvent(
@@ -42,9 +42,9 @@ class FirestoreEvents {
           "date": date,
           'id': eventId,
         })
-        .then((value) => ToastShow().showWhiteToast("update"))
+        .then((value) => ToastShow().whiteToast("update"))
         .catchError((error) =>
-            ToastShow().showRedToast("Failed to update event: $error"));
+            ToastShow().redToast("Failed to update event: $error"));
   }
 
   addStudentsInEvent(
@@ -54,8 +54,8 @@ class FirestoreEvents {
         .update({
           'students': FieldValue.arrayUnion([studentDocId]),
         })
-        .then((value) => ToastShow().showWhiteToast("student added in event !"))
+        .then((value) => ToastShow().whiteToast("student added in event !"))
         .catchError((error) => ToastShow()
-            .showRedToast("Failed to add student in event -> $error"));
+            .redToast("Failed to add student in event -> $error"));
   }
 }

@@ -20,9 +20,9 @@ class FirestoreSeasons {
           "docId": seasonRandomDocId,
           "students": [],
         })
-        .then((value) => ToastShow().showWhiteToast("season added "))
+        .then((value) => ToastShow().whiteToast("season added "))
         .catchError((error) =>
-            ToastShow().showRedToast("Failed to update season: $error"));
+            ToastShow().redToast("Failed to update season: $error"));
   }
 
   addEventInSeason(
@@ -32,9 +32,9 @@ class FirestoreSeasons {
         .update({
           'events': FieldValue.arrayUnion([eventDocId]),
         })
-        .then((value) => ToastShow().showWhiteToast("event added in season !"))
+        .then((value) => ToastShow().whiteToast("event added in season !"))
         .catchError((error) => ToastShow()
-            .showRedToast("fFailed to add event in season ->$error"));
+            .redToast("fFailed to add event in season ->$error"));
   }
 
   addStudentInSeason(
@@ -45,8 +45,8 @@ class FirestoreSeasons {
           'students': FieldValue.arrayUnion([studentDocId]),
         })
         .then(
-            (value) => ToastShow().showWhiteToast("student added in season !"))
+            (value) => ToastShow().whiteToast("student added in season !"))
         .catchError((error) => ToastShow()
-            .showRedToast("fFailed to add student in season ->$error"));
+            .redToast("fFailed to add student in season ->$error"));
   }
 }

@@ -44,22 +44,22 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       appBar: AppBar(),
       body: Column(
         children: [
-          buildTextFields(),
-          buildSaveAndCancelButtons(context),
+          textFields(),
+          saveAndCancelButtons(context),
         ],
       ),
     );
   }
 
-  SizedBox buildSaveAndCancelButtons(BuildContext context) {
+  SizedBox saveAndCancelButtons(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 55,
-      child: buildRowOfButtons(context),
+      child: rowOfButtons(context),
     );
   }
 
-  Row buildRowOfButtons(BuildContext context) {
+  Row rowOfButtons(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,7 +134,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       name: widget.controllerOfName.text,
       description: widget.controllerOfDescription.text,
       volunteeringHours: widget.controllerOfHours.text,
-      date: getText(),
+      date: getBirthdate(),
       studentDocId: widget.studentDocId,
     );
   }
@@ -144,35 +144,35 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       name: widget.controllerOfName.text,
       description: widget.controllerOfDescription.text,
       volunteeringHours: widget.controllerOfHours.text,
-      date: getText(),
+      date: getBirthdate(),
     );
   }
 
-  Expanded buildTextFields() {
+  Expanded textFields() {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
-          child: buildTextFieldsColumn(),
+          child: textFieldsColumn(),
         ),
       ),
     );
   }
 
-  Column buildTextFieldsColumn() {
+  Column textFieldsColumn() {
     return Column(
       //I can't replace divider with (space between) or any something else
       children: [
         const Divider(),
-        buildTextFormField(widget.controllerOfName, "Name"),
+        textFormField(widget.controllerOfName, "Name"),
         const Divider(),
-        buildTextFormField(widget.controllerOfDescription, "Description"),
+        textFormField(widget.controllerOfDescription, "Description"),
         containerOfPickDate(),
         const Divider(),
         widget.checkForUpdate
-            ? buildTextFormField(widget.controllerOfHours, "Volunteering Hours")
+            ? textFormField(widget.controllerOfHours, "Volunteering Hours")
             : const Divider(),
-        widget.checkForUpdate ? showMembershipsButton() : emptyMessage(),
+        widget.checkForUpdate ? membershipsButton() : emptyMessage(),
       ],
     );
   }
@@ -199,20 +199,20 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         width: double.infinity,
         height: 60,
         decoration: boxDecoration(),
-        child: buildRow());
+        child: rowOfDate());
   }
 
-  Row buildRow() {
+  Row rowOfDate() {
     return Row(
-      children: [buildExpandedDate(), const Icon(Icons.eleven_mp)],
+      children: [getTextOfDate(), const Icon(Icons.eleven_mp)],
     );
   }
 
-  Expanded buildExpandedDate() {
+  Expanded getTextOfDate() {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(getText(),
+        child: Text(getBirthdate(),
             style: const TextStyle(color: Colors.black),
             textAlign: TextAlign.start),
       ),
@@ -233,7 +233,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     );
   }
 
-  String getText() {
+  String getBirthdate() {
     if (date == null) {
       return widget.birthdate;
     } else {
@@ -253,7 +253,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     setState(() => date = newDate);
   }
 
-  ElevatedButton showMembershipsButton() {
+  ElevatedButton membershipsButton() {
     return ElevatedButton(
         onPressed: () => onPressedMemberships(), child: membershipsText());
   }
@@ -289,7 +289,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     );
   }
 
-  TextFormField buildTextFormField(
+  TextFormField textFormField(
       TextEditingController controller, String text) {
     return TextFormField(
       controller: controller,

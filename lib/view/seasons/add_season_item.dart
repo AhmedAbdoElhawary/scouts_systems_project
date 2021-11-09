@@ -8,14 +8,14 @@ import 'package:scouts_system/common_ui/toast_show.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 
-class AddYear extends StatefulWidget {
-  const AddYear({Key? key}) : super(key: key);
+class AddSeasonItem extends StatefulWidget {
+  const AddSeasonItem({Key? key}) : super(key: key);
 
   @override
-  State<AddYear> createState() => _AddYearState();
+  State<AddSeasonItem> createState() => _AddSeasonItemState();
 }
 
-class _AddYearState extends State<AddYear> {
+class _AddSeasonItemState extends State<AddSeasonItem> {
   final TextEditingController _controller = TextEditingController(text: "");
 //if you want to add another season ,just add it here
   List<String> seasonsList = ["winter", "summer"];
@@ -100,7 +100,7 @@ class _AddYearState extends State<AddYear> {
       //-------------------------->
       Navigator.pop(context);
     } else {
-      ToastShow().showRedToast("Write something !");
+      ToastShow().redToast("Write something !");
     }
   }
 

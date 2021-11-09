@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/custom_container_events.dart';
+import 'package:scouts_system/common_ui/primary_container_events.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
-import 'package:scouts_system/common_ui/move_to_page.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
+
+import 'add_event_item.dart';
 
 class EventsPage extends StatelessWidget {
   const EventsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //fetching data
     EventsLogic provider = context.watch<EventsLogic>();
-
     if (provider.eventsList.isEmpty &&
         provider.stateOfFetching != StateOfEvents.loaded) {
       provider.preparingEvents();
       context.read<SeasonsLogic>().preparingSeasons();
+      //---------->
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
@@ -29,16 +31,14 @@ class EventsPage extends StatelessWidget {
   Scaffold buildScaffold(BuildContext context, EventsLogic provider) {
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
-        child: provider.eventsList.isEmpty
-            ? emptyMessage("event")
-            : buildListView(provider),
-      ),
-      floatingActionButton: buildFloatingActionButton(context),
+      body: provider.eventsList.isEmpty
+          ? emptyMessage("event")
+          : listView(provider),
+      floatingActionButton: floatingActionButton(context),
     );
   }
 
-  FloatingActionButton buildFloatingActionButton(BuildContext context) {
+  FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => onPressedFloating(context),
       child: const Icon(Icons.add),
@@ -49,53 +49,68 @@ class EventsPage extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MoveToThePage().moveToEventInfo(
+            builder: (context) => eventInfoPage(
                 context: context,
                 model: Events(leader: "leader 1"),
                 seasonsFormat: [])));
   }
 
-  ListView buildListView(EventsLogic provider) {
+  ListView listView(EventsLogic provider) {
     return ListView.separated(
       itemCount: provider.eventsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
-        return buildListTile(provider, index, context);
+        return listTile(provider, index, context);
       },
     );
   }
 
-  ListTile buildListTile(
-      EventsLogic provider, int index, BuildContext context) {
+  ListTile listTile(EventsLogic provider, int index, BuildContext context) {
     return ListTile(
-        title: buildTheItemOfTheList(provider.eventsList[index], index,
+        title: itemOfListTitle(provider.eventsList[index], index,
             provider.eventsList[index].eventDocId, context));
   }
 
-  SafeArea buildTheItemOfTheList(
+  InkWell itemOfListTitle(
       Events model, int index, String eventDocId, BuildContext context) {
-    return SafeArea(
-      child: InkWell(
-        onTap: () {
-          context.read<StudentsLogic>().stateOfSelectedFetching =
-              StateOfSelectedStudents.initial;
-
-          buildPush(context, model, eventDocId);
-        },
-        child: CustomContainerEvents(index: index, modelEvents: model),
-      ),
+    return InkWell(
+      onTap: () => onTapItem(model, eventDocId, context),
+      child: PrimaryContainerEvents(index: index, modelEvents: model),
     );
   }
 
-  buildPush(BuildContext context, Events model, String eventDocId) {
+  onTapItem(Events model, String eventDocId, BuildContext context) {
+    context.read<StudentsLogic>().stateOfSelectedFetching =
+        StateOfSelectedStudents.initial;
+    moveToEventInfoPage(context, model, eventDocId);
+  }
+
+  moveToEventInfoPage(BuildContext context, Events model, String eventDocId) {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MoveToThePage().moveToEventInfo(
+            builder: (context) => eventInfoPage(
                 model: model,
                 eventDocId: eventDocId,
                 checkForUpdate: true,
                 seasonsFormat: context.read<SeasonsLogic>().seasonsOfDropButton,
                 context: context)));
   }
+}
+
+EventInfoPage eventInfoPage(
+    {required Events model,
+    String eventDocId = "",
+    bool checkForUpdate = false,
+    required List<SeasonsFormat> seasonsFormat,
+    required BuildContext context}) {
+  return EventInfoPage(
+    controlEventID: TextEditingController(text: model.eventId),
+    controlLocation: TextEditingController(text: model.location),
+    controlEventDay: TextEditingController(text: model.eventDay),
+    dropdownValueLeader: model.leader,
+    checkForUpdate: checkForUpdate,
+    eventDocId: eventDocId,
+    seasonsFormat: seasonsFormat,
+  );
 }

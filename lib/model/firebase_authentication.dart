@@ -24,6 +24,6 @@ class FirebaseAuthentication {
   Future signOut() async {
     await _firebaseAuth.signOut();
 
-    ToastShow().showWhiteToast('sign out !');
+    ToastShow().whiteToast('sign out !');
   }
 }

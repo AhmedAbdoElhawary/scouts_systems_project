@@ -23,9 +23,9 @@ class FirestoreStudents {
           'volunteeringHours': volunteeringHours,
           "memberships": [],
         })
-        .then((value) => ToastShow().showWhiteToast("user added !"))
+        .then((value) => ToastShow().whiteToast("user added !"))
         .catchError((error) =>
-            ToastShow().showWhiteToast("Failed to update user: $error"));
+            ToastShow().whiteToast("Failed to update user: $error"));
   }
 
   updateStudent(
@@ -39,9 +39,9 @@ class FirestoreStudents {
       "description": description,
       "date": date,
       'volunteeringHours': volunteeringHours,
-    }).then((value) => ToastShow().showWhiteToast("user updates").catchError(
+    }).then((value) => ToastShow().whiteToast("user updates").catchError(
         (error) =>
-            ToastShow().showWhiteToast("Failed to update user: $error")));
+            ToastShow().whiteToast("Failed to update user: $error")));
   }
 
   addMembership({required String seasonDocId, required String studentDocId}) {
@@ -51,8 +51,8 @@ class FirestoreStudents {
           'memberships': FieldValue.arrayUnion([seasonDocId]),
         })
         .then(
-            (value) => ToastShow().showWhiteToast("membership added in user !"))
+            (value) => ToastShow().whiteToast("membership added in user !"))
         .catchError((error) => ToastShow()
-            .showWhiteToast("Failed to add membership in user -> $error"));
+            .whiteToast("Failed to add membership in user -> $error"));
   }
 }
