@@ -8,7 +8,6 @@ import 'package:scouts_system/view/seasons/students_and_events_buttons.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
-
 import 'add_season_item.dart';
 
 class SeasonsPage extends StatefulWidget {
@@ -74,25 +73,26 @@ class _SeasonsPageState extends State<SeasonsPage> {
       Season model, int index, String seasonDocId, BuildContext context) {
     return SafeArea(
       child: InkWell(
-        onTap: () {
-          //to clear the previous data
-          context
-              .read<EventsLogic>()
-              .preparingSpecificEvents(model.eventsDocIds);
-          context
-              .read<StudentsLogic>()
-              .preparingSpecificStudents(studentsDocIds: model.studentsDocIds);
-          context.read<StudentsLogic>().stateOfSpecificFetching =
-              StateOfSpecificStudents.initial;
-          context.read<EventsLogic>().stateOfSpecificEvents =
-              StateOfSpecificEvents.initial;
-          //------------------------->
-
-          buildPush(context, model, seasonDocId);
-        },
+        onTap: () =>onTapItem(model,seasonDocId),
         child: container(index, model),
       ),
     );
+  }
+  onTapItem(Season model, String seasonDocId){
+    //to clear the previous data in the next pages
+    context
+        .read<EventsLogic>()
+        .preparingSpecificEvents(model.eventsDocIds);
+    context
+        .read<StudentsLogic>()
+        .preparingSpecificStudents(studentsDocIds: model.studentsDocIds);
+    context.read<StudentsLogic>().stateOfSpecificFetching =
+        StateOfSpecificStudents.initial;
+    context.read<EventsLogic>().stateOfSpecificEvents =
+        StateOfSpecificEvents.initial;
+    //------------------------------------------->
+
+    buildPush(context, model, seasonDocId);
   }
 
   buildPush(BuildContext context, Season model, String seasonDocId) {
