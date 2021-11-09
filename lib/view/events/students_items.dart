@@ -42,17 +42,19 @@ class StudentsEventPage extends StatelessWidget {
   FloatingActionButton buildFloatingActionButton(
       StudentsLogic provider, BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SelectStudentsList(
-                      seasonDocId: seasonDocId,
-                      eventDocId: eventDocId,
-                    )));
-      },
+      onPressed: () => onPressedFloating(context),
       child: const Icon(Icons.add),
     );
+  }
+
+  onPressedFloating(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SelectStudentsList(
+                  seasonDocId: seasonDocId,
+                  eventDocId: eventDocId,
+                )));
   }
 
   ListView buildListView(StudentsLogic provider) {

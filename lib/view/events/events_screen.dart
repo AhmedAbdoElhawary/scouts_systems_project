@@ -40,17 +40,19 @@ class EventsPage extends StatelessWidget {
 
   FloatingActionButton buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MoveToThePage().moveToEventInfo(
-                    context: context,
-                    model: Events(leader: "leader 1"),
-                    seasonsFormat: [])));
-      },
+      onPressed: () => onPressedFloating(context),
       child: const Icon(Icons.add),
     );
+  }
+
+  onPressedFloating(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MoveToThePage().moveToEventInfo(
+                context: context,
+                model: Events(leader: "leader 1"),
+                seasonsFormat: [])));
   }
 
   ListView buildListView(EventsLogic provider) {
