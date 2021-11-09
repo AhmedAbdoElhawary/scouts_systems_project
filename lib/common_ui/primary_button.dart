@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:provider/src/provider.dart';
+import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class PrimaryButton extends StatelessWidget {
@@ -23,6 +25,9 @@ class PrimaryButton extends StatelessWidget {
 
   onPressedButton(BuildContext context) {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
+      StudentsLogic provider = context.read<StudentsLogic>();
+      provider.studentsListCleared();
+      provider.stateOfFetching = StateOfStudents.initial;
       moveToPage(context);
     });
   }

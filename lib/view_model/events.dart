@@ -58,22 +58,23 @@ class EventsLogic extends ChangeNotifier {
     for (int i = 0; i < eventsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(eventsDocIds[i]).get();
-      addInSpecificEvents(snap);
+      _specificEvents.add(addInSpecificEvents(snap));
     }
     stateOfSpecificEvents = StateOfSpecificEvents.loaded;
     notifyListeners();
   }
 
-  addInSpecificEvents(DocumentSnapshot<Object?> snap) {
-    _specificEvents.add(Events(
+ Events addInSpecificEvents(DocumentSnapshot<Object?> snap) {
+    return Events(
         eventDay: snap.get("date"),
         leader: snap.get("leader"),
         eventDocId: snap.get("docId"),
         eventId: snap.get("id"),
-        location: snap.get("location")));
-    notifyListeners();
+        location: snap.get("location"));
   }
-
+  specificEventsCleared(){
+    _specificEvents.clear();
+  }
   List<Events> get specificEvents => _specificEvents;
 
   List<Events> get eventsList => _eventsList;

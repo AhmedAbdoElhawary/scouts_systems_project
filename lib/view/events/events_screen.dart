@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/primary_container_events.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
@@ -75,8 +75,17 @@ class EventsPage extends StatelessWidget {
       Events model, int index, String eventDocId, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(model, eventDocId, context),
-      child: PrimaryContainerEvents(index: index, modelEvents: model),
+      child: primaryContainer(index, model),
     );
+  }
+
+  PrimaryContainer primaryContainer(int index, Events model) {
+    return PrimaryContainer(
+        index: index,
+        rightTopText: model.eventId,
+        rightBottomText: model.leader,
+        leftTopText: model.location,
+        leftBottomText: model.eventDay);
   }
 
   onTapItem(Events model, String eventDocId, BuildContext context) {

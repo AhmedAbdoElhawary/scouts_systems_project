@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'memberships_check_list_screen.dart';
 
@@ -14,7 +15,7 @@ class MembershipsOfStudent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      //fetching data
+    //fetching data
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.studentMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
@@ -42,8 +43,7 @@ class MembershipsOfStudent extends StatelessWidget {
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          title:
-              membershipItem(provider.studentMemberships[index], index),
+          title: membershipItem(provider.studentMemberships[index], index),
         );
       },
     );
@@ -63,67 +63,13 @@ class MembershipsOfStudent extends StatelessWidget {
             builder: (context) => StudentCheckBoxMemberships(studentDocId)));
   }
 
-  SafeArea membershipItem(Memberships membership, int index) {
-    return SafeArea(
-      child: InkWell(
-        onTap: () async {},
-        child: containerOfItem(membership, index),
-      ),
-    );
-  }
-
-  SizedBox containerOfItem(Memberships membership, int index) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        children: [
-          circleAvatarNumber(index),
-          columnMembership(membership),
-        ],
-      ),
-    );
-  }
-
-  Expanded columnMembership(Memberships membership) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: columnOfTexts(membership),
-      ),
-    );
-  }
-
-  Column columnOfTexts(Memberships membership) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildText(membership.year),
-        buildText(membership.seasonType),
-      ],
-    );
-  }
-
-  Text buildText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-          fontSize: 16,
-          color: Colors.black54,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.italic),
-    );
-  }
-
-  CircleAvatar circleAvatarNumber(int index) {
-    return CircleAvatar(
-      radius: 25,
-      child: ClipOval(
-        child: Text(
-          "${index + 1}",
-          style: const TextStyle(fontSize: 25, color: Colors.white),
-        ),
-      ),
+  InkWell membershipItem(Memberships membership, int index) {
+    return InkWell(
+      onTap: () async {},
+      child: PrimaryContainer(
+          index: index,
+          rightTopText: membership.year,
+          rightBottomText: membership.seasonType),
     );
   }
 }

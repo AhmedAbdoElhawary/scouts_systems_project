@@ -66,7 +66,7 @@ class StudentsLogic extends ChangeNotifier {
     for (int i = 0; i < studentsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsDocIds[i]).get();
-      getTheStudent(snap);
+      _specificStudents.add(getTheStudent(snap));
     }
     stateOfSpecificFetching = StateOfSpecificStudents.loaded;
     notifyListeners();
@@ -130,6 +130,10 @@ class StudentsLogic extends ChangeNotifier {
 
   selectedStudentsCleared() {
     _selectedStudents.clear();
+  }
+
+  specificStudentsCleared(){
+    _specificStudents.clear();
   }
 
   List<Students> get specificStudents => _specificStudents;

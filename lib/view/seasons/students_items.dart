@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/primary_container_students.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/students.dart';
 
@@ -15,7 +15,7 @@ class StudentSeasonsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      //fetching data
+    //fetching data
     StudentsLogic provider = context.watch<StudentsLogic>();
     if (studentsDocIds.isNotEmpty &&
         provider.specificStudents.isEmpty &&
@@ -52,12 +52,21 @@ class StudentSeasonsPage extends StatelessWidget {
     );
   }
 
-  SafeArea listTitleItem(var model, int index) {
+  SafeArea listTitleItem(Students model, int index) {
     return SafeArea(
       child: InkWell(
         onTap: () async {},
-        child: PrimaryContainerStudents(modelStudents: model, index: index),
+        child: primaryContainer(index, model),
       ),
     );
+  }
+
+  PrimaryContainer primaryContainer(int index, Students model) {
+    return PrimaryContainer(
+          index: index,
+          rightTopText: model.name,
+          rightBottomText: model.description,
+          leftTopText: model.volunteeringHours,
+          leftBottomText: model.birthdate);
   }
 }

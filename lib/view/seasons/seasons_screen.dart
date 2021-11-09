@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/view/seasons/students_and_events_buttons.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
@@ -20,7 +21,7 @@ class SeasonsPage extends StatefulWidget {
 class _SeasonsPageState extends State<SeasonsPage> {
   @override
   Widget build(BuildContext context) {
-      //fetching data
+    //fetching data
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.seasonsList.isEmpty &&
         provider.stateOfFetchingSeasons != StateOfSeasons.loaded) {
@@ -44,13 +45,14 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async =>onPressedFloating(),
+      onPressed: () async => onPressedFloating(),
       child: const Icon(Icons.add),
     );
   }
-  onPressedFloating(){
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const AddSeasonItem()));
+
+  onPressedFloating() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const AddSeasonItem()));
   }
 
   ListView listView(SeasonsLogic provider) {
@@ -63,8 +65,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
     );
   }
 
-  ListTile listTile(
-      SeasonsLogic provider, int index, BuildContext context) {
+  ListTile listTile(SeasonsLogic provider, int index, BuildContext context) {
     return ListTile(
         title: listTitleItem(provider.seasonsList[index], index,
             provider.seasonsList[index].seasonDocId, context));
@@ -73,18 +74,18 @@ class _SeasonsPageState extends State<SeasonsPage> {
   InkWell listTitleItem(
       Season model, int index, String seasonDocId, BuildContext context) {
     return InkWell(
-      onTap: () =>onTapItem(model,seasonDocId),
-      child: containerOfItem(index, model),
+      onTap: () => onTapItem(model, seasonDocId),
+      child: PrimaryContainer(
+          index: index,
+          rightTopText: model.year,
+          rightBottomText: model.seasonType),
     );
   }
-  onTapItem(Season model, String seasonDocId){
+
+  onTapItem(Season model, String seasonDocId) {
     //to clear the previous data in the next pages
-    context
-        .read<EventsLogic>()
-        .preparingSpecificEvents(model.eventsDocIds);
-    context
-        .read<StudentsLogic>()
-        .preparingSpecificStudents(studentsDocIds: model.studentsDocIds);
+    context.read<EventsLogic>()..specificEventsCleared();
+    context.read<StudentsLogic>().specificStudentsCleared();
     context.read<StudentsLogic>().stateOfSpecificFetching =
         StateOfSpecificStudents.initial;
     context.read<EventsLogic>().stateOfSpecificEvents =
@@ -101,65 +102,5 @@ class _SeasonsPageState extends State<SeasonsPage> {
             builder: (context) => TwoButtonsPage(
                 eventsDocId: model.eventsDocIds,
                 studentsDocId: model.studentsDocIds)));
-  }
-
-  SizedBox containerOfItem(int index, Season model) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        children: [
-          circleAvatarNumber(index),
-          nameAndDescription(model),
-          dateAndHours(model),
-        ],
-      ),
-    );
-  }
-
-  Column dateAndHours(Season model) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        buildText(model.seasonType),
-      ],
-    );
-  }
-
-  Text buildText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-          fontSize: 16,
-          color: Colors.black54,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.italic),
-    );
-  }
-
-  Expanded nameAndDescription(Season model) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [buildText(model.year)],
-        ),
-      ),
-    );
-  }
-
-  CircleAvatar circleAvatarNumber(int index) {
-    return CircleAvatar(
-      radius: 25,
-      child: ClipOval(
-        child: Text(
-          "${index + 1}",
-          style: const TextStyle(fontSize: 25, color: Colors.white),
-        ),
-      ),
-    );
   }
 }
