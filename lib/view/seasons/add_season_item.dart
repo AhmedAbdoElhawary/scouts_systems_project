@@ -48,7 +48,7 @@ class _AddYearState extends State<AddYear> {
       dropdownButtonSeasons(),
     ]);
   }
-
+//i can't make it smaller
   DropdownButtonHideUnderline dropdownButtonSeasons() {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
