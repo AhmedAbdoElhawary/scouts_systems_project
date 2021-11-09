@@ -1,14 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
-class PrimaryContainerStudents extends StatelessWidget {
-  Students modelStudents;
+class PrimaryContainer extends StatelessWidget {
+  String rightTopText;
+  String rightBottomText;
+  String leftTopText;
+  String leftBottomText;
   int index;
 
-  PrimaryContainerStudents(
-      {Key? key, required this.index, required this.modelStudents})
+  PrimaryContainer(
+      {Key? key,
+      required this.index,
+      this.leftBottomText = "",
+      this.leftTopText = "",
+      required this.rightBottomText,
+      required this.rightTopText})
       : super(key: key);
 
   @override
@@ -18,21 +25,23 @@ class PrimaryContainerStudents extends StatelessWidget {
       child: Row(
         children: [
           circleAvatarNumber(index),
-          nameAndDescription(modelStudents),
-          dateAndHours(modelStudents),
+          columnOfRightTexts(
+              topText: rightTopText, bottomText: rightBottomText),
+          columnOfLeftTexts(topText: leftTopText, bottomText: leftBottomText),
         ],
       ),
     );
   }
 
-  Column dateAndHours(Students model) {
+  Column columnOfLeftTexts(
+      {required String topText, required String bottomText}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        buildText(model.birthdate),
-        buildText(model.volunteeringHours),
+        buildText(topText),
+        buildText(bottomText),
       ],
     );
   }
@@ -48,7 +57,8 @@ class PrimaryContainerStudents extends StatelessWidget {
     );
   }
 
-  Expanded nameAndDescription(Students model) {
+  Expanded columnOfRightTexts(
+      {required String topText, required String bottomText}) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0),
@@ -56,8 +66,8 @@ class PrimaryContainerStudents extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildText(model.name),
-            buildText(model.description),
+            buildText(topText),
+            buildText(bottomText),
           ],
         ),
       ),
