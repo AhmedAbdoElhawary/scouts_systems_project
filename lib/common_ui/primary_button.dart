@@ -4,40 +4,38 @@ import 'package:flutter/scheduler.dart';
 // ignore: must_be_immutable
 class PrimaryButton extends StatelessWidget {
   String text;
-  Widget moveToPage;
+  Widget page;
   bool pop;
   PrimaryButton(
-      {Key? key,
-      required this.text,
-      required this.moveToPage,
-      this.pop = false})
+      {Key? key, required this.text, required this.page, this.pop = false})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: buildElevatedButton(context),
+      child: elevatedButton(context),
     );
   }
 
-  ElevatedButton buildElevatedButton(BuildContext context) {
+  ElevatedButton elevatedButton(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {
-          SchedulerBinding.instance!.addPostFrameCallback((_) {
-            buildPush(context);
-          });
-        },
-        child: buildTextOfButton());
+        onPressed: () => onPressedButton(context), child: textOfButton());
   }
 
-  Text buildTextOfButton() {
+  onPressedButton(BuildContext context) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      moveToPage(context);
+    });
+  }
+
+  Text textOfButton() {
     return Text(
       text,
       style: const TextStyle(fontSize: 20, color: Colors.white),
     );
   }
 
-  Future<dynamic> buildPush(BuildContext context) {
+  Future<dynamic> moveToPage(BuildContext context) {
     return Navigator.push(
-        context, MaterialPageRoute(builder: (context) => moveToPage));
+        context, MaterialPageRoute(builder: (context) => page));
   }
 }

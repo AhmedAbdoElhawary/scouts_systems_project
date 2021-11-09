@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             }).catchError((e) {
-              ToastShow().showWhiteToast(e);
+              ToastShow().whiteToast(e);
             });
           }
         },
@@ -174,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : const StudentsPage()),
             );
           }).catchError((e) {
-            ToastShow().showWhiteToast(e);
+            ToastShow().whiteToast(e);
           });
         }
       },

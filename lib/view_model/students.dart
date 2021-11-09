@@ -32,8 +32,10 @@ class StudentsLogic extends ChangeNotifier {
   final List<Students> _specificStudents = [];
 
   StateOfStudents stateOfFetching = StateOfStudents.initial;
+
   StateOfSelectedStudents stateOfSelectedFetching =
       StateOfSelectedStudents.initial;
+
   StateOfSpecificStudents stateOfSpecificFetching =
       StateOfSpecificStudents.initial;
 
@@ -77,12 +79,12 @@ class StudentsLogic extends ChangeNotifier {
     stateOfSelectedFetching = StateOfSelectedStudents.loading;
     List<dynamic> studentsIdsSeason = await studentsDocIdsInSeason(seasonDocId);
     List<dynamic> studentsDocIdsEvent = await studentsDocIdsInEvent(eventDocId);
-    looping(studentsIdsSeason, studentsDocIdsEvent);
+    addStudentsInEventList(studentsIdsSeason, studentsDocIdsEvent);
     stateOfSelectedFetching = StateOfSelectedStudents.loaded;
     notifyListeners();
   }
 
-  looping(List<dynamic> studentsIdsSeason,
+  addStudentsInEventList(List<dynamic> studentsIdsSeason,
       List<dynamic> studentsDocIdsEvent) async {
     for (int i = 0; i < studentsIdsSeason.length; i++) {
       DocumentSnapshot<Object?> snap =

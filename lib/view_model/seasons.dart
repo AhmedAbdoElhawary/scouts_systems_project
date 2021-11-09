@@ -43,7 +43,7 @@ class SeasonsLogic extends ChangeNotifier {
 
   final List<SeasonsFormat> _seasonsOfDropButton = [];
 
-  final List<Memberships> _studentMemberships = [];
+  final List<Memberships> _selectedMemberships = [];
 
   final List<Memberships> _remainingMemberships = [];
 
@@ -82,27 +82,27 @@ class SeasonsLogic extends ChangeNotifier {
 
   preparingMemberships(String studentDocId) async {
     stateOfFetchingMemberships = StateOfMemberships.loading;
-    _studentMemberships.clear();
+    _selectedMemberships.clear();
     _remainingMemberships.clear();
     //get the list of ids of memberships
     List<dynamic> docIds = await membershipsDocIds(studentDocId);
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    looping(docIds, querySnapshot);
+    addInMembershipsLists(docIds, querySnapshot);
     stateOfFetchingMemberships = StateOfMemberships.loaded;
     notifyListeners();
   }
 
-  looping(List<dynamic> docIds, QuerySnapshot querySnapshot) {
+  addInMembershipsLists(List<dynamic> docIds, QuerySnapshot querySnapshot) {
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       QueryDocumentSnapshot data = querySnapshot.docs[i];
       docIds.contains(data.id)
-          ? addInStudentMembershipsList(data)
+          ? addInSelectedMembershipsList(data)
           : addInRemainingMembershipsList(data);
     }
   }
 
-  addInStudentMembershipsList(QueryDocumentSnapshot data) {
-    _studentMemberships.add(Memberships(
+  addInSelectedMembershipsList(QueryDocumentSnapshot data) {
+    _selectedMemberships.add(Memberships(
         year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
@@ -121,7 +121,7 @@ class SeasonsLogic extends ChangeNotifier {
   }
 
   studentMembershipsCleared() {
-    _studentMemberships.clear();
+    _selectedMemberships.clear();
   }
 
   remainingMembershipsCleared() {
@@ -132,7 +132,7 @@ class SeasonsLogic extends ChangeNotifier {
 
   List<Memberships> get remainingMemberships => _remainingMemberships;
 
-  List<Memberships> get studentMemberships => _studentMemberships;
+  List<Memberships> get studentMemberships => _selectedMemberships;
 
   List<Season> get seasonsList => _seasonsList;
 }

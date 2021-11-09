@@ -18,9 +18,9 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              PrimaryButton(moveToPage: const StudentsPage(), text: "Students"),
-              PrimaryButton(moveToPage: const EventsPage(), text: "Events"),
-              PrimaryButton(moveToPage: const SeasonsPage(), text: "Seasons"),
+              PrimaryButton(page: const StudentsPage(), text: "Students"),
+              PrimaryButton(page: const EventsPage(), text: "Events"),
+              PrimaryButton(page: const SeasonsPage(), text: "Seasons"),
             ],
           ),
         ),

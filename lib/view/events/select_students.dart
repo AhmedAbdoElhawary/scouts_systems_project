@@ -33,27 +33,27 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
       appBar: AppBar(),
       body: remainingStudents.isEmpty
           ? emptyMessage("student")
-          : buildListView(remainingStudents),
-      floatingActionButton: _buildSelectAllButton(remainingStudents),
+          : listView(remainingStudents),
+      floatingActionButton: _floatingActionButton(remainingStudents),
     );
   }
 
-  ListView buildListView(List<Students> remainingStudents) {
+  ListView listView(List<Students> remainingStudents) {
     return ListView.builder(
       itemBuilder: (builder, index) {
         selectedFlag[index] = selectedFlag[index] ?? false;
         bool? isSelected = selectedFlag[index];
-        return buildListTile(remainingStudents, isSelected, index);
+        return listTile(remainingStudents, isSelected, index);
       },
       itemCount: remainingStudents.length,
     );
   }
 
-  ListTile buildListTile(
+  ListTile listTile(
       List<Students> remainingStudents, bool? isSelected, int index) {
     return ListTile(
       onTap: () => onTap(isSelected!, index),
-      leading: _buildSelectIcon(isSelected!, index),
+      leading: _selectIcon(isSelected!, index),
       title: Text(remainingStudents[index].name),
       subtitle: Text(remainingStudents[index].description),
     );
@@ -66,13 +66,13 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     });
   }
 
-  Widget _buildSelectIcon(bool isSelected, int index) {
+  Widget _selectIcon(bool isSelected, int index) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
     );
   }
 
-  Widget? _buildSelectAllButton(List<Students> remainingStudents) {
+  Widget? _floatingActionButton(List<Students> remainingStudents) {
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: () => addItems(remainingStudents),

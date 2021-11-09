@@ -31,19 +31,19 @@ class _StudentCheckBoxMembershipsState
       appBar: AppBar(),
       body: seasonsList.isEmpty
           ? emptyMessage("season")
-          : buildListView(seasonsList),
-      floatingActionButton: _buildSelectAllButton(seasonsList),
+          : listView(seasonsList),
+      floatingActionButton: _floatingActionButton(seasonsList),
     );
   }
 
-  ListView buildListView(List<Memberships> seasonsList) {
+  ListView listView(List<Memberships> seasonsList) {
     return ListView.builder(
       itemBuilder: (builder, index) {
         selectedFlag[index] = selectedFlag[index] ?? false;
         bool? isSelected = selectedFlag[index];
         return Column(
           children: [
-            buildListTile(isSelected, index, seasonsList),
+            listTile(isSelected, index, seasonsList),
           ],
         );
       },
@@ -51,30 +51,30 @@ class _StudentCheckBoxMembershipsState
     );
   }
 
-  ListTile buildListTile(
+  ListTile listTile(
       bool? isSelected, int index, List<Memberships> seasonsList) {
     return ListTile(
-      onTap: () => onTap(isSelected!, index),
-      leading: _buildSelectIcon(isSelected!),
+      onTap: () => onTapTitle(isSelected!, index),
+      leading: _selectIcon(isSelected!),
       title: Text(seasonsList[index].year),
       subtitle: Text(seasonsList[index].seasonType),
     );
   }
 
-  void onTap(bool isSelected, int index) {
+  void onTapTitle(bool isSelected, int index) {
     setState(() {
       selectedFlag[index] = !isSelected;
       isSelectionMode = selectedFlag.containsValue(true);
     });
   }
 
-  Widget _buildSelectIcon(bool isSelected) {
+  Widget _selectIcon(bool isSelected) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
     );
   }
 
-  Widget? _buildSelectAllButton(List<Memberships> seasonsList) {
+  Widget? _floatingActionButton(List<Memberships> seasonsList) {
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: () => addItems(seasonsList),

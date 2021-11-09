@@ -20,10 +20,12 @@ class SeasonsPage extends StatefulWidget {
 class _SeasonsPageState extends State<SeasonsPage> {
   @override
   Widget build(BuildContext context) {
+      //fetching data
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.seasonsList.isEmpty &&
         provider.stateOfFetchingSeasons != StateOfSeasons.loaded) {
       provider.preparingSeasons();
+      //------------>
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
@@ -33,49 +35,46 @@ class _SeasonsPageState extends State<SeasonsPage> {
   Scaffold buildScaffold(BuildContext context, SeasonsLogic provider) {
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
-        child: provider.seasonsList.isEmpty
-            ? emptyMessage("season")
-            : buildListView(provider),
-      ),
-      floatingActionButton: buildFloatingActionButton(context),
+      body: provider.seasonsList.isEmpty
+          ? emptyMessage("season")
+          : listView(provider),
+      floatingActionButton: floatingActionButton(context),
     );
   }
 
-  FloatingActionButton buildFloatingActionButton(BuildContext context) {
+  FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const AddYear()));
-      },
+      onPressed: () async =>onPressedFloating(),
       child: const Icon(Icons.add),
     );
   }
+  onPressedFloating(){
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const AddSeasonItem()));
+  }
 
-  ListView buildListView(SeasonsLogic provider) {
+  ListView listView(SeasonsLogic provider) {
     return ListView.separated(
       itemCount: provider.seasonsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
-        return buildListTile(provider, index, context);
+        return listTile(provider, index, context);
       },
     );
   }
 
-  ListTile buildListTile(
+  ListTile listTile(
       SeasonsLogic provider, int index, BuildContext context) {
     return ListTile(
-        title: buildTheItemOfTheList(provider.seasonsList[index], index,
+        title: listTitleItem(provider.seasonsList[index], index,
             provider.seasonsList[index].seasonDocId, context));
   }
 
-  SafeArea buildTheItemOfTheList(
+  InkWell listTitleItem(
       Season model, int index, String seasonDocId, BuildContext context) {
-    return SafeArea(
-      child: InkWell(
-        onTap: () =>onTapItem(model,seasonDocId),
-        child: container(index, model),
-      ),
+    return InkWell(
+      onTap: () =>onTapItem(model,seasonDocId),
+      child: containerOfItem(index, model),
     );
   }
   onTapItem(Season model, String seasonDocId){
@@ -92,32 +91,32 @@ class _SeasonsPageState extends State<SeasonsPage> {
         StateOfSpecificEvents.initial;
     //------------------------------------------->
 
-    buildPush(context, model, seasonDocId);
+    moveToTwoButtonsPage(context, model, seasonDocId);
   }
 
-  buildPush(BuildContext context, Season model, String seasonDocId) {
+  moveToTwoButtonsPage(BuildContext context, Season model, String seasonDocId) {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => TwoButtonInSeason(
+            builder: (context) => TwoButtonsPage(
                 eventsDocId: model.eventsDocIds,
                 studentsDocId: model.studentsDocIds)));
   }
 
-  SizedBox container(int index, Season model) {
+  SizedBox containerOfItem(int index, Season model) {
     return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
-          buildCircleAvatarNumber(index),
-          buildNameAndDescription(model),
-          buildDateAndHours(model),
+          circleAvatarNumber(index),
+          nameAndDescription(model),
+          dateAndHours(model),
         ],
       ),
     );
   }
 
-  Column buildDateAndHours(Season model) {
+  Column dateAndHours(Season model) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -139,7 +138,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
     );
   }
 
-  Expanded buildNameAndDescription(Season model) {
+  Expanded nameAndDescription(Season model) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0),
@@ -152,7 +151,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
     );
   }
 
-  CircleAvatar buildCircleAvatarNumber(int index) {
+  CircleAvatar circleAvatarNumber(int index) {
     return CircleAvatar(
       radius: 25,
       child: ClipOval(

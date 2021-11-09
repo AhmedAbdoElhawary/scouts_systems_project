@@ -1,14 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scouts_system/view_model/students.dart';
+import 'package:scouts_system/view_model/events.dart';
 
 // ignore: must_be_immutable
-class CustomContainerStudents extends StatelessWidget {
-  Students modelStudents;
+class PrimaryContainerEvents extends StatelessWidget {
+  Events modelEvents;
   int index;
 
-  CustomContainerStudents(
-      {Key? key, required this.index, required this.modelStudents})
+  PrimaryContainerEvents(
+      {Key? key, required this.index, required this.modelEvents})
       : super(key: key);
 
   @override
@@ -17,22 +16,22 @@ class CustomContainerStudents extends StatelessWidget {
       width: double.infinity,
       child: Row(
         children: [
-          buildCircleAvatarNumber(index),
-          buildNameAndDescription(modelStudents),
-          buildDateAndHours(modelStudents),
+          circleAvatarNumber(index),
+          nameAndDescription(modelEvents),
+          dateAndHours(modelEvents),
         ],
       ),
     );
   }
 
-  Column buildDateAndHours(Students model) {
+  Column dateAndHours(Events model) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        buildText(model.birthdate),
-        buildText(model.volunteeringHours),
+        buildText(model.leader),
+        buildText(model.eventDay),
       ],
     );
   }
@@ -48,7 +47,7 @@ class CustomContainerStudents extends StatelessWidget {
     );
   }
 
-  Expanded buildNameAndDescription(Students model) {
+  Expanded nameAndDescription(Events model) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0),
@@ -56,15 +55,15 @@ class CustomContainerStudents extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildText(model.name),
-            buildText(model.description),
+            buildText(model.eventId),
+            buildText(model.location),
           ],
         ),
       ),
     );
   }
 
-  CircleAvatar buildCircleAvatarNumber(int index) {
+  CircleAvatar circleAvatarNumber(int index) {
     return CircleAvatar(
       radius: 25,
       child: ClipOval(

@@ -14,10 +14,12 @@ class MembershipsOfStudent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      //fetching data
     SeasonsLogic provider = context.watch<SeasonsLogic>();
     if (provider.studentMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
       provider.preparingMemberships(studentDocId);
+      //----------->
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
@@ -29,25 +31,25 @@ class MembershipsOfStudent extends StatelessWidget {
       appBar: AppBar(),
       body: provider.studentMemberships.isEmpty
           ? emptyMessage("memberships")
-          : buildListView(provider),
-      floatingActionButton: buildFloatingActionButton(context),
+          : listView(provider),
+      floatingActionButton: floatingActionButton(context),
     );
   }
 
-  ListView buildListView(SeasonsLogic provider) {
+  ListView listView(SeasonsLogic provider) {
     return ListView.separated(
       itemCount: provider.studentMemberships.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
           title:
-              buildTheItemOfTheList(provider.studentMemberships[index], index),
+              membershipItem(provider.studentMemberships[index], index),
         );
       },
     );
   }
 
-  FloatingActionButton buildFloatingActionButton(BuildContext context) {
+  FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => onPressedFloating(context),
       child: const Icon(Icons.add),
@@ -61,37 +63,37 @@ class MembershipsOfStudent extends StatelessWidget {
             builder: (context) => StudentCheckBoxMemberships(studentDocId)));
   }
 
-  SafeArea buildTheItemOfTheList(Memberships membership, int index) {
+  SafeArea membershipItem(Memberships membership, int index) {
     return SafeArea(
       child: InkWell(
         onTap: () async {},
-        child: buildContainer(membership, index),
+        child: containerOfItem(membership, index),
       ),
     );
   }
 
-  SizedBox buildContainer(Memberships membership, int index) {
+  SizedBox containerOfItem(Memberships membership, int index) {
     return SizedBox(
       width: double.infinity,
       child: Row(
         children: [
-          buildCircleAvatarNumber(index),
-          buildColumn(membership),
+          circleAvatarNumber(index),
+          columnMembership(membership),
         ],
       ),
     );
   }
 
-  Expanded buildColumn(Memberships membership) {
+  Expanded columnMembership(Memberships membership) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0),
-        child: buildColumnOfTexts(membership),
+        child: columnOfTexts(membership),
       ),
     );
   }
 
-  Column buildColumnOfTexts(Memberships membership) {
+  Column columnOfTexts(Memberships membership) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +115,7 @@ class MembershipsOfStudent extends StatelessWidget {
     );
   }
 
-  CircleAvatar buildCircleAvatarNumber(int index) {
+  CircleAvatar circleAvatarNumber(int index) {
     return CircleAvatar(
       radius: 25,
       child: ClipOval(
