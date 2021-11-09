@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
-import 'package:scouts_system/common_ui/primary_container_students.dart';
+import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/view_model/students.dart';
 
@@ -64,15 +64,23 @@ class StudentsPage extends StatelessWidget {
         controllerOfDescription: TextEditingController(text: ""),
         birthdate: "Select Date",
         controllerOfHours: TextEditingController(text: ""));
-        // -------------------------------------->
+    // -------------------------------------->
   }
 
-  InkWell studentItem(
-      Students studentInfo, int index, BuildContext context) {
+  InkWell studentItem(Students studentInfo, int index, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(context, studentInfo),
-      child: PrimaryContainerStudents(index: index, modelStudents: studentInfo),
+      child: primaryContainer(index, studentInfo),
     );
+  }
+
+  PrimaryContainer primaryContainer(int index, Students studentInfo) {
+    return PrimaryContainer(
+        index: index,
+        rightTopText: studentInfo.name,
+        rightBottomText: studentInfo.description,
+        leftTopText: studentInfo.volunteeringHours,
+        leftBottomText: studentInfo.birthdate);
   }
 
   onTapItem(BuildContext context, Students studentInfo) {
