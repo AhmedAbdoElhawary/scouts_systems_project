@@ -76,15 +76,17 @@ class EventsPage extends StatelessWidget {
       Events model, int index, String eventDocId, BuildContext context) {
     return SafeArea(
       child: InkWell(
-        onTap: () {
-          context.read<StudentsLogic>().stateOfSelectedFetching =
-              StateOfSelectedStudents.initial;
-
-          buildPush(context, model, eventDocId);
-        },
+        onTap: () => onTapItem(context, model, eventDocId),
         child: CustomContainerEvents(index: index, modelEvents: model),
       ),
     );
+  }
+
+  onTapItem(BuildContext context, Events model, String eventDocId) {
+    context.read<StudentsLogic>().stateOfSelectedFetching =
+        StateOfSelectedStudents.initial;
+
+    buildPush(context, model, eventDocId);
   }
 
   buildPush(BuildContext context, Events model, String eventDocId) {

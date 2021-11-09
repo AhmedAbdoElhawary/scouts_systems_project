@@ -53,18 +53,16 @@ class StudentsPage extends StatelessWidget {
   }
 
   onPressedFloating(BuildContext context) {
-    return Navigator.push(context,
-        MaterialPageRoute(builder: (context) => onPressedStudentInfoScreen()));
-  }
-
-  StudentInformationScreen onPressedStudentInfoScreen() {
-    return StudentInformationScreen(
-        //default value(i can't make them with the constructor)
-        controllerOfName: TextEditingController(text: ""),
-        controllerOfDescription: TextEditingController(text: ""),
-        birthdate: "Select Date",
-        controllerOfHours: TextEditingController(text: ""));
-        // -------------------------------------->
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => StudentInformationScreen(
+                //default value(i can't make them with the constructor)
+                controllerOfName: TextEditingController(text: ""),
+                controllerOfDescription: TextEditingController(text: ""),
+                birthdate: "Select Date",
+                controllerOfHours: TextEditingController(text: ""))));
+    // --------------------------------------->
   }
 
   InkWell buildStudentItem(
@@ -79,18 +77,14 @@ class StudentsPage extends StatelessWidget {
     return Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => onTapStudentInfoScreen(studentInfo)));
-  }
-
-  StudentInformationScreen onTapStudentInfoScreen(Students studentInfo) {
-    return StudentInformationScreen(
-        controllerOfName: TextEditingController(text: studentInfo.name),
-        controllerOfDescription:
-            TextEditingController(text: studentInfo.description),
-        birthdate: studentInfo.birthdate,
-        controllerOfHours:
-            TextEditingController(text: studentInfo.volunteeringHours),
-        studentDocId: studentInfo.docId,
-        checkForUpdate: true);
+            builder: (context) => StudentInformationScreen(
+                controllerOfName: TextEditingController(text: studentInfo.name),
+                controllerOfDescription:
+                    TextEditingController(text: studentInfo.description),
+                birthdate: studentInfo.birthdate,
+                controllerOfHours:
+                    TextEditingController(text: studentInfo.volunteeringHours),
+                studentDocId: studentInfo.docId,
+                checkForUpdate: true)));
   }
 }
