@@ -8,14 +8,14 @@ import 'package:scouts_system/common_ui/toast_show.dart';
 import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 
-class AddSeasonItem extends StatefulWidget {
-  const AddSeasonItem({Key? key}) : super(key: key);
+class AddSeasonScreen extends StatefulWidget {
+  const AddSeasonScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddSeasonItem> createState() => _AddSeasonItemState();
+  State<AddSeasonScreen> createState() => _AddSeasonScreenState();
 }
 
-class _AddSeasonItemState extends State<AddSeasonItem> {
+class _AddSeasonScreenState extends State<AddSeasonScreen> {
   final TextEditingController _controller = TextEditingController(text: "");
 //if you want to add another season ,just add it here
   List<String> seasonsList = ["winter", "summer"];
@@ -28,26 +28,27 @@ class _AddSeasonItemState extends State<AddSeasonItem> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: buildColumn(context),
+          child: columnBody(context),
         ),
       ),
     );
   }
 
-  Column buildColumn(BuildContext context) {
+  Column columnBody(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [buildRow(), buildAddTextButton(context)],
+      children: [rowOfField(), AddButton(context)],
     );
   }
 
-  Row buildRow() {
+  Row rowOfField() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      fieldOfYears(),
+      textFieldOfYears(),
       dropdownButtonSeasons(),
     ]);
   }
+
 //i can't make it smaller
   DropdownButtonHideUnderline dropdownButtonSeasons() {
     return DropdownButtonHideUnderline(
@@ -69,7 +70,7 @@ class _AddSeasonItemState extends State<AddSeasonItem> {
     );
   }
 
-  Expanded fieldOfYears() {
+  Expanded textFieldOfYears() {
     return Expanded(
       child: TextFormField(
         controller: _controller,
@@ -81,27 +82,30 @@ class _AddSeasonItemState extends State<AddSeasonItem> {
     );
   }
 
-  Container buildAddTextButton(BuildContext context) {
+  Container AddButton(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: Colors.blue),
-      child: TextButton(onPressed: () => onPressedAdd(), child: textOfAdd()),
+          borderRadius: BorderRadius.circular(10)),
+      child:
+          ElevatedButton(onPressed: () => addSeasonAndPop(), child: textOfAdd()),
     );
   }
 
-  onPressedAdd() {
+  addSeasonAndPop() {
     if (_controller.text != "") {
       FirestoreSeasons()
           .addSeason(year: _controller.text, season: seasonSelected);
-      //To rebuild the previous page
-      context.read<SeasonsLogic>().preparingSeasons();
-      context.read<SeasonsLogic>().stateOfFetchingSeasons =
-          StateOfSeasons.initial;
-      //-------------------------->
+      updatePreviousScreenData();
       Navigator.pop(context);
     } else {
       ToastShow().redToast("Write something !");
     }
+  }
+
+  updatePreviousScreenData() {
+    SeasonsProvider provider = context.read<SeasonsProvider>();
+    provider.preparingSeasons();
+    provider.stateOfFetchingSeasons = StateOfSeasons.initial;
   }
 
   Text textOfAdd() {

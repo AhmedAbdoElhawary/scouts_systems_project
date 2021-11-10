@@ -2,14 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class PrimaryContainer extends StatelessWidget {
-  String rightTopText;
-  String rightBottomText;
-  String leftTopText;
-  String leftBottomText;
-  int index;
+class PrimaryListItem extends StatelessWidget {
+  final String rightTopText, rightBottomText, leftTopText, leftBottomText;
+  final int index;
 
-  PrimaryContainer(
+  PrimaryListItem(
       {Key? key,
       required this.index,
       this.leftBottomText = "",
