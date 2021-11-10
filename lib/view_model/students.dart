@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Students {
+class Student {
   final String name;
   final String description;
   final String birthdate;
   final String volunteeringHours;
   final String docId;
-  Students(
+  Student(
       {this.name = "",
       this.docId = "",
       this.description = "",
@@ -19,17 +19,17 @@ enum StateOfStudents { initial, loaded, loading }
 enum StateOfSelectedStudents { initial, loaded, loading }
 enum StateOfSpecificStudents { initial, loaded, loading }
 
-class StudentsLogic extends ChangeNotifier {
+class StudentsProvider extends ChangeNotifier {
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('students');
 
-  final List<Students> _studentsList = [];
+  final List<Student> _studentsList = [];
 
-  final List<Students> _selectedStudents = [];
+  final List<Student> _selectedStudents = [];
 
-  final List<Students> _remainingStudents = [];
+  final List<Student> _remainingStudents = [];
 
-  final List<Students> _specificStudents = [];
+  final List<Student> _neededStudents = [];
 
   StateOfStudents stateOfFetching = StateOfStudents.initial;
 
@@ -51,8 +51,8 @@ class StudentsLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  Students mainStudent(QueryDocumentSnapshot<Object?> data) {
-    return Students(
+  Student mainStudent(QueryDocumentSnapshot<Object?> data) {
+    return Student(
         name: data["name"],
         description: data["description"],
         birthdate: data["date"],
@@ -60,13 +60,13 @@ class StudentsLogic extends ChangeNotifier {
         docId: data["docId"]);
   }
 
-  preparingSpecificStudents({required List<dynamic> studentsDocIds}) async {
-    _specificStudents.clear();
+  preparingNeededStudents({required List<dynamic> studentsDocIds}) async {
+    _neededStudents.clear();
     stateOfSpecificFetching = StateOfSpecificStudents.loading;
     for (int i = 0; i < studentsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsDocIds[i]).get();
-      _specificStudents.add(getTheStudent(snap));
+      _neededStudents.add(getTheStudent(snap));
     }
     stateOfSpecificFetching = StateOfSpecificStudents.loaded;
     notifyListeners();
@@ -89,7 +89,7 @@ class StudentsLogic extends ChangeNotifier {
     for (int i = 0; i < studentsIdsSeason.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsIdsSeason[i]).get();
-      Students student = getTheStudent(snap);
+      Student student = getTheStudent(snap);
       studentsDocIdsEvent.contains(studentsIdsSeason[i])
           ? _selectedStudents.add(student)
           : _remainingStudents.add(student);
@@ -97,8 +97,8 @@ class StudentsLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  Students getTheStudent(DocumentSnapshot<Object?> snap) {
-    return Students(
+  Student getTheStudent(DocumentSnapshot<Object?> snap) {
+    return Student(
         name: snap.get("name"),
         birthdate: snap.get("date"),
         description: snap.get("description"),
@@ -124,23 +124,23 @@ class StudentsLogic extends ChangeNotifier {
     return selectedMemberships["students"];
   }
 
-  studentsListCleared() {
+  clearStudentsList() {
     _studentsList.clear();
   }
 
-  selectedStudentsCleared() {
+  clearSelectedStudentsList() {
     _selectedStudents.clear();
   }
 
-  specificStudentsCleared(){
-    _specificStudents.clear();
+  clearNeededStudentsList(){
+    _neededStudents.clear();
   }
 
-  List<Students> get specificStudents => _specificStudents;
+  List<Student> get neededStudents => _neededStudents;
 
-  List<Students> get selectedStudents => _selectedStudents;
+  List<Student> get selectedStudents => _selectedStudents;
 
-  List<Students> get studentsList => _studentsList;
+  List<Student> get studentsList => _studentsList;
 
-  List<Students> get remainingStudents => _remainingStudents;
+  List<Student> get remainingStudents => _remainingStudents;
 }
