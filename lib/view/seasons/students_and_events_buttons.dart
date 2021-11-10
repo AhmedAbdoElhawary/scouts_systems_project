@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:scouts_system/view/seasons/students_items.dart';
 import 'events_items.dart';
 

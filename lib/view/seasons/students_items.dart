@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
@@ -56,7 +55,7 @@ class StudentSeasonsPage extends StatelessWidget {
 
   InkWell listItem(Student model, int index) {
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       child: studentContainerBody(index, model),
     );
   }

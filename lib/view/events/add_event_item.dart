@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';

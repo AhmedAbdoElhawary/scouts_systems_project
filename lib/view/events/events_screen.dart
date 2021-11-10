@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/primary_container.dart';
@@ -104,7 +103,8 @@ class EventsPage extends StatelessWidget {
                 model: model,
                 eventDocId: eventDocId,
                 checkForUpdate: true,
-                seasonsFormat: context.read<SeasonsProvider>().seasonsOfDropButton,
+                seasonsFormat:
+                    context.read<SeasonsProvider>().seasonsOfDropButton,
                 context: context)));
   }
 }

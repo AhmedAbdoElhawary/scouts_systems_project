@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
@@ -10,7 +9,7 @@ import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class StudentsEventPage extends StatelessWidget {
-  String eventDocId,seasonDocId;
+  String eventDocId, seasonDocId;
   StudentsEventPage(
       {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
@@ -74,7 +73,7 @@ class StudentsEventPage extends StatelessWidget {
 
   SafeArea listTitleItem(Student model, int index) {
     return SafeArea(
-      child: InkWell(onTap: (){}, child: listTitleItemBody(index, model)),
+      child: InkWell(onTap: () {}, child: listTitleItemBody(index, model)),
     );
   }
 

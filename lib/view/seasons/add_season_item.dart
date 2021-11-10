@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/toast_show.dart';
@@ -84,10 +81,9 @@ class _AddSeasonScreenState extends State<AddSeasonScreen> {
 
   Container AddButton(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10)),
-      child:
-          ElevatedButton(onPressed: () => addSeasonAndPop(), child: textOfAdd()),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      child: ElevatedButton(
+          onPressed: () => addSeasonAndPop(), child: textOfAdd()),
     );
   }
 
