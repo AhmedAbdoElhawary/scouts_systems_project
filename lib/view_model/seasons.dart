@@ -21,31 +21,31 @@ class Season {
       required this.studentsDocIds});
 }
 
-class SeasonsFormat {
+class SeasonFormat {
   String season;
   String seasonDocId;
-  SeasonsFormat({required this.seasonDocId, required this.season});
+  SeasonFormat({required this.seasonDocId, required this.season});
 }
 
-class Memberships {
+class Membership {
   final String year;
   final String seasonType;
   final String docId;
-  Memberships(
+  Membership(
       {required this.year, required this.seasonType, required this.docId});
 }
 
-class SeasonsLogic extends ChangeNotifier {
+class SeasonsProvider extends ChangeNotifier {
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('seasons');
 
   final List<Season> _seasonsList = [];
 
-  final List<SeasonsFormat> _seasonsOfDropButton = [];
+  final List<SeasonFormat> _seasonsOfDropButton = [];
 
-  final List<Memberships> _selectedMemberships = [];
+  final List<Membership> _selectedMemberships = [];
 
-  final List<Memberships> _remainingMemberships = [];
+  final List<Membership> _remainingMemberships = [];
 
   StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
 
@@ -66,7 +66,7 @@ class SeasonsLogic extends ChangeNotifier {
   }
 
   addInSeasonFormat(QueryDocumentSnapshot data) {
-    _seasonsOfDropButton.add(SeasonsFormat(
+    _seasonsOfDropButton.add(SeasonFormat(
         seasonDocId: data["docId"],
         season: "${data["year"]} , ${data["season"]}"));
   }
@@ -102,12 +102,12 @@ class SeasonsLogic extends ChangeNotifier {
   }
 
   addInSelectedMembershipsList(QueryDocumentSnapshot data) {
-    _selectedMemberships.add(Memberships(
+    _selectedMemberships.add(Membership(
         year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
   addInRemainingMembershipsList(QueryDocumentSnapshot data) {
-    _remainingMemberships.add(Memberships(
+    _remainingMemberships.add(Membership(
         year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
@@ -120,19 +120,19 @@ class SeasonsLogic extends ChangeNotifier {
     return listOfMemberships["memberships"];
   }
 
-  studentMembershipsCleared() {
+  clearStudentMembershipsList() {
     _selectedMemberships.clear();
   }
 
-  remainingMembershipsCleared() {
+  clearRemainingMembershipsList() {
     _remainingMemberships.clear();
   }
 
-  List<SeasonsFormat> get seasonsOfDropButton => _seasonsOfDropButton;
+  List<SeasonFormat> get seasonsOfDropButton => _seasonsOfDropButton;
 
-  List<Memberships> get remainingMemberships => _remainingMemberships;
+  List<Membership> get remainingMemberships => _remainingMemberships;
 
-  List<Memberships> get studentMemberships => _selectedMemberships;
+  List<Membership> get studentMemberships => _selectedMemberships;
 
   List<Season> get seasonsList => _seasonsList;
 }
