@@ -7,28 +7,27 @@ import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
-class SelectStudentsList extends StatefulWidget {
-  String seasonDocId;
-  String eventDocId;
-  SelectStudentsList(
+class SelectStudentsScreen extends StatefulWidget {
+ final String seasonDocId,eventDocId;
+  SelectStudentsScreen(
       {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
 
   @override
-  _SelectStudentsListState createState() => _SelectStudentsListState();
+  _SelectStudentsScreenState createState() => _SelectStudentsScreenState();
 }
 
-class _SelectStudentsListState extends State<SelectStudentsList> {
+class _SelectStudentsScreenState extends State<SelectStudentsScreen> {
   bool isSelectionMode = false;
   Map<int, bool> selectedFlag = {};
 
   @override
   Widget build(BuildContext context) {
-    StudentsLogic provider = context.watch<StudentsLogic>();
+    StudentsProvider provider = context.watch<StudentsProvider>();
     return buildScaffold(provider.remainingStudents);
   }
 
-  Scaffold buildScaffold(List<Students> remainingStudents) {
+  Scaffold buildScaffold(List<Student> remainingStudents) {
     return Scaffold(
       appBar: AppBar(),
       body: remainingStudents.isEmpty
@@ -38,7 +37,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     );
   }
 
-  ListView listView(List<Students> remainingStudents) {
+  ListView listView(List<Student> remainingStudents) {
     return ListView.builder(
       itemBuilder: (builder, index) {
         selectedFlag[index] = selectedFlag[index] ?? false;
@@ -50,16 +49,16 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
   }
 
   ListTile listTile(
-      List<Students> remainingStudents, bool? isSelected, int index) {
+      List<Student> remainingStudents, bool? isSelected, int index) {
     return ListTile(
-      onTap: () => onTap(isSelected!, index),
+      onTap: () => onTapTitle(isSelected!, index),
       leading: _selectIcon(isSelected!, index),
       title: Text(remainingStudents[index].name),
       subtitle: Text(remainingStudents[index].description),
     );
   }
 
-  void onTap(bool isSelected, int index) {
+  void onTapTitle(bool isSelected, int index) {
     setState(() {
       selectedFlag[index] = !isSelected;
       isSelectionMode = selectedFlag.containsValue(true);
@@ -72,7 +71,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     );
   }
 
-  Widget? _floatingActionButton(List<Students> remainingStudents) {
+  Widget? _floatingActionButton(List<Student> remainingStudents) {
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: () => addItems(remainingStudents),
@@ -85,7 +84,7 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
     }
   }
 
-  addItems(List<Students> remainingStudents) {
+  addItems(List<Student> remainingStudents) {
     for (int i = 0; i < selectedFlag.length; i++) {
       if (selectedFlag[i] == true) {
         FirestoreEvents().addStudentsInEvent(
@@ -94,13 +93,15 @@ class _SelectStudentsListState extends State<SelectStudentsList> {
       }
     }
     addEventInSeason();
-    //to update the previous data
-    StudentsLogic provider = context.read<StudentsLogic>();
+    updatePreviousScreenData();
+    Navigator.pop(context);
+  }
+
+  updatePreviousScreenData() {
+    StudentsProvider provider = context.read<StudentsProvider>();
     provider.preparingStudentsInEvent(
         eventDocId: widget.eventDocId, seasonDocId: widget.seasonDocId);
     provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
-    //------------------------->
-    Navigator.pop(context);
   }
 
   addEventInSeason() {

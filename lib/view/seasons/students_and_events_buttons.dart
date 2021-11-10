@@ -5,8 +5,7 @@ import 'package:scouts_system/view/seasons/students_items.dart';
 import 'events_items.dart';
 
 class TwoButtonsPage extends StatelessWidget {
-  final List<dynamic> studentsDocId;
-  final List<dynamic> eventsDocId;
+  final List<dynamic> studentsDocId, eventsDocId;
   const TwoButtonsPage(
       {Key? key, required this.eventsDocId, required this.studentsDocId})
       : super(key: key);

@@ -10,8 +10,7 @@ import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class StudentsEventPage extends StatelessWidget {
-  String eventDocId;
-  String seasonDocId;
+  String eventDocId,seasonDocId;
   StudentsEventPage(
       {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
