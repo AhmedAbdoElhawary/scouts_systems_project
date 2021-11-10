@@ -34,11 +34,11 @@ class TwoButtonsPage extends StatelessWidget {
         width: double.infinity,
         child: TextButton(
           child: buildText(text),
-          onPressed: () => onPressedButton(context, page),
+          onPressed: () => pushToThePage(context, page),
         ));
   }
 
-  onPressedButton(BuildContext context, Widget page) {
+  pushToThePage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
