@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Events {
+class Event {
   String eventDay;
   String location;
   String eventId;
   String eventDocId;
   String leader;
-  Events(
+  Event(
       {this.eventDocId = "",
       this.eventId = "",
       this.eventDay = "",
@@ -17,19 +17,20 @@ class Events {
 
 enum StateOfEvents { initial, loading, loaded }
 
-enum StateOfSpecificEvents { initial, loading, loaded }
+enum StateOfNeededEvents { initial, loading, loaded }
 
-class EventsLogic extends ChangeNotifier {
+class EventsProvider extends ChangeNotifier {
+
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('events');
 
-  final List<Events> _eventsList = [];
+  final List<Event> _eventsList = [];
 
-  final List<Events> _specificEvents = [];
+  final List<Event> _neededEvents = [];
 
   StateOfEvents stateOfFetching = StateOfEvents.initial;
 
-  StateOfSpecificEvents stateOfSpecificEvents = StateOfSpecificEvents.initial;
+  StateOfNeededEvents stateOfNeededEvents = StateOfNeededEvents.initial;
 
   preparingEvents() async {
     _eventsList.clear();
@@ -44,7 +45,7 @@ class EventsLogic extends ChangeNotifier {
   }
 
   addInEventsList(QueryDocumentSnapshot data) {
-    _eventsList.add(Events(
+    _eventsList.add(Event(
         eventDay: data["date"],
         location: data["location"],
         leader: data["leader"],
@@ -52,30 +53,30 @@ class EventsLogic extends ChangeNotifier {
         eventId: data["id"]));
   }
 
-  preparingSpecificEvents(List<dynamic> eventsDocIds) async {
-    _specificEvents.clear();
-    stateOfSpecificEvents = StateOfSpecificEvents.loading;
+  preparingNeededEvents(List<dynamic> eventsDocIds) async {
+    _neededEvents.clear();
+    stateOfNeededEvents = StateOfNeededEvents.loading;
     for (int i = 0; i < eventsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(eventsDocIds[i]).get();
-      _specificEvents.add(addInSpecificEvents(snap));
+      _neededEvents.add(addInNeededEvents(snap));
     }
-    stateOfSpecificEvents = StateOfSpecificEvents.loaded;
+    stateOfNeededEvents = StateOfNeededEvents.loaded;
     notifyListeners();
   }
 
- Events addInSpecificEvents(DocumentSnapshot<Object?> snap) {
-    return Events(
+ Event addInNeededEvents(DocumentSnapshot<Object?> snap) {
+    return Event(
         eventDay: snap.get("date"),
         leader: snap.get("leader"),
         eventDocId: snap.get("docId"),
         eventId: snap.get("id"),
         location: snap.get("location"));
   }
-  specificEventsCleared(){
-    _specificEvents.clear();
+  clearNeededEventsList(){
+    _neededEvents.clear();
   }
-  List<Events> get specificEvents => _specificEvents;
+  List<Event> get neededEvents => _neededEvents;
 
-  List<Events> get eventsList => _eventsList;
+  List<Event> get eventsList => _eventsList;
 }
