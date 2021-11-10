@@ -15,19 +15,21 @@ class MembershipsOfStudent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //fetching data
-    SeasonsLogic provider = context.watch<SeasonsLogic>();
+    return fetchingMemberships(context);
+  }
+
+  fetchingMemberships(BuildContext context) {
+    SeasonsProvider provider = context.watch<SeasonsProvider>();
     if (provider.studentMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
       provider.preparingMemberships(studentDocId);
-      //----------->
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
     }
   }
 
-  Scaffold buildScaffold(BuildContext context, SeasonsLogic provider) {
+  Scaffold buildScaffold(BuildContext context, SeasonsProvider provider) {
     return Scaffold(
       appBar: AppBar(),
       body: provider.studentMemberships.isEmpty
@@ -37,7 +39,7 @@ class MembershipsOfStudent extends StatelessWidget {
     );
   }
 
-  ListView listView(SeasonsLogic provider) {
+  ListView listView(SeasonsProvider provider) {
     return ListView.separated(
       itemCount: provider.studentMemberships.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -51,22 +53,22 @@ class MembershipsOfStudent extends StatelessWidget {
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => onPressedFloating(context),
+      onPressed: () => pushToCheckBoxMembershipsPage(context),
       child: const Icon(Icons.add),
     );
   }
 
-  onPressedFloating(BuildContext context) {
+  pushToCheckBoxMembershipsPage(BuildContext context) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => StudentCheckBoxMemberships(studentDocId)));
   }
 
-  InkWell membershipItem(Memberships membership, int index) {
+  InkWell membershipItem(Membership membership, int index) {
     return InkWell(
       onTap: () async {},
-      child: PrimaryContainer(
+      child: PrimaryListItem(
           index: index,
           rightTopText: membership.year,
           rightBottomText: membership.seasonType),
