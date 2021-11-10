@@ -14,7 +14,11 @@ class StudentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    StudentsLogic provider = context.watch<StudentsLogic>();
+    return fetchingStudents(context);
+  }
+
+  Widget fetchingStudents(BuildContext context) {
+    StudentsProvider provider = context.watch<StudentsProvider>();
     if (provider.studentsList.isEmpty &&
         provider.stateOfFetching != StateOfStudents.loaded) {
       provider.preparingStudents();
@@ -24,7 +28,7 @@ class StudentsPage extends StatelessWidget {
     }
   }
 
-  Scaffold buildScaffold(BuildContext context, StudentsLogic provider) {
+  Scaffold buildScaffold(BuildContext context, StudentsProvider provider) {
     return Scaffold(
       appBar: AppBar(),
       body: provider.studentsList.isEmpty
@@ -34,7 +38,7 @@ class StudentsPage extends StatelessWidget {
     );
   }
 
-  ListView listView(BuildContext context, List<Students> studentsList) {
+  ListView listView(BuildContext context, List<Student> studentsList) {
     return ListView.separated(
       itemCount: studentsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -48,34 +52,33 @@ class StudentsPage extends StatelessWidget {
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-        onPressed: () => onPressedFloating(context),
+        onPressed: () => pushStudentInfoScreen(context),
         child: const Icon(Icons.add));
   }
 
-  onPressedFloating(BuildContext context) {
+  pushStudentInfoScreen(BuildContext context) {
     return Navigator.push(context,
-        MaterialPageRoute(builder: (context) => studentInfoScreenFloating()));
+        MaterialPageRoute(builder: (context) => studentInfoScreen()));
   }
 
-  StudentInformationScreen studentInfoScreenFloating() {
+  StudentInformationScreen studentInfoScreen() {
     return StudentInformationScreen(
-        //default value(i can't make them with the constructor)
+        //default values(i can't make them with the constructor)
         controllerOfName: TextEditingController(text: ""),
         controllerOfDescription: TextEditingController(text: ""),
         birthdate: "Select Date",
         controllerOfHours: TextEditingController(text: ""));
-    // -------------------------------------->
   }
 
-  InkWell studentItem(Students studentInfo, int index, BuildContext context) {
+  InkWell studentItem(Student studentInfo, int index, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(context, studentInfo),
-      child: primaryContainer(index, studentInfo),
+      child: studentListItem(index, studentInfo),
     );
   }
 
-  PrimaryContainer primaryContainer(int index, Students studentInfo) {
-    return PrimaryContainer(
+  PrimaryListItem studentListItem(int index, Student studentInfo) {
+    return PrimaryListItem(
         index: index,
         rightTopText: studentInfo.name,
         rightBottomText: studentInfo.description,
@@ -83,14 +86,14 @@ class StudentsPage extends StatelessWidget {
         leftBottomText: studentInfo.birthdate);
   }
 
-  onTapItem(BuildContext context, Students studentInfo) {
+  onTapItem(BuildContext context, Student studentInfo) {
     return Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => studentInfoScreenItem(studentInfo)));
   }
 
-  StudentInformationScreen studentInfoScreenItem(Students studentInfo) {
+  StudentInformationScreen studentInfoScreenItem(Student studentInfo) {
     return StudentInformationScreen(
         controllerOfName: TextEditingController(text: studentInfo.name),
         controllerOfDescription:
