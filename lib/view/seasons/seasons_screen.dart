@@ -11,29 +11,26 @@ import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 import 'add_season_item.dart';
 
-class SeasonsPage extends StatefulWidget {
+class SeasonsPage extends StatelessWidget {
   const SeasonsPage({Key? key}) : super(key: key);
 
   @override
-  State<SeasonsPage> createState() => _SeasonsPageState();
-}
-
-class _SeasonsPageState extends State<SeasonsPage> {
-  @override
   Widget build(BuildContext context) {
-    //fetching data
-    SeasonsLogic provider = context.watch<SeasonsLogic>();
+    return fetchingSeasons(context);
+  }
+
+  fetchingSeasons(BuildContext context) {
+    SeasonsProvider provider = context.watch<SeasonsProvider>();
     if (provider.seasonsList.isEmpty &&
         provider.stateOfFetchingSeasons != StateOfSeasons.loaded) {
       provider.preparingSeasons();
-      //------------>
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
     }
   }
 
-  Scaffold buildScaffold(BuildContext context, SeasonsLogic provider) {
+  Scaffold buildScaffold(BuildContext context, SeasonsProvider provider) {
     return Scaffold(
       appBar: AppBar(),
       body: provider.seasonsList.isEmpty
@@ -45,17 +42,17 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async => onPressedFloating(),
+      onPressed: () async => pushToAddSeasonPage(context),
       child: const Icon(Icons.add),
     );
   }
 
-  onPressedFloating() {
+  pushToAddSeasonPage(BuildContext context) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const AddSeasonItem()));
+        MaterialPageRoute(builder: (context) => const AddSeasonScreen()));
   }
 
-  ListView listView(SeasonsLogic provider) {
+  ListView listView(SeasonsProvider provider) {
     return ListView.separated(
       itemCount: provider.seasonsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -65,7 +62,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
     );
   }
 
-  ListTile listTile(SeasonsLogic provider, int index, BuildContext context) {
+  ListTile listTile(SeasonsProvider provider, int index, BuildContext context) {
     return ListTile(
         title: listTitleItem(provider.seasonsList[index], index,
             provider.seasonsList[index].seasonDocId, context));
@@ -74,28 +71,34 @@ class _SeasonsPageState extends State<SeasonsPage> {
   InkWell listTitleItem(
       Season model, int index, String seasonDocId, BuildContext context) {
     return InkWell(
-      onTap: () => onTapItem(model, seasonDocId),
-      child: PrimaryContainer(
-          index: index,
-          rightTopText: model.year,
-          rightBottomText: model.seasonType),
+      onTap: () => onTapItem(model, seasonDocId, context),
+      child: seasonItemBody(index, model),
     );
   }
 
-  onTapItem(Season model, String seasonDocId) {
-    //to clear the previous data in the next pages
-    context.read<EventsLogic>()..specificEventsCleared();
-    context.read<StudentsLogic>().specificStudentsCleared();
-    context.read<StudentsLogic>().stateOfSpecificFetching =
-        StateOfSpecificStudents.initial;
-    context.read<EventsLogic>().stateOfSpecificEvents =
-        StateOfSpecificEvents.initial;
-    //------------------------------------------->
-
-    moveToTwoButtonsPage(context, model, seasonDocId);
+  PrimaryListItem seasonItemBody(int index, Season model) {
+    return PrimaryListItem(
+        index: index,
+        rightTopText: model.year,
+        rightBottomText: model.seasonType);
   }
 
-  moveToTwoButtonsPage(BuildContext context, Season model, String seasonDocId) {
+  onTapItem(Season model, String seasonDocId, BuildContext context) {
+    getReadyForNextPages(context);
+    pushToTwoButtonsPage(context, model, seasonDocId);
+  }
+
+  getReadyForNextPages(BuildContext context) {
+    EventsProvider eventsProvider = context.read<EventsProvider>();
+    StudentsProvider studentsProvider = context.read<StudentsProvider>();
+
+    eventsProvider.clearNeededEventsList();
+    studentsProvider.clearNeededStudentsList();
+    studentsProvider.stateOfSpecificFetching = StateOfSpecificStudents.initial;
+    eventsProvider.stateOfNeededEvents = StateOfNeededEvents.initial;
+  }
+
+  pushToTwoButtonsPage(BuildContext context, Season model, String seasonDocId) {
     return Navigator.push(
         context,
         MaterialPageRoute(
