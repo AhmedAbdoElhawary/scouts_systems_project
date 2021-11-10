@@ -15,30 +15,32 @@ class StudentSeasonsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //fetching data
-    StudentsLogic provider = context.watch<StudentsLogic>();
+    return fetchingNeededStudents(context);
+  }
+
+  fetchingNeededStudents(BuildContext context) {
+    StudentsProvider provider = context.watch<StudentsProvider>();
     if (studentsDocIds.isNotEmpty &&
-        provider.specificStudents.isEmpty &&
+        provider.neededStudents.isEmpty &&
         provider.stateOfSpecificFetching != StateOfSpecificStudents.loaded) {
-      provider.preparingSpecificStudents(studentsDocIds: studentsDocIds);
-      //------------>
+      provider.preparingNeededStudents(studentsDocIds: studentsDocIds);
       return const CircularProgress();
     } else {
       return buildScaffold(provider);
     }
   }
 
-  Scaffold buildScaffold(StudentsLogic provider) {
+  Scaffold buildScaffold(StudentsProvider provider) {
     return Scaffold(
         appBar: AppBar(),
-        body: provider.specificStudents.isEmpty
+        body: provider.neededStudents.isEmpty
             ? emptyMessage("student")
             : listView(provider));
   }
 
-  ListView listView(StudentsLogic provider) {
+  ListView listView(StudentsProvider provider) {
     return ListView.separated(
-      itemCount: provider.specificStudents.length,
+      itemCount: provider.neededStudents.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return listTile(provider, index);
@@ -46,27 +48,25 @@ class StudentSeasonsPage extends StatelessWidget {
     );
   }
 
-  ListTile listTile(StudentsLogic provider, int index) {
+  ListTile listTile(StudentsProvider provider, int index) {
     return ListTile(
-      title: listTitleItem(provider.specificStudents[index], index),
+      title: listItem(provider.neededStudents[index], index),
     );
   }
 
-  SafeArea listTitleItem(Students model, int index) {
-    return SafeArea(
-      child: InkWell(
-        onTap: () async {},
-        child: primaryContainer(index, model),
-      ),
+  InkWell listItem(Student model, int index) {
+    return InkWell(
+      onTap: (){},
+      child: studentContainerBody(index, model),
     );
   }
 
-  PrimaryContainer primaryContainer(int index, Students model) {
-    return PrimaryContainer(
-          index: index,
-          rightTopText: model.name,
-          rightBottomText: model.description,
-          leftTopText: model.volunteeringHours,
-          leftBottomText: model.birthdate);
+  PrimaryListItem studentContainerBody(int index, Student model) {
+    return PrimaryListItem(
+        index: index,
+        rightTopText: model.name,
+        rightBottomText: model.description,
+        leftTopText: model.volunteeringHours,
+        leftBottomText: model.birthdate);
   }
 }
