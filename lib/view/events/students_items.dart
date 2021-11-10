@@ -18,20 +18,22 @@ class StudentsEventPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //fetching data
-    StudentsLogic provider = context.watch<StudentsLogic>();
+    return fetchingSelectedStudents(context);
+  }
+
+  fetchingSelectedStudents(BuildContext context) {
+    StudentsProvider provider = context.watch<StudentsProvider>();
     if (provider.selectedStudents.isEmpty &&
         provider.stateOfSelectedFetching != StateOfSelectedStudents.loaded) {
       provider.preparingStudentsInEvent(
           eventDocId: eventDocId, seasonDocId: seasonDocId);
-      //------------>
       return const CircularProgress();
     } else {
       return buildScaffold(provider, context);
     }
   }
 
-  Scaffold buildScaffold(StudentsLogic provider, BuildContext context) {
+  Scaffold buildScaffold(StudentsProvider provider, BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: provider.selectedStudents.isEmpty
@@ -42,24 +44,24 @@ class StudentsEventPage extends StatelessWidget {
   }
 
   FloatingActionButton floatingActionButton(
-      StudentsLogic provider, BuildContext context) {
+      StudentsProvider provider, BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => onPressedFloating(context),
+      onPressed: () => pushToSelectStudentsPage(context),
       child: const Icon(Icons.add),
     );
   }
 
-  onPressedFloating(BuildContext context) {
+  pushToSelectStudentsPage(BuildContext context) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SelectStudentsList(
+            builder: (context) => SelectStudentsScreen(
                   seasonDocId: seasonDocId,
                   eventDocId: eventDocId,
                 )));
   }
 
-  ListView listView(StudentsLogic provider) {
+  ListView listView(StudentsProvider provider) {
     return ListView.separated(
       itemCount: provider.selectedStudents.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -71,14 +73,14 @@ class StudentsEventPage extends StatelessWidget {
     );
   }
 
-  SafeArea listTitleItem(Students model, int index) {
+  SafeArea listTitleItem(Student model, int index) {
     return SafeArea(
-      child: InkWell(onTap: () async {}, child: primaryContainer(index, model)),
+      child: InkWell(onTap: (){}, child: listTitleItemBody(index, model)),
     );
   }
 
-  PrimaryContainer primaryContainer(int index, Students model) {
-    return PrimaryContainer(
+  PrimaryListItem listTitleItemBody(int index, Student model) {
+    return PrimaryListItem(
         index: index,
         rightTopText: model.name,
         rightBottomText: model.description,
