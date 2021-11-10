@@ -15,20 +15,22 @@ class EventsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //fetching data
-    EventsLogic provider = context.watch<EventsLogic>();
+    return fetchingEvents(context);
+  }
+
+  fetchingEvents(BuildContext context) {
+    EventsProvider provider = context.watch<EventsProvider>();
     if (provider.eventsList.isEmpty &&
         provider.stateOfFetching != StateOfEvents.loaded) {
       provider.preparingEvents();
-      context.read<SeasonsLogic>().preparingSeasons();
-      //---------->
+      context.read<SeasonsProvider>().preparingSeasons();
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
     }
   }
 
-  Scaffold buildScaffold(BuildContext context, EventsLogic provider) {
+  Scaffold buildScaffold(BuildContext context, EventsProvider provider) {
     return Scaffold(
       appBar: AppBar(),
       body: provider.eventsList.isEmpty
@@ -40,22 +42,22 @@ class EventsPage extends StatelessWidget {
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => onPressedFloating(context),
+      onPressed: () => pushToEventInfoPage(context),
       child: const Icon(Icons.add),
     );
   }
 
-  onPressedFloating(BuildContext context) {
+  pushToEventInfoPage(BuildContext context) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => eventInfoPage(
                 context: context,
-                model: Events(leader: "leader 1"),
+                model: Event(leader: "leader 1"),
                 seasonsFormat: [])));
   }
 
-  ListView listView(EventsLogic provider) {
+  ListView listView(EventsProvider provider) {
     return ListView.separated(
       itemCount: provider.eventsList.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -65,22 +67,22 @@ class EventsPage extends StatelessWidget {
     );
   }
 
-  ListTile listTile(EventsLogic provider, int index, BuildContext context) {
+  ListTile listTile(EventsProvider provider, int index, BuildContext context) {
     return ListTile(
-        title: itemOfListTitle(provider.eventsList[index], index,
+        title: listTitleItem(provider.eventsList[index], index,
             provider.eventsList[index].eventDocId, context));
   }
 
-  InkWell itemOfListTitle(
-      Events model, int index, String eventDocId, BuildContext context) {
+  InkWell listTitleItem(
+      Event model, int index, String eventDocId, BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(model, eventDocId, context),
-      child: primaryContainer(index, model),
+      child: eventItemBody(index, model),
     );
   }
 
-  PrimaryContainer primaryContainer(int index, Events model) {
-    return PrimaryContainer(
+  PrimaryListItem eventItemBody(int index, Event model) {
+    return PrimaryListItem(
         index: index,
         rightTopText: model.eventId,
         rightBottomText: model.leader,
@@ -88,13 +90,13 @@ class EventsPage extends StatelessWidget {
         leftBottomText: model.eventDay);
   }
 
-  onTapItem(Events model, String eventDocId, BuildContext context) {
-    context.read<StudentsLogic>().stateOfSelectedFetching =
+  onTapItem(Event model, String eventDocId, BuildContext context) {
+    context.read<StudentsProvider>().stateOfSelectedFetching =
         StateOfSelectedStudents.initial;
     moveToEventInfoPage(context, model, eventDocId);
   }
 
-  moveToEventInfoPage(BuildContext context, Events model, String eventDocId) {
+  moveToEventInfoPage(BuildContext context, Event model, String eventDocId) {
     return Navigator.push(
         context,
         MaterialPageRoute(
@@ -102,16 +104,16 @@ class EventsPage extends StatelessWidget {
                 model: model,
                 eventDocId: eventDocId,
                 checkForUpdate: true,
-                seasonsFormat: context.read<SeasonsLogic>().seasonsOfDropButton,
+                seasonsFormat: context.read<SeasonsProvider>().seasonsOfDropButton,
                 context: context)));
   }
 }
 
 EventInfoPage eventInfoPage(
-    {required Events model,
+    {required Event model,
     String eventDocId = "",
     bool checkForUpdate = false,
-    required List<SeasonsFormat> seasonsFormat,
+    required List<SeasonFormat> seasonsFormat,
     required BuildContext context}) {
   return EventInfoPage(
     controlEventID: TextEditingController(text: model.eventId),
