@@ -12,11 +12,10 @@ import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class StudentInformationScreen extends StatefulWidget {
-  TextEditingController controllerOfName;
-  TextEditingController controllerOfDescription;
-  String birthdate;
-  TextEditingController controllerOfHours;
-  String studentDocId;
+  TextEditingController controllerOfName,
+      controllerOfDescription,
+      controllerOfHours;
+  String birthdate, studentDocId;
   bool checkForUpdate;
   StudentInformationScreen(
       {Key? key,
@@ -86,7 +85,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   Expanded buttonOfSave(BuildContext context) {
     return Expanded(
-      child: TextButton(child: textOfSave(), onPressed: () => onPressedSave()),
+      child: TextButton(
+          child: textOfSave(), onPressed: () => checkValidationFields()),
     );
   }
 
@@ -96,20 +96,21 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
-  onPressedSave() {
-    //Check for => are text fields empty or not ?
-    //He can't add or update if them empty.
+  checkValidationFields() {
     if (validateTextField(widget.controllerOfName.text) &&
             validateTextField(widget.controllerOfDescription.text) &&
             widget.checkForUpdate
         ? validateTextField(widget.controllerOfHours.text)
         : true) {
-      StudentsLogic provider = context.read<StudentsLogic>();
-      //To rebuild the students page(previous screen) by notifyListeners in the provider
-      provider.preparingStudents();
+      updatePreviousScreenData();
       widget.checkForUpdate ? updateStudent() : addStudent();
       Navigator.pop(context);
     }
+  }
+
+  updatePreviousScreenData() {
+    StudentsProvider provider = context.read<StudentsProvider>();
+    provider.preparingStudents();
   }
 
   bool validateTextField(String userInput) {
@@ -167,7 +168,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         textFormField(widget.controllerOfName, "Name"),
         const Divider(),
         textFormField(widget.controllerOfDescription, "Description"),
-        containerOfPickDate(),
+        columnOfPickDate(),
         const Divider(),
         widget.checkForUpdate
             ? textFormField(widget.controllerOfHours, "Volunteering Hours")
@@ -177,7 +178,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     );
   }
 
-  Column containerOfPickDate() {
+  Column columnOfPickDate() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -190,11 +191,11 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   InkWell containerOfDate() {
     return InkWell(
       onTap: () => pickDate(context),
-      child: container(),
+      child: containerBody(),
     );
   }
 
-  Container container() {
+  Container containerBody() {
     return Container(
         width: double.infinity,
         height: 60,
@@ -255,7 +256,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   ElevatedButton membershipsButton() {
     return ElevatedButton(
-        onPressed: () => onPressedMemberships(), child: membershipsText());
+        onPressed: () => pushToMembershipsPage(), child: membershipsText());
   }
 
   Text membershipsText() {
@@ -265,19 +266,21 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     );
   }
 
-  onPressedMemberships() {
+  pushToMembershipsPage() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      //get memberships ready
-      SeasonsLogic provider = context.read<SeasonsLogic>();
-      provider.stateOfFetchingMemberships = StateOfMemberships.initial;
-      provider.remainingMembershipsCleared();
-      provider.studentMembershipsCleared();
-      //------------------->
+      getReadyForMemberships();
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => MembershipsOfStudent(widget.studentDocId)));
     });
+  }
+
+  getReadyForMemberships() {
+    SeasonsProvider provider = context.read<SeasonsProvider>();
+    provider.stateOfFetchingMemberships = StateOfMemberships.initial;
+    provider.clearRemainingMembershipsList();
+    provider.clearStudentMembershipsList();
   }
 
   Column emptyMessage() {
@@ -289,8 +292,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     );
   }
 
-  TextFormField textFormField(
-      TextEditingController controller, String text) {
+  TextFormField textFormField(TextEditingController controller, String text) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(

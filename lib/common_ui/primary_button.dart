@@ -5,9 +5,9 @@ import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class PrimaryButton extends StatelessWidget {
-  String text;
-  Widget page;
-  bool pop;
+  final String text;
+  final Widget page;
+  final bool pop;
   PrimaryButton(
       {Key? key, required this.text, required this.page, this.pop = false})
       : super(key: key);
@@ -25,8 +25,8 @@ class PrimaryButton extends StatelessWidget {
 
   onPressedButton(BuildContext context) {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      StudentsLogic provider = context.read<StudentsLogic>();
-      provider.studentsListCleared();
+      StudentsProvider provider = context.read<StudentsProvider>();
+      provider.clearStudentsList();
       provider.stateOfFetching = StateOfStudents.initial;
       moveToPage(context);
     });

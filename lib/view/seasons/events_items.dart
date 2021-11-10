@@ -14,30 +14,32 @@ class EventsSeasonList extends StatelessWidget {
   EventsSeasonList({Key? key, required this.eventsDocIds}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    //fetching data
-    EventsLogic provider = context.watch<EventsLogic>();
+    return fetchingNeededEvents(context);
+  }
+
+  fetchingNeededEvents(BuildContext context) {
+    EventsProvider provider = context.watch<EventsProvider>();
     if (eventsDocIds.isNotEmpty &&
-        provider.specificEvents.isEmpty &&
-        provider.stateOfSpecificEvents != StateOfSpecificEvents.loaded) {
-      provider.preparingSpecificEvents(eventsDocIds);
-      //------------>
+        provider.neededEvents.isEmpty &&
+        provider.stateOfNeededEvents != StateOfNeededEvents.loaded) {
+      provider.preparingNeededEvents(eventsDocIds);
       return const CircularProgress();
     } else {
       return buildScaffold(provider);
     }
   }
 
-  Scaffold buildScaffold(EventsLogic provider) {
+  Scaffold buildScaffold(EventsProvider provider) {
     return Scaffold(
         appBar: AppBar(),
-        body: provider.specificEvents.isEmpty
+        body: provider.neededEvents.isEmpty
             ? emptyMessage("event")
             : listView(provider));
   }
 
-  ListView listView(EventsLogic provider) {
+  ListView listView(EventsProvider provider) {
     return ListView.separated(
-      itemCount: provider.specificEvents.length,
+      itemCount: provider.neededEvents.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return listTile(provider, index);
@@ -45,14 +47,14 @@ class EventsSeasonList extends StatelessWidget {
     );
   }
 
-  ListTile listTile(EventsLogic provider, int index) {
+  ListTile listTile(EventsProvider provider, int index) {
     return ListTile(
-      title: listTitleItem(provider.specificEvents[index], index),
+      title: listTitleItemBody(provider.neededEvents[index], index),
     );
   }
 
-  PrimaryContainer listTitleItem(Events model, int index) {
-    return PrimaryContainer(
+  PrimaryListItem listTitleItemBody(Event model, int index) {
+    return PrimaryListItem(
         index: index,
         rightTopText: model.eventId,
         rightBottomText: model.leader,

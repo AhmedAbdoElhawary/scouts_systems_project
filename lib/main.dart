@@ -10,9 +10,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => StudentsLogic()),
-    ChangeNotifierProvider(create: (_) => SeasonsLogic()),
-    ChangeNotifierProvider(create: (_) => EventsLogic()),
+    ChangeNotifierProvider(create: (_) => StudentsProvider()),
+    ChangeNotifierProvider(create: (_) => SeasonsProvider()),
+    ChangeNotifierProvider(create: (_) => EventsProvider()),
   ], child: const MyApp()));
 }
 

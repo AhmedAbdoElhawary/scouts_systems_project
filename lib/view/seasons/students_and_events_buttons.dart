@@ -5,8 +5,7 @@ import 'package:scouts_system/view/seasons/students_items.dart';
 import 'events_items.dart';
 
 class TwoButtonsPage extends StatelessWidget {
-  final List<dynamic> studentsDocId;
-  final List<dynamic> eventsDocId;
+  final List<dynamic> studentsDocId, eventsDocId;
   const TwoButtonsPage(
       {Key? key, required this.eventsDocId, required this.studentsDocId})
       : super(key: key);
@@ -34,11 +33,11 @@ class TwoButtonsPage extends StatelessWidget {
         width: double.infinity,
         child: TextButton(
           child: buildText(text),
-          onPressed: () => onPressedButton(context, page),
+          onPressed: () => pushToThePage(context, page),
         ));
   }
 
-  onPressedButton(BuildContext context, Widget page) {
+  pushToThePage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 

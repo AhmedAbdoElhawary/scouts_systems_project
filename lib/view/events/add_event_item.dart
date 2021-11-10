@@ -11,13 +11,10 @@ import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class EventInfoPage extends StatefulWidget {
-  TextEditingController controlEventID;
-  TextEditingController controlLocation;
-  TextEditingController controlEventDay;
-  String dropdownValueLeader;
+  TextEditingController controlEventID, controlLocation, controlEventDay;
+  String dropdownValueLeader, eventDocId;
   bool checkForUpdate;
-  String eventDocId;
-  List<SeasonsFormat> seasonsFormat;
+  List<SeasonFormat> seasonsFormat;
   EventInfoPage(
       {Key? key,
       required this.controlEventID,
@@ -85,7 +82,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   Expanded buttonOfSave(BuildContext context) {
     return Expanded(
-      child: TextButton(child: textOfSave(), onPressed: () => onPressedSave()),
+      child: TextButton(
+          child: textOfSave(), onPressed: () => checkValidationFieldsAndPop()),
     );
   }
 
@@ -95,19 +93,21 @@ class _EventInfoPageState extends State<EventInfoPage> {
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
-  onPressedSave() async {
+  checkValidationFieldsAndPop() async {
     if (validateTextField(widget.controlEventID.text) &&
         validateTextField(widget.controlLocation.text) &&
         validateTextField(widget.controlEventDay.text)) {
       widget.checkForUpdate ? updateEvent() : addEvent();
-      //to update data in the previous page
-      EventsLogic provider = context.read<EventsLogic>();
-      provider.stateOfFetching = StateOfEvents.initial;
-      provider.preparingEvents();
-      context.read<SeasonsLogic>().preparingSeasons();
-      //--------------------------------->
+      updatePreviousScreenData();
       Navigator.pop(context);
     }
+  }
+
+  updatePreviousScreenData() {
+    EventsProvider provider = context.read<EventsProvider>();
+    provider.stateOfFetching = StateOfEvents.initial;
+    provider.preparingEvents();
+    context.read<SeasonsProvider>().preparingSeasons();
   }
 
   addEvent() {
@@ -168,9 +168,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
       textFormField(userDateValidate, widget.controlEventDay, "Event Day"),
       const Divider(),
       dropdownButton(widget.dropdownValueLeader),
-      widget.checkForUpdate
-          ? dropdownButton(dropDownSeason)
-          : const Divider(),
+      widget.checkForUpdate ? dropdownButton(dropDownSeason) : const Divider(),
       widget.checkForUpdate && seasonDocId != ""
           ? studentsButton()
           : emptyMessage(),
@@ -179,17 +177,20 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   ElevatedButton studentsButton() {
     return ElevatedButton(
-        onPressed: () => onPressedButton(),
-        child: textOfStudents("Students"));
+        onPressed: () => onPressedButton(), child: textOfStudents("Students"));
   }
 
   onPressedButton() {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      StudentsLogic provider = context.read<StudentsLogic>();
-      provider.selectedStudentsCleared();
-      provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
-      moveToStudentsEventPage();
+      getReadySelectedStudents();
+      pushToStudentsEventPage();
     });
+  }
+
+  getReadySelectedStudents() {
+    StudentsProvider provider = context.read<StudentsProvider>();
+    provider.clearSelectedStudentsList();
+    provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
   }
 
   Text textOfStudents(String text) {
@@ -199,7 +200,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     );
   }
 
-  Future<dynamic> moveToStudentsEventPage() {
+  Future<dynamic> pushToStudentsEventPage() {
     return Navigator.push(
         context,
         MaterialPageRoute(
@@ -255,9 +256,8 @@ Iterable<DropdownMenuItem<String>>? listMapOfLeaders(List<String>? list) {
   });
 }
 
-Iterable<DropdownMenuItem<String>>? listMapOfSeasons(
-    List<SeasonsFormat>? list) {
-  return list?.map<DropdownMenuItem<String>>((SeasonsFormat value) {
+Iterable<DropdownMenuItem<String>>? listMapOfSeasons(List<SeasonFormat>? list) {
+  return list?.map<DropdownMenuItem<String>>((SeasonFormat value) {
     return DropdownMenuItem<String>(
         value: value.seasonDocId, child: Text(value.season));
   });

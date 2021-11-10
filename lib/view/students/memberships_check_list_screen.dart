@@ -22,21 +22,20 @@ class _StudentCheckBoxMembershipsState
 
   @override
   Widget build(BuildContext context) {
-    SeasonsLogic provider = context.watch<SeasonsLogic>();
+    SeasonsProvider provider = context.watch<SeasonsProvider>();
     return buildScaffold(provider.remainingMemberships);
   }
 
-  Scaffold buildScaffold(List<Memberships> seasonsList) {
+  Scaffold buildScaffold(List<Membership> seasonsList) {
     return Scaffold(
       appBar: AppBar(),
-      body: seasonsList.isEmpty
-          ? emptyMessage("season")
-          : listView(seasonsList),
+      body:
+          seasonsList.isEmpty ? emptyMessage("season") : listView(seasonsList),
       floatingActionButton: _floatingActionButton(seasonsList),
     );
   }
 
-  ListView listView(List<Memberships> seasonsList) {
+  ListView listView(List<Membership> seasonsList) {
     return ListView.builder(
       itemBuilder: (builder, index) {
         selectedFlag[index] = selectedFlag[index] ?? false;
@@ -51,8 +50,7 @@ class _StudentCheckBoxMembershipsState
     );
   }
 
-  ListTile listTile(
-      bool? isSelected, int index, List<Memberships> seasonsList) {
+  ListTile listTile(bool? isSelected, int index, List<Membership> seasonsList) {
     return ListTile(
       onTap: () => onTapTitle(isSelected!, index),
       leading: _selectIcon(isSelected!),
@@ -74,7 +72,7 @@ class _StudentCheckBoxMembershipsState
     );
   }
 
-  Widget? _floatingActionButton(List<Memberships> seasonsList) {
+  Widget? _floatingActionButton(List<Membership> seasonsList) {
     if (isSelectionMode) {
       return FloatingActionButton(
         onPressed: () => addItems(seasonsList),
@@ -87,18 +85,14 @@ class _StudentCheckBoxMembershipsState
     }
   }
 
-  Future<void> addItems(List<Memberships> seasonsList) async {
+  Future<void> addItems(List<Membership> seasonsList) async {
     for (int i = 0; i < selectedFlag.length; i++) {
       if (selectedFlag[i] == true) {
         addMembership(seasonsList[i].docId);
         addStudentInSeason(seasonsList[i].docId);
       }
     }
-    //to rebuild the previous screen
-    context.read<SeasonsLogic>().preparingMemberships(widget.studentDocId);
-    context.read<SeasonsLogic>().stateOfFetchingMemberships ==
-        StateOfMemberships.initial;
-    //----------------------------->
+    updatePreviousScreenData();
     Navigator.pop(context);
   }
 
@@ -110,5 +104,11 @@ class _StudentCheckBoxMembershipsState
   addStudentInSeason(String seasonDocId) {
     FirestoreSeasons().addStudentInSeason(
         studentDocId: widget.studentDocId, seasonDocId: seasonDocId);
+  }
+
+  updatePreviousScreenData() {
+    SeasonsProvider seasonsProvider = context.read<SeasonsProvider>();
+    seasonsProvider.preparingMemberships(widget.studentDocId);
+    seasonsProvider.stateOfFetchingMemberships == StateOfMemberships.initial;
   }
 }
