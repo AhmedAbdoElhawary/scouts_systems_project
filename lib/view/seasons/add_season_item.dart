@@ -15,9 +15,9 @@ class AddSeasonScreen extends StatefulWidget {
 class _AddSeasonScreenState extends State<AddSeasonScreen> {
   final TextEditingController _controller = TextEditingController(text: "");
 //if you want to add another season ,just add it here
-  List<String> seasonsList = ["winter", "summer"];
+  List<String> seasonsList = ["Winter", "Summer"];
 
-  String seasonSelected = "winter";
+  String seasonSelected = "Winter";
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class _AddSeasonScreenState extends State<AddSeasonScreen> {
         controller: _controller,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
-          labelText: "year",
+          labelText: "Year",
         ),
       ),
     );
@@ -106,7 +106,7 @@ class _AddSeasonScreenState extends State<AddSeasonScreen> {
 
   Text textOfAdd() {
     return const Text(
-      "   add   ",
+      "  Add  ",
       style: TextStyle(fontSize: 20, color: Colors.white),
     );
   }
