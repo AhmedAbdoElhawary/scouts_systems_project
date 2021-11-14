@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 // ignore: implementation_imports
@@ -7,11 +8,12 @@ import 'package:scouts_system/view/events/students_items.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class EventInfoPage extends StatefulWidget {
-  TextEditingController controlEventID, controlLocation, controlEventDay;
-  String dropdownValueLeader, eventDocId;
+  TextEditingController controlEventID, controlLocation;
+  String dropdownValueLeader, eventDocId, EventDay;
   bool checkForUpdate;
   List<SeasonFormat> seasonsFormat;
   EventInfoPage(
@@ -20,7 +22,7 @@ class EventInfoPage extends StatefulWidget {
       required this.seasonsFormat,
       required this.controlLocation,
       required this.dropdownValueLeader,
-      required this.controlEventDay,
+      required this.EventDay,
       required this.checkForUpdate,
       required this.eventDocId})
       : super(key: key);
@@ -35,6 +37,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
   bool eventIdValidate = false;
   bool locationValidate = false;
   bool userDateValidate = false;
+  DateTime? date;
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +97,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   checkValidationFieldsAndPop() async {
     if (validateTextField(widget.controlEventID.text) &&
-        validateTextField(widget.controlLocation.text) &&
-        validateTextField(widget.controlEventDay.text)) {
+        validateTextField(widget.controlLocation.text)) {
       widget.checkForUpdate ? updateEvent() : addEvent();
       updatePreviousScreenData();
       Navigator.pop(context);
@@ -113,7 +115,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     FirestoreEvents().addEvent(
       eventId: widget.controlEventID.text,
       location: widget.controlLocation.text,
-      date: widget.controlEventDay.text,
+      date: getEventDay(),
       leader: widget.dropdownValueLeader,
     );
   }
@@ -122,7 +124,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     FirestoreEvents().updateEvent(
       eventId: widget.controlEventID.text,
       location: widget.controlLocation.text,
-      date: widget.controlEventDay.text,
+      date: getEventDay(),
       leader: widget.dropdownValueLeader,
       eventDocId: widget.eventDocId,
     );
@@ -163,8 +165,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
       textFormField(eventIdValidate, widget.controlEventID, "ID"),
       const Divider(),
       textFormField(locationValidate, widget.controlLocation, "Location"),
-      const Divider(),
-      textFormField(userDateValidate, widget.controlEventDay, "Event Day"),
+      const SizedBox(height: 5),
+      columnOfPickDate(),
       const Divider(),
       dropdownButton(widget.dropdownValueLeader),
       widget.checkForUpdate ? dropdownButton(dropDownSeason) : const Divider(),
@@ -172,6 +174,65 @@ class _EventInfoPageState extends State<EventInfoPage> {
           ? studentsButton()
           : emptyMessage(),
     ];
+  }
+
+  Column columnOfPickDate() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        textOfEventDay(),
+        containerOfDate(),
+      ],
+    );
+  }
+
+  Padding textOfEventDay() {
+    return const Padding(
+      padding: EdgeInsets.only(left: 10),
+      child: Text("Event Day"),
+    );
+  }
+
+  InkWell containerOfDate() {
+    return InkWell(
+      onTap: () => pickDate(context),
+      child: containerBody(),
+    );
+  }
+
+  Container containerBody() {
+    return Container(
+        width: double.infinity,
+        height: 60,
+        decoration: boxDecoration(),
+        child: rowOfDate());
+  }
+
+  Row rowOfDate() {
+    return Row(
+      children: [getTextOfDate()],
+    );
+  }
+
+  Expanded getTextOfDate() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(getEventDay(),
+            style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500),
+            textAlign: TextAlign.start),
+      ),
+    );
+  }
+
+  BoxDecoration boxDecoration() {
+    return BoxDecoration(
+        border: Border.all(
+          color: Colors.grey,
+          width: 1.2,
+        ),
+      borderRadius: BorderRadius.circular(6)
+    );
   }
 
   ElevatedButton studentsButton() {
@@ -190,6 +251,26 @@ class _EventInfoPageState extends State<EventInfoPage> {
     StudentsProvider provider = context.read<StudentsProvider>();
     provider.clearSelectedStudentsList();
     provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
+  }
+
+  String getEventDay() {
+    if (date == null) {
+      return widget.EventDay;
+    } else {
+      return DateFormat('MM/dd/yyyy').format(date!);
+    }
+  }
+
+  Future pickDate(BuildContext context) async {
+    final initialDate = DateTime(DateTime.now().year);
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: date ?? initialDate,
+      firstDate: DateTime(DateTime.now().year),
+      lastDate: DateTime(DateTime.now().year + 50),
+    );
+    if (newDate == null) return;
+    setState(() => date = newDate);
   }
 
   Text textOfStudents(String text) {
