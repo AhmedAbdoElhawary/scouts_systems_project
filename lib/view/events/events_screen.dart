@@ -118,7 +118,7 @@ EventInfoPage eventInfoPage(
   return EventInfoPage(
     controlEventID: TextEditingController(text: model.eventId),
     controlLocation: TextEditingController(text: model.location),
-    controlEventDay: TextEditingController(text: model.eventDay),
+    EventDay: model.eventDay,
     dropdownValueLeader: model.leader,
     checkForUpdate: checkForUpdate,
     eventDocId: eventDocId,

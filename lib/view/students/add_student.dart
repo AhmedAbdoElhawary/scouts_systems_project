@@ -202,7 +202,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   Row rowOfDate() {
     return Row(
-      children: [getTextOfDate(), const Icon(Icons.eleven_mp)],
+      children: [getTextOfDate()],
     );
   }
 
@@ -211,7 +211,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(getBirthdate(),
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500),
             textAlign: TextAlign.start),
       ),
     );
@@ -219,15 +219,18 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   BoxDecoration boxDecoration() {
     return BoxDecoration(
-      borderRadius: BorderRadius.circular(6),
-      color: const Color.fromRGBO(104, 104, 104, 0.10588235294117647),
+        border: Border.all(
+          color: Colors.grey,
+          width: 1.2,
+        ),
+        borderRadius: BorderRadius.circular(6)
     );
   }
 
   Padding textOfBirthdate() {
     return const Padding(
       padding: EdgeInsets.only(left: 10),
-      child: Text("birthdate"),
+      child: Text("Birthdate"),
     );
   }
 
