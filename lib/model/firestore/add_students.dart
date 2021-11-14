@@ -24,8 +24,8 @@ class FirestoreStudents {
           "memberships": [],
         })
         .then((value) => ToastShow().whiteToast("user added !"))
-        .catchError((error) =>
-            ToastShow().whiteToast("Failed to update user: $error"));
+        .catchError(
+            (error) => ToastShow().whiteToast("Failed to update user: $error"));
   }
 
   updateStudent(
@@ -34,14 +34,17 @@ class FirestoreStudents {
       required String date,
       required var volunteeringHours,
       required String studentDocId}) {
-    _firestoreCollectionStudents.doc(studentDocId).update({
-      'name': name,
-      "description": description,
-      "date": date,
-      'volunteeringHours': volunteeringHours,
-    }).then((value) => ToastShow().whiteToast("user updates").catchError(
-        (error) =>
-            ToastShow().whiteToast("Failed to update user: $error")));
+    _firestoreCollectionStudents
+        .doc(studentDocId)
+        .update({
+          'name': name,
+          "description": description,
+          "date": date,
+          'volunteeringHours': volunteeringHours,
+        })
+        .then((value) {})
+        .catchError(
+            (error) => ToastShow().whiteToast("Failed to update user: $error"));
   }
 
   addMembership({required String seasonDocId, required String studentDocId}) {
@@ -50,9 +53,20 @@ class FirestoreStudents {
         .update({
           'memberships': FieldValue.arrayUnion([seasonDocId]),
         })
-        .then(
-            (value) => ToastShow().whiteToast("membership added in user !"))
-        .catchError((error) => ToastShow()
-            .whiteToast("Failed to add membership in user -> $error"));
+        .then((value) {})
+        .catchError((error) =>
+            ToastShow().redToast("Failed to add membership in user -> $error"));
+  }
+
+  deleteMembership(
+      {required String seasonDocId, required String studentDocId}) {
+    _firestoreCollectionStudents
+        .doc(studentDocId)
+        .update({
+          'memberships': FieldValue.arrayRemove([seasonDocId]),
+        })
+        .then((value) {})
+        .catchError((error) =>
+            ToastShow().redToast("Failed to delete membership -> $error"));
   }
 }

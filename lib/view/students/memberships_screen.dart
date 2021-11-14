@@ -4,14 +4,21 @@ import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/common_ui/primary_container.dart';
+import 'package:scouts_system/model/firestore/add_seasons.dart';
+import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'memberships_check_list_screen.dart';
 
 // ignore: must_be_immutable
-class MembershipsOfStudent extends StatelessWidget {
+class MembershipsOfStudent extends StatefulWidget {
   String studentDocId;
   MembershipsOfStudent(this.studentDocId, {Key? key}) : super(key: key);
 
+  @override
+  _MembershipsOfStudentState createState() => _MembershipsOfStudentState();
+}
+
+class _MembershipsOfStudentState extends State<MembershipsOfStudent> {
   @override
   Widget build(BuildContext context) {
     return fetchingMemberships(context);
@@ -21,7 +28,7 @@ class MembershipsOfStudent extends StatelessWidget {
     SeasonsProvider provider = context.watch<SeasonsProvider>();
     if (provider.studentMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
-      provider.preparingMemberships(studentDocId);
+      provider.preparingMemberships(widget.studentDocId);
       return const CircularProgress();
     } else {
       return buildScaffold(context, provider);
@@ -32,7 +39,7 @@ class MembershipsOfStudent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: provider.studentMemberships.isEmpty
-          ? emptyMessage("memberships")
+          ? emptyMessage("Memberships")
           : listView(provider),
       floatingActionButton: floatingActionButton(context),
     );
@@ -43,11 +50,38 @@ class MembershipsOfStudent extends StatelessWidget {
       itemCount: provider.studentMemberships.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: membershipItem(provider.studentMemberships[index], index),
-        );
+        final membership = provider.studentMemberships[index];
+        return dismissible(membership, index, provider);
       },
     );
+  }
+
+  Dismissible dismissible(
+      Membership membership, int index, SeasonsProvider provider) {
+    return Dismissible(
+      key: Key(membership.docId),
+      onDismissed: (direction) => deleteElement(membership, index, provider),
+      background: Container(color: Colors.red),
+      child: ListTile(title: membershipItem(membership, index)),
+    );
+  }
+
+  deleteElement(Membership membership, int index, SeasonsProvider provider) {
+    setState(() {
+      deleteMembership(membership, index);
+      deleteStudentInSeason(membership, index);
+      provider.studentMemberships.removeAt(index);
+    });
+  }
+
+  deleteStudentInSeason(Membership membership, int index) {
+    FirestoreSeasons().deleteStudentInSeason(
+        studentDocId: widget.studentDocId, seasonDocId: membership.docId);
+  }
+
+  deleteMembership(Membership membership, int index) {
+    FirestoreStudents().deleteMembership(
+        seasonDocId: membership.docId, studentDocId: widget.studentDocId);
   }
 
   FloatingActionButton floatingActionButton(BuildContext context) {
@@ -61,7 +95,8 @@ class MembershipsOfStudent extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => StudentCheckBoxMemberships(studentDocId)));
+            builder: (context) =>
+                StudentCheckBoxMemberships(widget.studentDocId)));
   }
 
   InkWell membershipItem(Membership membership, int index) {

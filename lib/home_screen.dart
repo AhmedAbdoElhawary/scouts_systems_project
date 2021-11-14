@@ -10,17 +10,16 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              PrimaryButton(page: const StudentsPage(), text: "Students"),
-              PrimaryButton(page: const EventsPage(), text: "Events"),
-              PrimaryButton(page: const SeasonsPage(), text: "Seasons"),
-            ],
-          ),
+      appBar: AppBar(),
+      body: Center(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            PrimaryButton(page: const StudentsPage(), text: "Students"),
+            PrimaryButton(page: const EventsPage(), text: "Events"),
+            PrimaryButton(page: const SeasonsPage(), text: "Seasons"),
+          ],
         ),
       ),
     );
