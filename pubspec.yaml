@@ -43,7 +43,6 @@ dependencies:
   expansion_tile_card: ^2.0.0
   random_string: ^2.3.1
   syncfusion_flutter_datepicker: ^19.3.48
-  json_serializable: ^6.0.1
 
 
 dev_dependencies:
@@ -73,6 +72,8 @@ flutter:
     - assets/images/facebook_image.webp
     - assets/images/linkedIn_image.webp
     - assets/images/google_image.webp
+    - assets/icons/calendar.png
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

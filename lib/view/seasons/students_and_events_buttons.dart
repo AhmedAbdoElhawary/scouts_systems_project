@@ -19,8 +19,8 @@ class TwoButtonsPage extends StatelessWidget {
     return Column(
       children: [
         containerOfItem(
-            context, "events", EventsSeasonList(eventsDocIds: eventsDocId)),
-        containerOfItem(context, "students",
+            context, "Events", EventsSeasonList(eventsDocIds: eventsDocId)),
+        containerOfItem(context, "Students",
             StudentSeasonsPage(studentsDocIds: studentsDocId))
       ],
     );
