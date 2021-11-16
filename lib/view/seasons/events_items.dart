@@ -21,7 +21,7 @@ class EventsSeasonList extends StatelessWidget {
     if (eventsDocIds.isNotEmpty &&
         provider.neededEvents.isEmpty &&
         provider.stateOfNeededEvents != StateOfNeededEvents.loaded) {
-      provider.preparingNeededEvents(eventsDocIds);
+      provider.preparingNeededEvents(eventsDocIds,seasonDocId);
       return const CircularProgress();
     } else {
       return buildScaffold(provider);
