@@ -53,13 +53,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
     );
   }
 
-  List<Widget> actionsWidgets() {
-    if (widget.eventDocId.isNotEmpty) {
-      return [deleteIcon()];
-    } else {
-      return [];
-    }
-  }
+  List<Widget> actionsWidgets() =>
+      widget.eventDocId.isNotEmpty ? [deleteIcon()] : [];
 
   IconButton deleteIcon() {
     return IconButton(
