@@ -34,7 +34,7 @@ class FirestoreSeasons {
         })
         .then((value) {})
         .catchError((error) =>
-            ToastShow().redToast("fFailed to add event in season ->$error"));
+            ToastShow().redToast("Failed to add event in season ->$error"));
   }
 
   addStudentInSeason(
@@ -47,6 +47,15 @@ class FirestoreSeasons {
         .then((value) {})
         .catchError((error) =>
             ToastShow().redToast("Failed to add student in season ->$error"));
+  }
+
+  deleteEventInSeason(
+      {required String seasonDocId, required String eventDocId}) {
+    _firestoreCollectionSeasons.doc(seasonDocId).update({
+      'events': FieldValue.arrayRemove([eventDocId])
+    }).then((value) {})
+        .catchError((error) =>
+        ToastShow().redToast("Failed to remove event in season ->$error"));;
   }
 
   deleteStudentInSeason(
