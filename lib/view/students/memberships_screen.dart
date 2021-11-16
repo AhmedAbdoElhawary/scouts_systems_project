@@ -4,8 +4,6 @@ import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/common_ui/primary_container.dart';
-import 'package:scouts_system/model/firestore/add_seasons.dart';
-import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'memberships_check_list_screen.dart';
 
@@ -26,7 +24,7 @@ class _MembershipsOfStudentState extends State<MembershipsOfStudent> {
 
   fetchingMemberships(BuildContext context) {
     SeasonsProvider provider = context.watch<SeasonsProvider>();
-    if (provider.studentMemberships.isEmpty &&
+    if (provider.selectedMemberships.isEmpty &&
         provider.stateOfFetchingMemberships != StateOfMemberships.loaded) {
       provider.preparingMemberships(widget.studentDocId);
       return const CircularProgress();
@@ -37,8 +35,8 @@ class _MembershipsOfStudentState extends State<MembershipsOfStudent> {
 
   Scaffold buildScaffold(BuildContext context, SeasonsProvider provider) {
     return Scaffold(
-      appBar: AppBar(),
-      body: provider.studentMemberships.isEmpty
+      appBar: AppBar(title: Text("Memberships")),
+      body: provider.selectedMemberships.isEmpty
           ? emptyMessage("Memberships")
           : listView(provider),
       floatingActionButton: floatingActionButton(context),
@@ -47,47 +45,19 @@ class _MembershipsOfStudentState extends State<MembershipsOfStudent> {
 
   ListView listView(SeasonsProvider provider) {
     return ListView.separated(
-      itemCount: provider.studentMemberships.length,
+      itemCount: provider.selectedMemberships.length,
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
-        final membership = provider.studentMemberships[index];
-        return dismissible(membership, index, provider);
+        final membership = provider.selectedMemberships[index];
+        return ListTile(title: membershipItem(membership, index));
       },
     );
-  }
-
-  Dismissible dismissible(
-      Membership membership, int index, SeasonsProvider provider) {
-    return Dismissible(
-      key: Key(membership.docId),
-      onDismissed: (direction) => deleteElement(membership, index, provider),
-      background: Container(color: Colors.red),
-      child: ListTile(title: membershipItem(membership, index)),
-    );
-  }
-
-  deleteElement(Membership membership, int index, SeasonsProvider provider) {
-    setState(() {
-      deleteMembership(membership, index);
-      deleteStudentInSeason(membership, index);
-      provider.studentMemberships.removeAt(index);
-    });
-  }
-
-  deleteStudentInSeason(Membership membership, int index) {
-    FirestoreSeasons().deleteStudentInSeason(
-        studentDocId: widget.studentDocId, seasonDocId: membership.docId);
-  }
-
-  deleteMembership(Membership membership, int index) {
-    FirestoreStudents().deleteMembership(
-        seasonDocId: membership.docId, studentDocId: widget.studentDocId);
   }
 
   FloatingActionButton floatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => pushToCheckBoxMembershipsPage(context),
-      child: const Icon(Icons.add),
+      child: const Icon(Icons.edit),
     );
   }
 

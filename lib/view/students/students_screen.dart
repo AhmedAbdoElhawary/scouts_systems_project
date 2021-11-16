@@ -9,6 +9,7 @@ import 'package:scouts_system/view_model/students.dart';
 import 'add_student.dart';
 
 class StudentsPage extends StatelessWidget {
+
   const StudentsPage({Key? key}) : super(key: key);
 
   @override
@@ -29,7 +30,7 @@ class StudentsPage extends StatelessWidget {
 
   Scaffold buildScaffold(BuildContext context, StudentsProvider provider) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Students")),
       body: provider.studentsList.isEmpty
           ? emptyMessage("students")
           : listView(context, provider.studentsList),

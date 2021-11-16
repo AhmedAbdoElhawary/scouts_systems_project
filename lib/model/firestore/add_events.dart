@@ -23,9 +23,9 @@ class FirestoreEvents {
           'id': eventId,
           "students": [],
         })
-        .then((value) => ToastShow().whiteToast("event added !"))
-        .catchError((error) =>
-            ToastShow().redToast("Failed to update event: $error"));
+        .then((value) {})
+        .catchError(
+            (error) => ToastShow().redToast("Failed to update event: $error"));
   }
 
   updateEvent(
@@ -42,9 +42,9 @@ class FirestoreEvents {
           "date": date,
           'id': eventId,
         })
-        .then((value) => ToastShow().whiteToast("update"))
-        .catchError((error) =>
-            ToastShow().redToast("Failed to update event: $error"));
+        .then((value) {})
+        .catchError(
+            (error) => ToastShow().redToast("Failed to update event: $error"));
   }
 
   addStudentsInEvent(
@@ -54,8 +54,23 @@ class FirestoreEvents {
         .update({
           'students': FieldValue.arrayUnion([studentDocId]),
         })
-        .then((value) => ToastShow().whiteToast("student added in event !"))
-        .catchError((error) => ToastShow()
-            .redToast("Failed to add student in event -> $error"));
+        .then((value) {})
+        .catchError((error) =>
+            ToastShow().redToast("Failed to add student in event -> $error"));
   }
+
+  deleteStudentOfEvent(
+      {required String eventDocId, required String studentDocId}) {
+    _firestoreCollectionEvents
+        .doc(eventDocId)
+        .update({
+          'students': FieldValue.arrayRemove([studentDocId]),
+        })
+        .then((value) {})
+        .catchError((error) =>
+            ToastShow().redToast("Failed to delete student -> $error"));
+  }
+
+  deleteEvent(String eventDocId) =>
+      _firestoreCollectionEvents.doc(eventDocId).delete();
 }

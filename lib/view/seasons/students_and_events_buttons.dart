@@ -4,13 +4,14 @@ import 'events_items.dart';
 
 class TwoButtonsPage extends StatelessWidget {
   final List<dynamic> studentsDocId, eventsDocId;
+  final String title,seasonDocId;
   const TwoButtonsPage(
-      {Key? key, required this.eventsDocId, required this.studentsDocId})
+      {Key? key, required this.eventsDocId, required this.studentsDocId,required this.title,required this.seasonDocId})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(title)),
       body: columnOfButtons(context),
     );
   }
@@ -19,9 +20,9 @@ class TwoButtonsPage extends StatelessWidget {
     return Column(
       children: [
         containerOfItem(
-            context, "Events", EventsSeasonList(eventsDocIds: eventsDocId)),
+            context, "Events", EventsSeasonList(eventsDocIds: eventsDocId,seasonDocId:seasonDocId)),
         containerOfItem(context, "Students",
-            StudentSeasonsPage(studentsDocIds: studentsDocId))
+            StudentSeasonsPage(studentsDocIds: studentsDocId,seasonDocId:seasonDocId))
       ],
     );
   }

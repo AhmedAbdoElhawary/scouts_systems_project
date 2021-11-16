@@ -37,7 +37,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+          title: Text(widget.controllerOfName.text), actions: actionsWidgets()),
       body: Column(
         children: [
           textFields(),
@@ -45,6 +46,22 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> actionsWidgets() {
+    if (widget.studentDocId.isNotEmpty) {
+      return [
+        IconButton(
+            onPressed: () {
+              FirestoreStudents().deleteStudent(widget.studentDocId);
+              updatePreviousScreenData();
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.delete))
+      ];
+    } else {
+      return [];
+    }
   }
 
   SizedBox saveAndCancelButtons(BuildContext context) {
@@ -211,7 +228,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(getBirthdate(),
-            style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w500),
             textAlign: TextAlign.start),
       ),
     );
@@ -223,8 +241,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
           color: Colors.grey,
           width: 1.2,
         ),
-        borderRadius: BorderRadius.circular(6)
-    );
+        borderRadius: BorderRadius.circular(6));
   }
 
   Padding textOfBirthdate() {
@@ -261,7 +278,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   Text membershipsText() {
     return const Text(
-      "memberships",
+      "Memberships",
       style: TextStyle(fontSize: 20, color: Colors.white),
     );
   }
@@ -279,8 +296,9 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   getReadyForMemberships() {
     SeasonsProvider provider = context.read<SeasonsProvider>();
     provider.stateOfFetchingMemberships = StateOfMemberships.initial;
-    provider.clearRemainingMembershipsList();
+    provider.clearMembershipsList();
     provider.clearStudentMembershipsList();
+    provider.clearMembershipsIds();
   }
 
   Column emptyMessage() {

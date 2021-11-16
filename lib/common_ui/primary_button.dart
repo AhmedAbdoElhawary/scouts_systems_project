@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/view_model/events.dart';
+import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
@@ -25,11 +27,30 @@ class PrimaryButton extends StatelessWidget {
 
   onPressedButton(BuildContext context) {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      StudentsProvider provider = context.read<StudentsProvider>();
-      provider.clearStudentsList();
-      provider.stateOfFetching = StateOfStudents.initial;
+      prepareStudentsData(context);
+      prepareEventsData(context);
+      prepareSeasonsData(context);
+
       moveToPage(context);
     });
+  }
+
+  prepareStudentsData(BuildContext context) {
+    StudentsProvider studentProvider = context.read<StudentsProvider>();
+    studentProvider.clearStudentsList();
+    studentProvider.stateOfFetching = StateOfStudents.initial;
+  }
+
+  prepareEventsData(BuildContext context) {
+    SeasonsProvider seasonProvider = context.read<SeasonsProvider>();
+    seasonProvider.clearSeasonsList();
+    seasonProvider.stateOfFetchingSeasons = StateOfSeasons.initial;
+  }
+
+  prepareSeasonsData(BuildContext context) {
+    EventsProvider eventProvider = context.read<EventsProvider>();
+    eventProvider.clearEventList();
+    eventProvider.stateOfFetching = StateOfEvents.initial;
   }
 
   Text textOfButton() {

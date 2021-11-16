@@ -8,8 +8,9 @@ import 'package:scouts_system/view_model/events.dart';
 
 // ignore: must_be_immutable
 class EventsSeasonList extends StatelessWidget {
-  List<dynamic> eventsDocIds;
-  EventsSeasonList({Key? key, required this.eventsDocIds}) : super(key: key);
+  final List<dynamic> eventsDocIds;
+  final String seasonDocId;
+  EventsSeasonList({Key? key, required this.eventsDocIds,required this.seasonDocId}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return fetchingNeededEvents(context);
@@ -29,7 +30,7 @@ class EventsSeasonList extends StatelessWidget {
 
   Scaffold buildScaffold(EventsProvider provider) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text("Events")),
         body: provider.neededEvents.isEmpty
             ? emptyMessage("event")
             : listView(provider));

@@ -69,4 +69,7 @@ class FirestoreStudents {
         .catchError((error) =>
             ToastShow().redToast("Failed to delete membership -> $error"));
   }
+
+  deleteStudent(String studentDocId) =>
+      _firestoreCollectionStudents.doc(studentDocId).delete();
 }

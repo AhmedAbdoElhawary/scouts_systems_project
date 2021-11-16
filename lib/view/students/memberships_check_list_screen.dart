@@ -22,31 +22,34 @@ class _StudentCheckBoxMembershipsState
 
   @override
   Widget build(BuildContext context) {
-    SeasonsProvider provider = context.watch<SeasonsProvider>();
-    return buildScaffold(provider.remainingMemberships);
+    return buildScaffold(context.watch<SeasonsProvider>());
   }
 
-  Scaffold buildScaffold(List<Membership> seasonsList) {
+  Scaffold buildScaffold(SeasonsProvider seasonsProvider) {
     return Scaffold(
-      appBar: AppBar(),
-      body:
-          seasonsList.isEmpty ? emptyMessage("season") : listView(seasonsList),
-      floatingActionButton: _floatingActionButton(seasonsList),
+      appBar: AppBar(title: Text("Memberships")),
+      body: seasonsProvider.studentMemberships.isEmpty
+          ? emptyMessage("season")
+          : listView(seasonsProvider),
+      floatingActionButton:
+          _floatingActionButton(seasonsProvider.studentMemberships),
     );
   }
 
-  ListView listView(List<Membership> seasonsList) {
+  ListView listView(SeasonsProvider seasonsProvider) {
     return ListView.builder(
       itemBuilder: (builder, index) {
-        selectedFlag[index] = selectedFlag[index] ?? false;
+        bool checkSelection = seasonsProvider.selectedMembershipsIds
+            .contains(seasonsProvider.studentMemberships[index].docId);
+        selectedFlag[index] = selectedFlag[index] ?? checkSelection;
         bool? isSelected = selectedFlag[index];
         return Column(
           children: [
-            listTile(isSelected, index, seasonsList),
+            listTile(isSelected, index, seasonsProvider.studentMemberships),
           ],
         );
       },
-      itemCount: seasonsList.length,
+      itemCount: seasonsProvider.studentMemberships.length,
     );
   }
 
@@ -69,20 +72,21 @@ class _StudentCheckBoxMembershipsState
   Widget _selectIcon(bool isSelected) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+      color: Colors.blue,
     );
   }
 
   Widget? _floatingActionButton(List<Membership> seasonsList) {
-    if (isSelectionMode) {
-      return FloatingActionButton(
-        onPressed: () => addItems(seasonsList),
-        child: const Icon(
-          Icons.add,
-        ),
-      );
-    } else {
-      return null;
-    }
+    // if (isSelectionMode) {
+    return FloatingActionButton(
+      onPressed: () => addItems(seasonsList),
+      child: const Icon(
+        Icons.add,
+      ),
+    );
+    // } else {
+    //   return null;
+    // }
   }
 
   Future<void> addItems(List<Membership> seasonsList) async {
@@ -90,10 +94,23 @@ class _StudentCheckBoxMembershipsState
       if (selectedFlag[i] == true) {
         addMembership(seasonsList[i].docId);
         addStudentInSeason(seasonsList[i].docId);
+      } else {
+        deleteMembership(seasonsList[i], i);
+        deleteStudentInSeason(seasonsList[i], i);
       }
     }
     updatePreviousScreenData();
     Navigator.pop(context);
+  }
+
+  deleteStudentInSeason(Membership membership, int index) {
+    FirestoreSeasons().deleteStudentInSeason(
+        studentDocId: widget.studentDocId, seasonDocId: membership.docId);
+  }
+
+  deleteMembership(Membership membership, int index) {
+    FirestoreStudents().deleteMembership(
+        seasonDocId: membership.docId, studentDocId: widget.studentDocId);
   }
 
   addMembership(String seasonDocId) {

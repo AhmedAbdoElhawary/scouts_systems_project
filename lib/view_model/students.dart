@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scouts_system/model/firestore/add_events.dart';
+import 'package:scouts_system/model/firestore/add_seasons.dart';
 
 class Student {
   final String name;
@@ -25,9 +27,11 @@ class StudentsProvider extends ChangeNotifier {
 
   final List<Student> _studentsList = [];
 
+  final List<Student> _studentsOfEvent = [];
+
   final List<Student> _selectedStudents = [];
 
-  final List<Student> _remainingStudents = [];
+  final List<String> _selectedStudentsIds = [];
 
   final List<Student> _neededStudents = [];
 
@@ -60,13 +64,18 @@ class StudentsProvider extends ChangeNotifier {
         docId: data["docId"]);
   }
 
-  preparingNeededStudents({required List<dynamic> studentsDocIds}) async {
+  preparingNeededStudents(
+      {required List<dynamic> studentsDocIds,
+      required String seasonDocId}) async {
     _neededStudents.clear();
     stateOfSpecificFetching = StateOfSpecificStudents.loading;
     for (int i = 0; i < studentsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsDocIds[i]).get();
-      _neededStudents.add(getTheStudent(snap));
+      snap.exists
+          ? _neededStudents.add(getTheStudent(snap))
+          : FirestoreSeasons().deleteStudentInSeason(
+              studentDocId: studentsDocIds[i], seasonDocId: seasonDocId);
     }
     stateOfSpecificFetching = StateOfSpecificStudents.loaded;
     notifyListeners();
@@ -74,27 +83,43 @@ class StudentsProvider extends ChangeNotifier {
 
   preparingStudentsInEvent(
       {required String seasonDocId, required String eventDocId}) async {
+    _studentsOfEvent.clear();
     _selectedStudents.clear();
-    _remainingStudents.clear();
+    _selectedStudentsIds.clear();
     stateOfSelectedFetching = StateOfSelectedStudents.loading;
     List<dynamic> studentsIdsSeason = await studentsDocIdsInSeason(seasonDocId);
     List<dynamic> studentsDocIdsEvent = await studentsDocIdsInEvent(eventDocId);
-    addStudentsInEventList(studentsIdsSeason, studentsDocIdsEvent);
+    addStudentsInEventList(studentsIdsSeason, studentsDocIdsEvent, eventDocId);
     stateOfSelectedFetching = StateOfSelectedStudents.loaded;
     notifyListeners();
   }
 
   addStudentsInEventList(List<dynamic> studentsIdsSeason,
-      List<dynamic> studentsDocIdsEvent) async {
+      List<dynamic> studentsDocIdsEvent, String eventDocId) async {
     for (int i = 0; i < studentsIdsSeason.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(studentsIdsSeason[i]).get();
-      Student student = getTheStudent(snap);
-      studentsDocIdsEvent.contains(studentsIdsSeason[i])
-          ? _selectedStudents.add(student)
-          : _remainingStudents.add(student);
+
+      snap.exists
+          ? addStudent(studentsIdsSeason, studentsDocIdsEvent, snap, i)
+          : deleteStudentOfEvent(studentsIdsSeason[i], eventDocId);
     }
     notifyListeners();
+  }
+
+  addStudent(List<dynamic> studentsIdsSeason, List<dynamic> studentsDocIdsEvent,
+      DocumentSnapshot<Object?> snap, int i) {
+    Student student = getTheStudent(snap);
+    _studentsOfEvent.add(student);
+    if (studentsDocIdsEvent.contains(studentsIdsSeason[i])) {
+      _selectedStudents.add(student);
+      _selectedStudentsIds.add(student.docId);
+    }
+  }
+
+  deleteStudentOfEvent(dynamic studentsIdSeason, String eventDocId) {
+    FirestoreEvents().deleteStudentOfEvent(
+        studentDocId: studentsIdSeason, eventDocId: eventDocId);
   }
 
   Student getTheStudent(DocumentSnapshot<Object?> snap) {
@@ -128,11 +153,19 @@ class StudentsProvider extends ChangeNotifier {
     _studentsList.clear();
   }
 
+  clearStudentsOfEvent() {
+    _studentsOfEvent.clear();
+  }
+
   clearSelectedStudentsList() {
     _selectedStudents.clear();
   }
 
-  clearNeededStudentsList(){
+  clearSelectedStudentsIds() {
+    _selectedStudentsIds.clear();
+  }
+
+  clearNeededStudentsList() {
     _neededStudents.clear();
   }
 
@@ -140,7 +173,9 @@ class StudentsProvider extends ChangeNotifier {
 
   List<Student> get selectedStudents => _selectedStudents;
 
-  List<Student> get studentsList => _studentsList;
+  List<Student> get studentsOfEvent => _studentsOfEvent;
 
-  List<Student> get remainingStudents => _remainingStudents;
+  List<String> get selectedStudentsIds => _selectedStudentsIds;
+
+  List<Student> get studentsList => _studentsList;
 }

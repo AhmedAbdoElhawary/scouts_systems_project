@@ -31,7 +31,7 @@ class EventsPage extends StatelessWidget {
 
   Scaffold buildScaffold(BuildContext context, EventsProvider provider) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Events")),
       body: provider.eventsList.isEmpty
           ? emptyMessage("event")
           : listView(provider),
