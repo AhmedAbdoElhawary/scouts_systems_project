@@ -9,7 +9,7 @@ class FirestoreStudents {
     required String name,
     required String description,
     required String date,
-    required var volunteeringHours,
+    required String volunteeringHours,
   }) {
     String studentRandomDocId = randomAlphaNumeric(20);
 
@@ -32,7 +32,7 @@ class FirestoreStudents {
       {required String name,
       required String description,
       required String date,
-      required var volunteeringHours,
+      required String volunteeringHours,
       required String studentDocId}) {
     _firestoreCollectionStudents
         .doc(studentDocId)
