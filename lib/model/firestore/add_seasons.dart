@@ -60,4 +60,7 @@ class FirestoreSeasons {
         .catchError((error) =>
             ToastShow().redToast("Failed to delete student in season->$error"));
   }
+
+  deleteSeason(String seasonDocId) =>
+      _firestoreCollectionSeasons.doc(seasonDocId).delete();
 }
