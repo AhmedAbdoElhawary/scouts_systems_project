@@ -8,7 +8,7 @@ import 'package:scouts_system/view_model/students.dart';
 
 // ignore: must_be_immutable
 class SelectStudentsScreen extends StatefulWidget {
- final String seasonDocId,eventDocId;
+  final String seasonDocId, eventDocId;
   SelectStudentsScreen(
       {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
@@ -23,38 +23,41 @@ class _SelectStudentsScreenState extends State<SelectStudentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    StudentsProvider provider = context.watch<StudentsProvider>();
-    return buildScaffold(provider.remainingStudents);
+    return buildScaffold(context.watch<StudentsProvider>());
   }
 
-  Scaffold buildScaffold(List<Student> remainingStudents) {
+  Scaffold buildScaffold(StudentsProvider seasonsProvider) {
     return Scaffold(
-      appBar: AppBar(),
-      body: remainingStudents.isEmpty
+      appBar: AppBar(title: Text("Students")),
+      body: seasonsProvider.studentsOfEvent.isEmpty
           ? emptyMessage("student")
-          : listView(remainingStudents),
-      floatingActionButton: _floatingActionButton(remainingStudents),
+          : listView(seasonsProvider),
+      floatingActionButton:
+          _floatingActionButton(seasonsProvider.studentsOfEvent),
     );
   }
 
-  ListView listView(List<Student> remainingStudents) {
+  ListView listView(StudentsProvider seasonsProvider) {
     return ListView.builder(
       itemBuilder: (builder, index) {
-        selectedFlag[index] = selectedFlag[index] ?? false;
+        bool checkSelection = seasonsProvider.selectedStudentsIds
+            .contains(seasonsProvider.studentsOfEvent[index].docId);
+
+        selectedFlag[index] = selectedFlag[index] ?? checkSelection;
         bool? isSelected = selectedFlag[index];
-        return listTile(remainingStudents, isSelected, index);
+        return listTile(seasonsProvider.studentsOfEvent, isSelected, index);
       },
-      itemCount: remainingStudents.length,
+      itemCount: seasonsProvider.studentsOfEvent.length,
     );
   }
 
   ListTile listTile(
-      List<Student> remainingStudents, bool? isSelected, int index) {
+      List<Student> studentsOfEvent, bool? isSelected, int index) {
     return ListTile(
       onTap: () => onTapTitle(isSelected!, index),
       leading: _selectIcon(isSelected!, index),
-      title: Text(remainingStudents[index].name),
-      subtitle: Text(remainingStudents[index].description),
+      title: Text(studentsOfEvent[index].name),
+      subtitle: Text(studentsOfEvent[index].description),
     );
   }
 
@@ -68,33 +71,38 @@ class _SelectStudentsScreenState extends State<SelectStudentsScreen> {
   Widget _selectIcon(bool isSelected, int index) {
     return Icon(
       isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+      color: Colors.blue,
     );
   }
 
-  Widget? _floatingActionButton(List<Student> remainingStudents) {
-    if (isSelectionMode) {
-      return FloatingActionButton(
-        onPressed: () => addItems(remainingStudents),
-        child: const Icon(
-          Icons.add,
-        ),
-      );
-    } else {
-      return null;
-    }
+  Widget? _floatingActionButton(List<Student> students) {
+    return FloatingActionButton(
+      onPressed: () => addItems(students),
+      child: const Icon(
+        Icons.add,
+      ),
+    );
   }
 
-  addItems(List<Student> remainingStudents) {
+  addItems(List<Student> students) {
     for (int i = 0; i < selectedFlag.length; i++) {
       if (selectedFlag[i] == true) {
         FirestoreEvents().addStudentsInEvent(
-            studentDocId: remainingStudents[i].docId,
-            eventDocId: widget.eventDocId);
+            studentDocId: students[i].docId, eventDocId: widget.eventDocId);
+      } else {
+        deleteStudentOfEvent(
+            studentDocId: students[i].docId, eventDocId: widget.eventDocId);
       }
     }
     addEventInSeason();
     updatePreviousScreenData();
     Navigator.pop(context);
+  }
+
+  deleteStudentOfEvent(
+      {required String eventDocId, required String studentDocId}) {
+    FirestoreEvents().deleteStudentOfEvent(
+        eventDocId: eventDocId, studentDocId: studentDocId);
   }
 
   updatePreviousScreenData() {
