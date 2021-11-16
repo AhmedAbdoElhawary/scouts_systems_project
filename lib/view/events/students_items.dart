@@ -33,7 +33,7 @@ class StudentsEventPage extends StatelessWidget {
 
   Scaffold buildScaffold(StudentsProvider provider, BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Students")),
       body: provider.selectedStudents.isEmpty
           ? emptyMessage("student")
           : listView(provider),
@@ -45,7 +45,7 @@ class StudentsEventPage extends StatelessWidget {
       StudentsProvider provider, BuildContext context) {
     return FloatingActionButton(
       onPressed: () => pushToSelectStudentsPage(context),
-      child: const Icon(Icons.add),
+      child: const Icon(Icons.edit),
     );
   }
 
