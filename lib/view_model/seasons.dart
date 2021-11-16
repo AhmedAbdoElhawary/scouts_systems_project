@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scouts_system/model/firestore/add_students.dart';
 
 enum SeasonType { summer, winter }
 
@@ -45,7 +46,9 @@ class SeasonsProvider extends ChangeNotifier {
 
   final List<Membership> _selectedMemberships = [];
 
-  final List<Membership> _remainingMemberships = [];
+  final List<String> _selectedMembershipsIds = [];
+
+  final List<Membership> _studentMemberships = [];
 
   StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
 
@@ -82,23 +85,38 @@ class SeasonsProvider extends ChangeNotifier {
 
   preparingMemberships(String studentDocId) async {
     stateOfFetchingMemberships = StateOfMemberships.loading;
+    _selectedMembershipsIds.clear();
     _selectedMemberships.clear();
-    _remainingMemberships.clear();
+    _studentMemberships.clear();
     //get the list of ids of memberships
-    List<dynamic> docIds = await membershipsDocIds(studentDocId);
+    List<dynamic> membershipsDocIdsList = await membershipsDocIds(studentDocId);
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    addInMembershipsLists(docIds, querySnapshot);
+    addInMembershipsLists(membershipsDocIdsList, querySnapshot, studentDocId);
     stateOfFetchingMemberships = StateOfMemberships.loaded;
     notifyListeners();
   }
 
-  addInMembershipsLists(List<dynamic> docIds, QuerySnapshot querySnapshot) {
+  addInMembershipsLists(List<dynamic> membershipDocIds,
+      QuerySnapshot querySnapshot, String studentDocId) {
     for (int i = 0; i < querySnapshot.docs.length; i++) {
-      QueryDocumentSnapshot data = querySnapshot.docs[i];
-      docIds.contains(data.id)
-          ? addInSelectedMembershipsList(data)
-          : addInRemainingMembershipsList(data);
+      QueryDocumentSnapshot season = querySnapshot.docs[i];
+      season.exists
+          ? addMembership(season, membershipDocIds)
+          : deleteMembership(season, studentDocId);
     }
+  }
+
+  addMembership(QueryDocumentSnapshot season, List<dynamic> membershipDocIds) {
+    membershipsList(season);
+    if (membershipDocIds.contains(season.id)) {
+      addInSelectedMembershipsList(season);
+      _selectedMembershipsIds.add("${season["docId"]}");
+    }
+  }
+
+  deleteMembership(QueryDocumentSnapshot season, String studentDocId) {
+    FirestoreStudents().deleteMembership(
+        seasonDocId: season["docId"], studentDocId: studentDocId);
   }
 
   addInSelectedMembershipsList(QueryDocumentSnapshot data) {
@@ -106,8 +124,8 @@ class SeasonsProvider extends ChangeNotifier {
         year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
-  addInRemainingMembershipsList(QueryDocumentSnapshot data) {
-    _remainingMemberships.add(Membership(
+  membershipsList(QueryDocumentSnapshot data) {
+    _studentMemberships.add(Membership(
         year: data["year"], seasonType: data["season"], docId: data["docId"]));
   }
 
@@ -120,19 +138,21 @@ class SeasonsProvider extends ChangeNotifier {
     return listOfMemberships["memberships"];
   }
 
-  clearStudentMembershipsList() {
-    _selectedMemberships.clear();
-  }
+  clearStudentMembershipsList() => _selectedMemberships.clear();
 
-  clearRemainingMembershipsList() {
-    _remainingMemberships.clear();
-  }
+  clearMembershipsIds() => _selectedMembershipsIds.clear();
+
+  clearMembershipsList() => _studentMemberships.clear();
+
+  clearSeasonsList() => _seasonsList.clear();
 
   List<SeasonFormat> get seasonsOfDropButton => _seasonsOfDropButton;
 
-  List<Membership> get remainingMemberships => _remainingMemberships;
+  List<Membership> get selectedMemberships => _selectedMemberships;
 
-  List<Membership> get studentMemberships => _selectedMemberships;
+  List<Membership> get studentMemberships => _studentMemberships;
+
+  List<String> get selectedMembershipsIds => _selectedMembershipsIds;
 
   List<Season> get seasonsList => _seasonsList;
 }
