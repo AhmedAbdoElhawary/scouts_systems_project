@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scouts_system/model/firestore/add_seasons.dart';
 
 class Event {
   String eventDay;
@@ -52,16 +53,23 @@ class EventsProvider extends ChangeNotifier {
         eventId: data["id"]));
   }
 
-  preparingNeededEvents(List<dynamic> eventsDocIds) async {
+  preparingNeededEvents(List<dynamic> eventsDocIds, String seasonDocId) async {
     _neededEvents.clear();
     stateOfNeededEvents = StateOfNeededEvents.loading;
     for (int i = 0; i < eventsDocIds.length; i++) {
       DocumentSnapshot<Object?> snap =
           await _collectionRef.doc(eventsDocIds[i]).get();
-      _neededEvents.add(addInNeededEvents(snap));
+      snap.exists
+          ? _neededEvents.add(addInNeededEvents(snap))
+          : deleteTheEventInSeason(eventsDocIds[i], seasonDocId);
     }
     stateOfNeededEvents = StateOfNeededEvents.loaded;
     notifyListeners();
+  }
+
+  deleteTheEventInSeason(String eventDocId, String seasonDocId) {
+    FirestoreSeasons()
+        .deleteEventInSeason(seasonDocId: seasonDocId, eventDocId: eventDocId);
   }
 
   Event addInNeededEvents(DocumentSnapshot<Object?> snap) {
