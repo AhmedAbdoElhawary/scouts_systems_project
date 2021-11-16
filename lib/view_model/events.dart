@@ -20,7 +20,6 @@ enum StateOfEvents { initial, loading, loaded }
 enum StateOfNeededEvents { initial, loading, loaded }
 
 class EventsProvider extends ChangeNotifier {
-
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('events');
 
@@ -65,7 +64,7 @@ class EventsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- Event addInNeededEvents(DocumentSnapshot<Object?> snap) {
+  Event addInNeededEvents(DocumentSnapshot<Object?> snap) {
     return Event(
         eventDay: snap.get("date"),
         leader: snap.get("leader"),
@@ -73,9 +72,11 @@ class EventsProvider extends ChangeNotifier {
         eventId: snap.get("id"),
         location: snap.get("location"));
   }
-  clearNeededEventsList(){
-    _neededEvents.clear();
-  }
+
+  clearNeededEventsList() => _neededEvents.clear();
+
+  clearEventList() => _eventsList.clear();
+
   List<Event> get neededEvents => _neededEvents;
 
   List<Event> get eventsList => _eventsList;
