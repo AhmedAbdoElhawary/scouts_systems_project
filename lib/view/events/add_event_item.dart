@@ -42,16 +42,34 @@ class _EventInfoPageState extends State<EventInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            containerOfFields(),
-            containerOfButtons(context),
-          ],
-        ),
+      appBar: AppBar(
+          title: Text(widget.controlEventID.text), actions: actionsWidgets()),
+      body: Column(
+        children: [
+          containerOfFields(),
+          containerOfButtons(context),
+        ],
       ),
     );
+  }
+
+  List<Widget> actionsWidgets() {
+    if (widget.eventDocId.isNotEmpty) {
+      return [deleteIcon()];
+    } else {
+      return [];
+    }
+  }
+
+  IconButton deleteIcon() {
+    return IconButton(
+        onPressed: () => deleteTheEvent(), icon: Icon(Icons.delete));
+  }
+
+  deleteTheEvent() {
+    FirestoreEvents().deleteEvent(widget.eventDocId);
+    updatePreviousScreenData();
+    Navigator.pop(context);
   }
 
   SizedBox containerOfButtons(BuildContext context) {
@@ -219,7 +237,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(getEventDay(),
-            style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w500),
             textAlign: TextAlign.start),
       ),
     );
@@ -231,8 +250,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
           color: Colors.grey,
           width: 1.2,
         ),
-      borderRadius: BorderRadius.circular(6)
-    );
+        borderRadius: BorderRadius.circular(6));
   }
 
   ElevatedButton studentsButton() {
@@ -250,6 +268,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
   getReadySelectedStudents() {
     StudentsProvider provider = context.read<StudentsProvider>();
     provider.clearSelectedStudentsList();
+    provider.clearSelectedStudentsIds();
     provider.stateOfSelectedFetching = StateOfSelectedStudents.initial;
   }
 
