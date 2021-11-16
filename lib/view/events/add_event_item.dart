@@ -65,7 +65,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     if (provider.selectedSeasonOfEvent.isEmpty &&
         provider.stateOfFetchingSelectedSeason != StateOfEvents.loaded) {
       print("event item ${provider.selectedSeasonOfEvent}");
-      provider.neededSeason(
+      provider.neededSeasonOfEvent(
           seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
       return const CircularProgress();
     } else {
@@ -292,8 +292,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   ElevatedButton studentsButton() {
     return ElevatedButton(
-        onPressed: () => onPressedButton(),
-        child: textOfStudents("Students"));
+        onPressed: () => onPressedButton(), child: textOfStudents("Students"));
   }
 
   onPressedButton() {

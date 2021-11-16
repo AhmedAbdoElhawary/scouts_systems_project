@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 
 enum SeasonType { summer, winter }
@@ -25,7 +26,7 @@ class Season {
 class SeasonFormat {
   String season;
   String seasonDocId;
-  SeasonFormat({required this.seasonDocId, required this.season});
+  SeasonFormat({this.seasonDocId = "", this.season = ""});
 }
 
 class Membership {
@@ -50,7 +51,11 @@ class SeasonsProvider extends ChangeNotifier {
 
   final List<Membership> _studentMemberships = [];
 
+  String _selectedSeasonOfEvent = "";
+
   StateOfMemberships stateOfFetchingMemberships = StateOfMemberships.initial;
+
+  StateOfSeasons stateOfFetchingSelectedSeason = StateOfSeasons.initial;
 
   StateOfSeasons stateOfFetchingSeasons = StateOfSeasons.initial;
 
@@ -81,6 +86,26 @@ class SeasonsProvider extends ChangeNotifier {
         seasonDocId: data["docId"],
         studentsDocIds: data["students"],
         eventsDocIds: data["events"]));
+  }
+
+  neededSeasonOfEvent(
+      {required String seasonDocId, required String eventDocId}) async {
+    stateOfFetchingSelectedSeason = StateOfSeasons.loading;
+    print(stateOfFetchingSelectedSeason);
+    DocumentSnapshot snap = await _collectionRef
+        .doc(seasonDocId.isEmpty ? "nothing" : seasonDocId)
+        .get();
+    if (snap.exists) {
+      _selectedSeasonOfEvent = "${snap.get("year")} , ${snap.get("season")}";
+      print("provider ${_selectedSeasonOfEvent}");
+    } else {
+      FirestoreEvents().deleteSeasonOfEvent(eventDocId: eventDocId);
+      _selectedSeasonOfEvent = "nothing";
+      print("provider ${_selectedSeasonOfEvent}");
+    }
+    stateOfFetchingSelectedSeason = StateOfSeasons.loaded;
+    print(stateOfFetchingSelectedSeason);
+    notifyListeners();
   }
 
   preparingMemberships(String studentDocId) async {
@@ -146,11 +171,15 @@ class SeasonsProvider extends ChangeNotifier {
 
   clearSeasonsList() => _seasonsList.clear();
 
+  clearSelectedSeasonOfEvent() => _selectedSeasonOfEvent = "";
+
   List<SeasonFormat> get seasonsOfDropButton => _seasonsOfDropButton;
 
   List<Membership> get selectedMemberships => _selectedMemberships;
 
   List<Membership> get studentMemberships => _studentMemberships;
+
+  String get selectedSeasonOfEvent => _selectedSeasonOfEvent;
 
   List<String> get selectedMembershipsIds => _selectedMembershipsIds;
 
