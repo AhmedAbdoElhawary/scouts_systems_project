@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/model/firestore/add_events.dart';
 import 'package:scouts_system/view/events/students_items.dart';
 import 'package:scouts_system/view_model/events.dart';
@@ -13,9 +14,10 @@ import 'package:intl/intl.dart';
 // ignore: must_be_immutable
 class EventInfoPage extends StatefulWidget {
   TextEditingController controlEventID, controlLocation;
-  String dropdownValueLeader, eventDocId, EventDay;
+  String dropdownValueLeader, eventDocId, EventDay, seasonDocId;
   bool checkForUpdate;
   List<SeasonFormat> seasonsFormat;
+
   EventInfoPage(
       {Key? key,
       required this.controlEventID,
@@ -24,6 +26,7 @@ class EventInfoPage extends StatefulWidget {
       required this.dropdownValueLeader,
       required this.EventDay,
       required this.checkForUpdate,
+      required this.seasonDocId,
       required this.eventDocId})
       : super(key: key);
   @override
@@ -31,7 +34,7 @@ class EventInfoPage extends StatefulWidget {
 }
 
 class _EventInfoPageState extends State<EventInfoPage> {
-  String seasonDocId = "";
+  String seasonDocIdDropDown = "";
   String? dropDownSeason;
   var listOfLeader = List<String>.generate(10, (i) => "leader ${i + 1}");
   bool eventIdValidate = false;
@@ -41,16 +44,38 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    return fetchingSeason(context);
+  }
+
+  Scaffold buildScaffold(String selectedSeason, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.controlEventID.text), actions: actionsWidgets()),
       body: Column(
         children: [
-          containerOfFields(),
-          containerOfButtons(context),
+          containerOfFields(selectedSeason),
+          containerOfButtons(context, selectedSeason)
         ],
       ),
     );
+  }
+
+  Widget fetchingSeason(BuildContext context) {
+    SeasonsProvider provider = context.watch<SeasonsProvider>();
+    if (provider.selectedSeasonOfEvent.isEmpty &&
+        provider.stateOfFetchingSelectedSeason != StateOfEvents.loaded) {
+      print("event item ${provider.selectedSeasonOfEvent}");
+      provider.neededSeasonOfEvent(
+          seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
+      return const CircularProgress();
+    } else {
+      print("event item ${provider.selectedSeasonOfEvent}");
+      return buildScaffold(
+          provider.selectedSeasonOfEvent == "nothing"
+              ? ""
+              : provider.selectedSeasonOfEvent,
+          context);
+    }
   }
 
   List<Widget> actionsWidgets() =>
@@ -67,7 +92,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     Navigator.pop(context);
   }
 
-  SizedBox containerOfButtons(BuildContext context) {
+  SizedBox containerOfButtons(BuildContext context, String selectedSeason) {
     return SizedBox(
       width: double.infinity,
       height: 55,
@@ -76,7 +101,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           buttonOfCancel(context),
-          buttonOfSave(context),
+          buttonOfSave(context, selectedSeason),
         ],
       ),
     );
@@ -95,10 +120,11 @@ class _EventInfoPageState extends State<EventInfoPage> {
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
-  Expanded buttonOfSave(BuildContext context) {
+  Expanded buttonOfSave(BuildContext context, String selectedSeason) {
     return Expanded(
       child: TextButton(
-          child: textOfSave(), onPressed: () => checkValidationFieldsAndPop()),
+          child: textOfSave(),
+          onPressed: () => checkValidationFieldsAndPop(selectedSeason)),
     );
   }
 
@@ -108,10 +134,12 @@ class _EventInfoPageState extends State<EventInfoPage> {
             fontSize: 25, color: Colors.black, fontWeight: FontWeight.normal));
   }
 
-  checkValidationFieldsAndPop() async {
+  checkValidationFieldsAndPop(String selectedSeason) async {
     if (validateTextField(widget.controlEventID.text) &&
         validateTextField(widget.controlLocation.text)) {
-      widget.checkForUpdate ? updateEvent() : addEvent();
+      String season = "";
+      if (selectedSeason.isEmpty) season = seasonDocIdDropDown;
+      widget.checkForUpdate ? updateEvent(season) : addEvent();
       updatePreviousScreenData();
       Navigator.pop(context);
     }
@@ -133,8 +161,9 @@ class _EventInfoPageState extends State<EventInfoPage> {
     );
   }
 
-  updateEvent() {
+  updateEvent(String season) {
     FirestoreEvents().updateEvent(
+      seasonDocId: season,
       eventId: widget.controlEventID.text,
       location: widget.controlLocation.text,
       date: getEventDay(),
@@ -160,20 +189,21 @@ class _EventInfoPageState extends State<EventInfoPage> {
     return true;
   }
 
-  Expanded containerOfFields() {
+  Expanded containerOfFields(String selectedSeason) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
-            children: childrenOfColumn(),
+            children: childrenOfColumn(selectedSeason),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> childrenOfColumn() {
+  List<Widget> childrenOfColumn(String selectedSeason) {
+    print(selectedSeason);
     return [
       textFormField(eventIdValidate, widget.controlEventID, "ID"),
       const Divider(),
@@ -182,11 +212,23 @@ class _EventInfoPageState extends State<EventInfoPage> {
       columnOfPickDate(),
       const Divider(),
       dropdownButton(widget.dropdownValueLeader),
-      widget.checkForUpdate ? dropdownButton(dropDownSeason) : const Divider(),
-      widget.checkForUpdate && seasonDocId != ""
+      widget.checkForUpdate
+          ? (selectedSeason.isEmpty
+              ? dropdownButton(dropDownSeason)
+              : containerSeasonBody(selectedSeason))
+          : const Divider(),
+      widget.checkForUpdate && selectedSeason.isNotEmpty
           ? studentsButton()
           : emptyMessage(),
     ];
+  }
+
+  Container containerSeasonBody(selectedSeason) {
+    return Container(
+        child: Text(
+      selectedSeason,
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+    ));
   }
 
   Column columnOfPickDate() {
@@ -299,7 +341,10 @@ class _EventInfoPageState extends State<EventInfoPage> {
         context,
         MaterialPageRoute(
             builder: (context) => StudentsEventPage(
-                eventDocId: widget.eventDocId, seasonDocId: seasonDocId)));
+                eventDocId: widget.eventDocId,
+                seasonDocId: widget.seasonDocId.isEmpty
+                    ? seasonDocIdDropDown
+                    : widget.seasonDocId)));
   }
 
   Column emptyMessage() {
@@ -319,7 +364,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
         isExpanded: false,
         icon: const Icon(Icons.keyboard_arrow_down_outlined),
         iconSize: 20,
-        hint: const Text("select item"),
+        hint: const Text("select season"),
         elevation: 16,
         style: const TextStyle(
             color: Colors.black, fontSize: 17, fontWeight: FontWeight.w300),
@@ -327,7 +372,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
           setState(() {
             if (widget.checkForUpdate && dropDownValue == dropDownSeason) {
               dropDownSeason = n!;
-              seasonDocId = dropDownSeason!;
+              seasonDocIdDropDown = dropDownSeason!;
             } else {
               widget.dropdownValueLeader = n!;
             }

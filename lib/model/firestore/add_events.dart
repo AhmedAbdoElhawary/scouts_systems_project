@@ -9,7 +9,7 @@ class FirestoreEvents {
     required String leader,
     required String location,
     required String date,
-    required var eventId,
+    required String eventId,
   }) {
     String eventRandomDocId = randomAlphaNumeric(20);
 
@@ -22,6 +22,7 @@ class FirestoreEvents {
           "docId": eventRandomDocId,
           'id': eventId,
           "students": [],
+          "seasonDocId": "",
         })
         .then((value) {})
         .catchError(
@@ -32,8 +33,9 @@ class FirestoreEvents {
       {required String leader,
       required String location,
       required String date,
-      required var eventId,
-      required String eventDocId}) {
+      required String eventId,
+      required String eventDocId,
+      required String seasonDocId}) {
     _firestoreCollectionEvents
         .doc(eventDocId)
         .update({
@@ -45,6 +47,11 @@ class FirestoreEvents {
         .then((value) {})
         .catchError(
             (error) => ToastShow().redToast("Failed to update event: $error"));
+    if (seasonDocId.isNotEmpty) {
+      _firestoreCollectionEvents
+          .doc(eventDocId)
+          .update({"seasonDocId": seasonDocId});
+    }
   }
 
   addStudentsInEvent(
@@ -73,4 +80,15 @@ class FirestoreEvents {
 
   deleteEvent(String eventDocId) =>
       _firestoreCollectionEvents.doc(eventDocId).delete();
+
+  deleteSeasonOfEvent({required String eventDocId}) {
+    _firestoreCollectionEvents
+        .doc(eventDocId)
+        .update({
+          "seasonDocId": "",
+        })
+        .then((value) {})
+        .catchError((error) =>
+            ToastShow().redToast("Failed to delete season -> $error"));
+  }
 }

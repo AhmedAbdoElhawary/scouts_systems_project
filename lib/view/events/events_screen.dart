@@ -92,6 +92,7 @@ class EventsPage extends StatelessWidget {
   onTapItem(Event model, String eventDocId, BuildContext context) {
     context.read<StudentsProvider>().stateOfSelectedFetching =
         StateOfSelectedStudents.initial;
+    context.read<SeasonsProvider>().clearSelectedSeasonOfEvent();
     moveToEventInfoPage(context, model, eventDocId);
   }
 
@@ -123,5 +124,7 @@ EventInfoPage eventInfoPage(
     checkForUpdate: checkForUpdate,
     eventDocId: eventDocId,
     seasonsFormat: seasonsFormat,
+    seasonDocId:model.seasonDocId
+
   );
 }

@@ -8,12 +8,14 @@ class Event {
   String eventId;
   String eventDocId;
   String leader;
+  String seasonDocId;
   Event(
       {this.eventDocId = "",
       this.eventId = "",
       this.eventDay = "",
       this.leader = "",
-      this.location = ""});
+      this.location = "",
+      this.seasonDocId = ""});
 }
 
 enum StateOfEvents { initial, loading, loaded }
@@ -50,7 +52,8 @@ class EventsProvider extends ChangeNotifier {
         location: data["location"],
         leader: data["leader"],
         eventDocId: data["docId"],
-        eventId: data["id"]));
+        eventId: data["id"],
+        seasonDocId: data["seasonDocId"]));
   }
 
   preparingNeededEvents(List<dynamic> eventsDocIds, String seasonDocId) async {
@@ -78,7 +81,8 @@ class EventsProvider extends ChangeNotifier {
         leader: snap.get("leader"),
         eventDocId: snap.get("docId"),
         eventId: snap.get("id"),
-        location: snap.get("location"));
+        location: snap.get("location"),
+        seasonDocId: snap.get("seasonDocId"));
   }
 
   clearNeededEventsList() => _neededEvents.clear();
