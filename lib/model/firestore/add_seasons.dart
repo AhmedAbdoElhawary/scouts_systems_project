@@ -51,11 +51,14 @@ class FirestoreSeasons {
 
   deleteEventInSeason(
       {required String seasonDocId, required String eventDocId}) {
-    _firestoreCollectionSeasons.doc(seasonDocId).update({
-      'events': FieldValue.arrayRemove([eventDocId])
-    }).then((value) {})
+    _firestoreCollectionSeasons
+        .doc(seasonDocId)
+        .update({
+          'events': FieldValue.arrayRemove([eventDocId])
+        })
+        .then((value) {})
         .catchError((error) =>
-        ToastShow().redToast("Failed to remove event in season ->$error"));;
+            ToastShow().redToast("Failed to remove event in season ->$error"));
   }
 
   deleteStudentInSeason(

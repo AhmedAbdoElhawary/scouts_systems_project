@@ -91,20 +91,16 @@ class SeasonsProvider extends ChangeNotifier {
   neededSeasonOfEvent(
       {required String seasonDocId, required String eventDocId}) async {
     stateOfFetchingSelectedSeason = StateOfSeasons.loading;
-    print(stateOfFetchingSelectedSeason);
     DocumentSnapshot snap = await _collectionRef
         .doc(seasonDocId.isEmpty ? "nothing" : seasonDocId)
         .get();
     if (snap.exists) {
       _selectedSeasonOfEvent = "${snap.get("year")} , ${snap.get("season")}";
-      print("provider ${_selectedSeasonOfEvent}");
     } else {
       FirestoreEvents().deleteSeasonOfEvent(eventDocId: eventDocId);
       _selectedSeasonOfEvent = "nothing";
-      print("provider ${_selectedSeasonOfEvent}");
     }
     stateOfFetchingSelectedSeason = StateOfSeasons.loaded;
-    print(stateOfFetchingSelectedSeason);
     notifyListeners();
   }
 

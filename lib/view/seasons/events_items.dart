@@ -10,7 +10,9 @@ import 'package:scouts_system/view_model/events.dart';
 class EventsSeasonList extends StatelessWidget {
   final List<dynamic> eventsDocIds;
   final String seasonDocId;
-  EventsSeasonList({Key? key, required this.eventsDocIds,required this.seasonDocId}) : super(key: key);
+  const EventsSeasonList(
+      {Key? key, required this.eventsDocIds, required this.seasonDocId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return fetchingNeededEvents(context);
@@ -21,7 +23,7 @@ class EventsSeasonList extends StatelessWidget {
     if (eventsDocIds.isNotEmpty &&
         provider.neededEvents.isEmpty &&
         provider.stateOfNeededEvents != StateOfNeededEvents.loaded) {
-      provider.preparingNeededEvents(eventsDocIds,seasonDocId);
+      provider.preparingNeededEvents(eventsDocIds, seasonDocId);
       return const CircularProgress();
     } else {
       return buildScaffold(provider);
@@ -30,7 +32,7 @@ class EventsSeasonList extends StatelessWidget {
 
   Scaffold buildScaffold(EventsProvider provider) {
     return Scaffold(
-        appBar: AppBar(title: Text("Events")),
+        appBar: AppBar(title: const Text("Events")),
         body: provider.neededEvents.isEmpty
             ? emptyMessage("event")
             : listView(provider));

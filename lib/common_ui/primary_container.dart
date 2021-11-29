@@ -5,7 +5,7 @@ class PrimaryListItem extends StatelessWidget {
   final String rightTopText, rightBottomText, leftTopText, leftBottomText;
   final int index;
 
-  PrimaryListItem(
+  const PrimaryListItem(
       {Key? key,
       required this.index,
       this.leftBottomText = "",

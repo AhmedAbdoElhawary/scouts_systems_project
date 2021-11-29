@@ -35,7 +35,7 @@ class _MembershipsOfStudentState extends State<MembershipsOfStudent> {
 
   Scaffold buildScaffold(BuildContext context, SeasonsProvider provider) {
     return Scaffold(
-      appBar: AppBar(title: Text("Memberships")),
+      appBar: AppBar(title: const Text("Memberships")),
       body: provider.selectedMemberships.isEmpty
           ? emptyMessage("Memberships")
           : listView(provider),

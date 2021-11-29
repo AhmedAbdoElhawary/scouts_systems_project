@@ -57,7 +57,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
               updatePreviousScreenData();
               Navigator.pop(context);
             },
-            icon: Icon(Icons.delete))
+            icon: const Icon(Icons.delete))
       ];
     } else {
       return [];

@@ -10,7 +10,8 @@ import 'package:scouts_system/view_model/students.dart';
 class StudentSeasonsPage extends StatelessWidget {
   final List<dynamic> studentsDocIds;
   final String seasonDocId;
-  StudentSeasonsPage({Key? key, required this.studentsDocIds,required this.seasonDocId})
+  const StudentSeasonsPage(
+      {Key? key, required this.studentsDocIds, required this.seasonDocId})
       : super(key: key);
 
   @override
@@ -23,7 +24,8 @@ class StudentSeasonsPage extends StatelessWidget {
     if (studentsDocIds.isNotEmpty &&
         provider.neededStudents.isEmpty &&
         provider.stateOfSpecificFetching != StateOfSpecificStudents.loaded) {
-      provider.preparingNeededStudents(studentsDocIds: studentsDocIds,seasonDocId:seasonDocId);
+      provider.preparingNeededStudents(
+          studentsDocIds: studentsDocIds, seasonDocId: seasonDocId);
       return const CircularProgress();
     } else {
       return buildScaffold(provider);
@@ -32,7 +34,7 @@ class StudentSeasonsPage extends StatelessWidget {
 
   Scaffold buildScaffold(StudentsProvider provider) {
     return Scaffold(
-        appBar: AppBar(title: Text("Students")),
+        appBar: AppBar(title: const Text("Students")),
         body: provider.neededStudents.isEmpty
             ? emptyMessage("student")
             : listView(provider));

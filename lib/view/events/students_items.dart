@@ -33,7 +33,7 @@ class StudentsEventPage extends StatelessWidget {
 
   Scaffold buildScaffold(StudentsProvider provider, BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Students")),
+      appBar: AppBar(title: const Text("Students")),
       body: provider.selectedStudents.isEmpty
           ? emptyMessage("student")
           : listView(provider),

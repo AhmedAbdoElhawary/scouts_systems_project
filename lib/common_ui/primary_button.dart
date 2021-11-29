@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
@@ -10,7 +11,7 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final Widget page;
   final bool pop;
-  PrimaryButton(
+  const PrimaryButton(
       {Key? key, required this.text, required this.page, this.pop = false})
       : super(key: key);
   @override

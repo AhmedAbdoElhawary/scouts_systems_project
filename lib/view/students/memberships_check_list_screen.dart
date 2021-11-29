@@ -27,7 +27,7 @@ class _StudentCheckBoxMembershipsState
 
   Scaffold buildScaffold(SeasonsProvider seasonsProvider) {
     return Scaffold(
-      appBar: AppBar(title: Text("Memberships")),
+      appBar: AppBar(title: const Text("Memberships")),
       body: seasonsProvider.studentMemberships.isEmpty
           ? emptyMessage("season")
           : listView(seasonsProvider),

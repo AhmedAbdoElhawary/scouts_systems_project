@@ -10,15 +10,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Scouts App")),
+      appBar: AppBar(title: const Text("Scouts App")),
       body: Center(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            PrimaryButton(page: const StudentsPage(), text: "Students"),
-            PrimaryButton(page: const EventsPage(), text: "Events"),
-            PrimaryButton(page: const SeasonsPage(), text: "Seasons"),
+          children: const [
+            PrimaryButton(page: StudentsPage(), text: "Students"),
+            PrimaryButton(page: EventsPage(), text: "Events"),
+            PrimaryButton(page: SeasonsPage(), text: "Seasons"),
           ],
         ),
       ),

@@ -5,10 +5,11 @@ import 'package:scouts_system/home_screen.dart';
 import 'model/firebase_authentication.dart';
 
 class LoginScreen extends StatelessWidget {
-  Duration get loginTime => Duration(milliseconds: 2250);
+  const LoginScreen({Key? key}) : super(key: key);
+
+  Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String> _authUser(LoginData data) {
-    print('Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) {
       return FirebaseAuthentication()
           .logIn(email: data.name, password: data.password)
@@ -32,13 +33,12 @@ class LoginScreen extends StatelessWidget {
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeScreen(),
+          builder: (context) => const HomeScreen(),
         ));
       },
-      onRecoverPassword:(p0) async {
+      onRecoverPassword: (p0) async {
         final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-        print(p0);
-        await _firebaseAuth.sendPasswordResetEmail(email: p0).then((value) => print("done"));
+        await _firebaseAuth.sendPasswordResetEmail(email: p0).then((value) {});
       },
     );
   }

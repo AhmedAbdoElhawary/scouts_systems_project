@@ -35,7 +35,7 @@ class _AddSeasonScreenState extends State<AddSeasonScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [rowOfField(), AddButton(context)],
+      children: [rowOfField(), addButton(context)],
     );
   }
 
@@ -79,7 +79,7 @@ class _AddSeasonScreenState extends State<AddSeasonScreen> {
     );
   }
 
-  Container AddButton(BuildContext context) {
+  Container addButton(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: ElevatedButton(

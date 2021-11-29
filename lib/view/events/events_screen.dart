@@ -31,7 +31,7 @@ class EventsPage extends StatelessWidget {
 
   Scaffold buildScaffold(BuildContext context, EventsProvider provider) {
     return Scaffold(
-      appBar: AppBar(title: Text("Events")),
+      appBar: AppBar(title: const Text("Events")),
       body: provider.eventsList.isEmpty
           ? emptyMessage("event")
           : listView(provider),
@@ -114,7 +114,7 @@ EventInfoPage eventInfoPage(
   return EventInfoPage(
       controlEventID: TextEditingController(text: model.eventId),
       controlLocation: TextEditingController(text: model.location),
-      EventDay: model.eventDay,
+      eventDay: model.eventDay,
       dropdownValueLeader: model.leader,
       checkForUpdate: checkForUpdate,
       eventDocId: eventDocId,

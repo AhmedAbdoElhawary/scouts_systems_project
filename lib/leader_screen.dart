@@ -6,8 +6,10 @@ class LeaderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Leader"),),
-      body: Center(
+      appBar: AppBar(
+        title: const Text("Leader"),
+      ),
+      body: const Center(
         child: Text(
           "Leader",
           style: TextStyle(fontSize: 30, color: Colors.black87),
