@@ -4,7 +4,6 @@ import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
 import 'package:scouts_system/common_ui/primary_container.dart';
-import 'package:scouts_system/model/firestore/add_seasons.dart';
 import 'package:scouts_system/view/seasons/students_and_events_buttons.dart';
 import 'package:scouts_system/view_model/events.dart';
 import 'package:scouts_system/view_model/seasons.dart';
@@ -71,23 +70,8 @@ class _SeasonsPageState extends State<SeasonsPage> {
     return ListTile(
         title: listTitleItem(provider.seasonsList[index], index,
             provider.seasonsList[index].seasonDocId, context),
-        trailing: deleteButton(index, provider));
+    );
   }
-
-  Widget deleteButton(int index, SeasonsProvider provider) {
-    return IconButton(
-        onPressed: () => deleteSeason(index, provider),
-        icon: Icon(Icons.delete, color: Colors.black54));
-  }
-
-  deleteSeason(int index, SeasonsProvider provider) {
-    FirestoreSeasons().deleteSeason(provider.seasonsList[index].seasonDocId);
-    setState(() {
-      provider.clearSeasonsList();
-      provider.stateOfFetchingSeasons=StateOfSeasons.initial;
-    });
-  }
-
   InkWell listTitleItem(
       Season model, int index, String seasonDocId, BuildContext context) {
     return InkWell(
