@@ -30,19 +30,19 @@ class EventsProvider extends ChangeNotifier {
 
   final List<Event> _neededEvents = [];
 
-  StateOfEvents stateOfFetching = StateOfEvents.initial;
+  StateOfEvents stateOfFetchingEvent = StateOfEvents.initial;
 
   StateOfNeededEvents stateOfNeededEvents = StateOfNeededEvents.initial;
 
   preparingEvents() async {
     _eventsList.clear();
-    stateOfFetching = StateOfEvents.loading;
+    stateOfFetchingEvent = StateOfEvents.loading;
     QuerySnapshot snap = await _collectionRef.get();
     for (int i = 0; i < snap.docs.length; i++) {
       QueryDocumentSnapshot data = snap.docs[i];
       addInEventsList(data);
     }
-    stateOfFetching = StateOfEvents.loaded;
+    stateOfFetchingEvent = StateOfEvents.loaded;
     notifyListeners();
   }
 

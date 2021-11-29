@@ -51,8 +51,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
     SeasonsProvider provider = context.watch<SeasonsProvider>();
     if (widget.checkForUpdate &&
         provider.selectedSeasonOfEvent.isEmpty &&
-        // ignore: unrelated_type_equality_checks
-        provider.stateOfFetchingSelectedSeason != StateOfEvents.loaded) {
+        provider.stateOfFetchingSelectedSeason != StateOfSeasons.loaded) {
       provider.neededSeasonOfEvent(
           seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
       return const CircularProgress();
@@ -169,7 +168,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   updatePreviousScreenData() {
     EventsProvider provider = context.read<EventsProvider>();
-    provider.stateOfFetching = StateOfEvents.initial;
+    provider.stateOfFetchingEvent = StateOfEvents.initial;
     provider.preparingEvents();
     context.read<SeasonsProvider>().preparingSeasons();
   }

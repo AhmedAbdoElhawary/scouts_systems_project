@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
@@ -7,7 +9,6 @@ import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'memberships_check_list_screen.dart';
 
-// ignore: must_be_immutable
 class MembershipsOfStudent extends StatefulWidget {
   String studentDocId;
   MembershipsOfStudent(this.studentDocId, {Key? key}) : super(key: key);
