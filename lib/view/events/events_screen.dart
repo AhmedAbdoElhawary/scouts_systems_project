@@ -51,9 +51,7 @@ class EventsPage extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => eventInfoPage(
-                context: context,
-                model: Event(leader: "leader 1"),
-                seasonsFormat: [])));
+                context: context, model: Event(leader: "Leader 1"))));
   }
 
   ListView listView(EventsProvider provider) {
@@ -104,8 +102,6 @@ class EventsPage extends StatelessWidget {
                 model: model,
                 eventDocId: eventDocId,
                 checkForUpdate: true,
-                seasonsFormat:
-                    context.read<SeasonsProvider>().seasonsOfDropButton,
                 context: context)));
   }
 }
@@ -114,17 +110,14 @@ EventInfoPage eventInfoPage(
     {required Event model,
     String eventDocId = "",
     bool checkForUpdate = false,
-    required List<SeasonFormat> seasonsFormat,
     required BuildContext context}) {
   return EventInfoPage(
-    controlEventID: TextEditingController(text: model.eventId),
-    controlLocation: TextEditingController(text: model.location),
-    EventDay: model.eventDay,
-    dropdownValueLeader: model.leader,
-    checkForUpdate: checkForUpdate,
-    eventDocId: eventDocId,
-    seasonsFormat: seasonsFormat,
-    seasonDocId:model.seasonDocId
-
-  );
+      controlEventID: TextEditingController(text: model.eventId),
+      controlLocation: TextEditingController(text: model.location),
+      EventDay: model.eventDay,
+      dropdownValueLeader: model.leader,
+      checkForUpdate: checkForUpdate,
+      eventDocId: eventDocId,
+      seasonsFormat: context.read<SeasonsProvider>().seasonsOfDropButton,
+      seasonDocId: model.seasonDocId);
 }

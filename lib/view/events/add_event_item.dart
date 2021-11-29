@@ -36,7 +36,7 @@ class EventInfoPage extends StatefulWidget {
 class _EventInfoPageState extends State<EventInfoPage> {
   String seasonDocIdDropDown = "";
   String? dropDownSeason;
-  var listOfLeader = List<String>.generate(10, (i) => "leader ${i + 1}");
+  var listOfLeader = List<String>.generate(5, (i) => "Leader ${i + 1}");
   bool eventIdValidate = false;
   bool locationValidate = false;
   bool userDateValidate = false;
@@ -47,22 +47,10 @@ class _EventInfoPageState extends State<EventInfoPage> {
     return fetchingSeason(context);
   }
 
-  Scaffold buildScaffold(String selectedSeason, BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text(widget.controlEventID.text), actions: actionsWidgets()),
-      body: Column(
-        children: [
-          containerOfFields(selectedSeason),
-          containerOfButtons(context, selectedSeason)
-        ],
-      ),
-    );
-  }
-
   Widget fetchingSeason(BuildContext context) {
     SeasonsProvider provider = context.watch<SeasonsProvider>();
-    if (provider.selectedSeasonOfEvent.isEmpty &&
+    if (widget.checkForUpdate &&
+        provider.selectedSeasonOfEvent.isEmpty &&
         provider.stateOfFetchingSelectedSeason != StateOfEvents.loaded) {
       print("event item ${provider.selectedSeasonOfEvent}");
       provider.neededSeasonOfEvent(
@@ -71,11 +59,41 @@ class _EventInfoPageState extends State<EventInfoPage> {
     } else {
       print("event item ${provider.selectedSeasonOfEvent}");
       return buildScaffold(
-          provider.selectedSeasonOfEvent == "nothing"
-              ? ""
-              : provider.selectedSeasonOfEvent,
+          widget.checkForUpdate
+              ? (provider.selectedSeasonOfEvent == "nothing"
+                  ? ""
+                  : provider.selectedSeasonOfEvent)
+              : "",
           context);
     }
+  }
+
+  Scaffold buildScaffold(String selectedSeason, BuildContext context) {
+    final appBar = new AppBar(
+        title: Text(widget.controlEventID.text.isEmpty
+            ? "New Event"
+            : widget.controlEventID.text),
+        actions: actionsWidgets());
+    double appBarHeight = appBar.preferredSize.height;
+    final safePadding = MediaQuery.of(context).padding.top;
+    final bodyHeight =
+        MediaQuery.of(context).size.height - appBarHeight - safePadding;
+
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: bodyHeight,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              containerOfFields(selectedSeason),
+              containerOfButtons(context, selectedSeason)
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   List<Widget> actionsWidgets() =>
@@ -97,8 +115,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
       width: double.infinity,
       height: 55,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           buttonOfCancel(context),
           buttonOfSave(context, selectedSeason),
@@ -136,13 +154,18 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   checkValidationFieldsAndPop(String selectedSeason) async {
     if (validateTextField(widget.controlEventID.text) &&
-        validateTextField(widget.controlLocation.text)) {
+        validateTextField(widget.controlLocation.text) &&
+        validateSeasonDropButton()) {
       String season = "";
       if (selectedSeason.isEmpty) season = seasonDocIdDropDown;
       widget.checkForUpdate ? updateEvent(season) : addEvent();
       updatePreviousScreenData();
       Navigator.pop(context);
     }
+  }
+
+  bool validateSeasonDropButton() {
+    return seasonDocIdDropDown.isEmpty ? false : true;
   }
 
   updatePreviousScreenData() {
@@ -158,6 +181,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
       location: widget.controlLocation.text,
       date: getEventDay(),
       leader: widget.dropdownValueLeader,
+      seasonDOcId: seasonDocIdDropDown,
     );
   }
 
@@ -189,15 +213,11 @@ class _EventInfoPageState extends State<EventInfoPage> {
     return true;
   }
 
-  Expanded containerOfFields(String selectedSeason) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: childrenOfColumn(selectedSeason),
-          ),
-        ),
+  Padding containerOfFields(String selectedSeason) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: childrenOfColumn(selectedSeason),
       ),
     );
   }
@@ -212,11 +232,9 @@ class _EventInfoPageState extends State<EventInfoPage> {
       columnOfPickDate(),
       const Divider(),
       dropdownButton(widget.dropdownValueLeader),
-      widget.checkForUpdate
-          ? (selectedSeason.isEmpty
-              ? dropdownButton(dropDownSeason)
-              : containerSeasonBody(selectedSeason))
-          : const Divider(),
+      selectedSeason.isEmpty
+          ? dropdownButton(dropDownSeason)
+          : containerSeasonBody(selectedSeason),
       widget.checkForUpdate && selectedSeason.isNotEmpty
           ? studentsButton()
           : emptyMessage(),
@@ -370,7 +388,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
             color: Colors.black, fontSize: 17, fontWeight: FontWeight.w300),
         onChanged: (n) {
           setState(() {
-            if (widget.checkForUpdate && dropDownValue == dropDownSeason) {
+            if (dropDownValue == dropDownSeason) {
               dropDownSeason = n!;
               seasonDocIdDropDown = dropDownSeason!;
             } else {
@@ -378,7 +396,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
             }
           });
         },
-        items: widget.checkForUpdate && dropDownValue == dropDownSeason
+        items: dropDownValue == dropDownSeason
             ? listMapOfSeasons(widget.seasonsFormat)?.toList()
             : listMapOfLeaders(listOfLeader)?.toList(),
       ),

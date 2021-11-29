@@ -10,6 +10,7 @@ class FirestoreEvents {
     required String location,
     required String date,
     required String eventId,
+    required String seasonDOcId,
   }) {
     String eventRandomDocId = randomAlphaNumeric(20);
 
@@ -22,7 +23,7 @@ class FirestoreEvents {
           "docId": eventRandomDocId,
           'id': eventId,
           "students": [],
-          "seasonDocId": "",
+          "seasonDocId": seasonDOcId,
         })
         .then((value) {})
         .catchError(
