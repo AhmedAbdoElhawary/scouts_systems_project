@@ -51,7 +51,7 @@ class PrimaryButton extends StatelessWidget {
   prepareSeasonsData(BuildContext context) {
     EventsProvider eventProvider = context.read<EventsProvider>();
     eventProvider.clearEventList();
-    eventProvider.stateOfFetching = StateOfEvents.initial;
+    eventProvider.stateOfFetchingEvent = StateOfEvents.initial;
   }
 
   Text textOfButton() {

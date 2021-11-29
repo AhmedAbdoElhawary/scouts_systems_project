@@ -20,7 +20,7 @@ class EventsPage extends StatelessWidget {
   fetchingEvents(BuildContext context) {
     EventsProvider provider = context.watch<EventsProvider>();
     if (provider.eventsList.isEmpty &&
-        provider.stateOfFetching != StateOfEvents.loaded) {
+        provider.stateOfFetchingEvent != StateOfEvents.loaded) {
       provider.preparingEvents();
       context.read<SeasonsProvider>().preparingSeasons();
       return const CircularProgress();
