@@ -36,7 +36,7 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   Scaffold buildScaffold(BuildContext context, SeasonsProvider provider) {
     return Scaffold(
-      appBar: AppBar(title: Text("Seasons")),
+      appBar: AppBar(title: const Text("Seasons")),
       body: provider.seasonsList.isEmpty
           ? emptyMessage("season")
           : listView(provider),
@@ -68,10 +68,11 @@ class _SeasonsPageState extends State<SeasonsPage> {
 
   ListTile listTile(SeasonsProvider provider, int index, BuildContext context) {
     return ListTile(
-        title: listTitleItem(provider.seasonsList[index], index,
-            provider.seasonsList[index].seasonDocId, context),
+      title: listTitleItem(provider.seasonsList[index], index,
+          provider.seasonsList[index].seasonDocId, context),
     );
   }
+
   InkWell listTitleItem(
       Season model, int index, String seasonDocId, BuildContext context) {
     return InkWell(

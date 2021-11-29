@@ -9,7 +9,7 @@ import 'package:scouts_system/view_model/students.dart';
 // ignore: must_be_immutable
 class SelectStudentsScreen extends StatefulWidget {
   final String seasonDocId, eventDocId;
-  SelectStudentsScreen(
+  const SelectStudentsScreen(
       {Key? key, required this.eventDocId, required this.seasonDocId})
       : super(key: key);
 
@@ -28,7 +28,7 @@ class _SelectStudentsScreenState extends State<SelectStudentsScreen> {
 
   Scaffold buildScaffold(StudentsProvider seasonsProvider) {
     return Scaffold(
-      appBar: AppBar(title: Text("Students")),
+      appBar: AppBar(title: const Text("Students")),
       body: seasonsProvider.studentsOfEvent.isEmpty
           ? emptyMessage("student")
           : listView(seasonsProvider),
