@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 // ignore: must_be_immutable
 class EventInfoPage extends StatefulWidget {
   TextEditingController controlEventID, controlLocation;
-  String dropdownValueLeader, eventDocId, EventDay, seasonDocId;
+  String dropdownValueLeader, eventDocId, eventDay, seasonDocId;
   bool checkForUpdate;
   List<SeasonFormat> seasonsFormat;
 
@@ -24,7 +24,7 @@ class EventInfoPage extends StatefulWidget {
       required this.seasonsFormat,
       required this.controlLocation,
       required this.dropdownValueLeader,
-      required this.EventDay,
+      required this.eventDay,
       required this.checkForUpdate,
       required this.seasonDocId,
       required this.eventDocId})
@@ -51,13 +51,12 @@ class _EventInfoPageState extends State<EventInfoPage> {
     SeasonsProvider provider = context.watch<SeasonsProvider>();
     if (widget.checkForUpdate &&
         provider.selectedSeasonOfEvent.isEmpty &&
+        // ignore: unrelated_type_equality_checks
         provider.stateOfFetchingSelectedSeason != StateOfEvents.loaded) {
-      print("event item ${provider.selectedSeasonOfEvent}");
       provider.neededSeasonOfEvent(
           seasonDocId: widget.seasonDocId, eventDocId: widget.eventDocId);
       return const CircularProgress();
     } else {
-      print("event item ${provider.selectedSeasonOfEvent}");
       return buildScaffold(
           widget.checkForUpdate
               ? (provider.selectedSeasonOfEvent == "nothing"
@@ -69,7 +68,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
   }
 
   Scaffold buildScaffold(String selectedSeason, BuildContext context) {
-    final appBar = new AppBar(
+    final appBar = AppBar(
         title: Text(widget.controlEventID.text.isEmpty
             ? "New Event"
             : widget.controlEventID.text),
@@ -101,7 +100,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   IconButton deleteIcon() {
     return IconButton(
-        onPressed: () => deleteTheEvent(), icon: Icon(Icons.delete));
+        onPressed: () => deleteTheEvent(), icon: const Icon(Icons.delete));
   }
 
   deleteTheEvent() {
@@ -223,7 +222,6 @@ class _EventInfoPageState extends State<EventInfoPage> {
   }
 
   List<Widget> childrenOfColumn(String selectedSeason) {
-    print(selectedSeason);
     return [
       textFormField(eventIdValidate, widget.controlEventID, "ID"),
       const Divider(),
@@ -241,12 +239,11 @@ class _EventInfoPageState extends State<EventInfoPage> {
     ];
   }
 
-  Container containerSeasonBody(selectedSeason) {
-    return Container(
-        child: Text(
+  Text containerSeasonBody(selectedSeason) {
+    return Text(
       selectedSeason,
-      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-    ));
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+    );
   }
 
   Column columnOfPickDate() {
@@ -329,7 +326,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
 
   String getEventDay() {
     if (date == null) {
-      return widget.EventDay;
+      return widget.eventDay;
     } else {
       return DateFormat('MM/dd/yyyy').format(date!);
     }
