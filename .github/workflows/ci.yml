@@ -25,5 +25,5 @@ jobs:
       with:
         appId: 1:1008843271805:android:d3d75dded9f63801ff4b14
         token: 1//03JMF3_pdbhQxCgYIARAAGAMSNwF-L9IrPUYqizsnR37QsUwJW5xjob5vX8_DHjJOu1QS2Wdpa7Y_PSkXyX9jR75z3JHQO3paVIs
-        groups: testers
+        groups: tester
         file: app/build/outputs/apk/release/app-release-unsigned.apk
