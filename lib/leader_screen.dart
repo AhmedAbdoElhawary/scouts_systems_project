@@ -12,7 +12,7 @@ class LeaderPage extends StatelessWidget {
       body: const Center(
         child: Text(
           "Leader",
-          style: TextStyle(fontSize: 30, color: Colors.black87),
+          style: TextStyle(fontSize: 30, color: Colors.black),
         ),
       ),
     );
