@@ -61,7 +61,7 @@ android {
 
     }
    signingConfigs {
-       release {
+       debug  {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']
            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
@@ -69,11 +69,12 @@ android {
        }
    }
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
+        debug {
+             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-           signingConfig signingConfigs.release
-
+           signingConfig signingConfigs.debug 
+        }
+        release {
         }
     }
       aaptOptions {  
