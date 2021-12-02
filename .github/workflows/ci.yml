@@ -31,7 +31,7 @@ jobs:
       
       # Build (fat) APK
       # - run: flutter analyze .
-      - run: flutter build apk --debug
+      - run: flutter build apk
         env:
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
