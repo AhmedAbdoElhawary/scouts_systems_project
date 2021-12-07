@@ -33,16 +33,18 @@ jobs:
       # - run: flutter analyze .
       - run: flutter build apk
 
-      - uses: actions/checkout@v2
-      # Add any build steps here. For example:
-      - run: npm ci && npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
         with:
-          repoToken: "${{ secrets.FIREBASE_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          projectId: scouts-system
-          channelId: live
-      
+          node-version: '10.x'
+      - run: npm install
+      - run: npm run build:prod
+      - uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}     
+           
       # Step to Submit the generated APK to Firebase App Distribution
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
