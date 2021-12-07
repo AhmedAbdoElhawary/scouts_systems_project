@@ -33,18 +33,24 @@ jobs:
       # - run: flutter analyze .
       - run: flutter build apk
 
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
         with:
-          node-version: '10.x'
-      - run: npm install
-      - run: npm run build:prod
-      - uses: w9jds/firebase-action@master
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
         with:
-          args: deploy --only hosting
+          channel: dev
+      - run: flutter pub get
+      - run: flutter pub run build_runner build
+      - run: flutter build web --release
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.FIREBASE_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: scouts-system
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}     
-           
+          FIREBASE_CLI_PREVIEWS: hostingchannels
+
       # Step to Submit the generated APK to Firebase App Distribution
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
