@@ -32,11 +32,6 @@ jobs:
       # Build (fat) APK
       # - run: flutter analyze .
       - run: flutter build apk
-        env:
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          ALIAS: ${{ secrets.ALIAS }}
-          KEY_PATH: upload-keystore.jks
 
       - uses: actions/checkout@master
       - uses: actions/setup-node@master
