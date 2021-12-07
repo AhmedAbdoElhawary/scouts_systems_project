@@ -45,12 +45,11 @@ jobs:
       - run: flutter build web --release
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.FIREBASE_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          repoToken: '${{ secrets.FIREBASE_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCOUTS_SYSTEM }}'
+          channelId: live
           projectId: scouts-system
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
-
+          
       # Step to Submit the generated APK to Firebase App Distribution
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
