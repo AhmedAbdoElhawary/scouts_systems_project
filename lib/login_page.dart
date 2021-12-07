@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
           .then((value) {
         return "";
       }).catchError((e) {
-        return "Something wrong";
+        return "Something Wrong";
       });
     });
   }
