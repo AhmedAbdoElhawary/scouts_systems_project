@@ -79,10 +79,13 @@ class StudentsEventPage extends StatelessWidget {
 
   PrimaryListItem listTitleItemBody(int index, Student model) {
     return PrimaryListItem(
-        index: index,
-        rightTopText: model.name,
-        rightBottomText: model.description,
-        leftTopText: model.volunteeringHours,
-        leftBottomText: model.birthdate);
+      index: index,
+      rightTopText: model.name,
+      rightBottomText: model.description,
+      leftTopText: model.volunteeringHours,
+      leftBottomText: model.birthdate,
+      isStudentSelected: true,
+      studentImageUrl: model.imageUrl,
+    );
   }
 }
