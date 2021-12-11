@@ -98,7 +98,7 @@ class SeasonsProvider extends ChangeNotifier {
       _selectedSeasonOfEvent = "${snap.get("year")} , ${snap.get("season")}";
     } else {
       FirestoreEvents().deleteSeasonOfEvent(eventDocId: eventDocId);
-      _selectedSeasonOfEvent = "nothing";
+      _selectedSeasonOfEvent = "";
     }
     stateOfFetchingSelectedSeason = StateOfSeasons.loaded;
     notifyListeners();
