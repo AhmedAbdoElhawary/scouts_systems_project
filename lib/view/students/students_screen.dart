@@ -54,7 +54,7 @@ class StudentsPage extends StatelessWidget {
       BuildContext context, List<Student> studentsList, int index) {
     return InkWell(
         onTap: () => showDialogImage(context, studentsList[index].imageUrl),
-        child: circleAvatarNumber(index, true, studentsList[index].imageUrl));
+        child: circleAvatarOfStudent(studentsList[index].imageUrl));
   }
 
   FloatingActionButton floatingActionButton(BuildContext context) {

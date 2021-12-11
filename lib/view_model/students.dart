@@ -9,8 +9,11 @@ class Student {
   final String birthdate;
   final String volunteeringHours;
   final String docId;
+  final String imageUrl;
   Student(
       {this.name = "",
+      this.imageUrl =
+          "https://3znvnpy5ek52a26m01me9p1t-wpengine.netdna-ssl.com/wp-content/uploads/2017/07/noimage_person.png",
       this.docId = "",
       this.description = "",
       this.birthdate = "",
@@ -61,7 +64,8 @@ class StudentsProvider extends ChangeNotifier {
         description: data["description"],
         birthdate: data["date"],
         volunteeringHours: data["volunteeringHours"],
-        docId: data["docId"]);
+        docId: data["docId"],
+        imageUrl: data["imageUrl"]);
   }
 
   preparingNeededStudents(
@@ -128,7 +132,8 @@ class StudentsProvider extends ChangeNotifier {
         birthdate: snap.get("date"),
         description: snap.get("description"),
         docId: snap.get("docId"),
-        volunteeringHours: snap.get("volunteeringHours"));
+        volunteeringHours: snap.get("volunteeringHours"),
+        imageUrl: snap.get("imageUrl"));
   }
 
   Future<List<dynamic>> studentsDocIdsInSeason(String seasonDocId) async {
