@@ -91,6 +91,7 @@ class EventsPage extends StatelessWidget {
     context.read<StudentsProvider>().stateOfSelectedFetching =
         StateOfSelectedStudents.initial;
     context.read<SeasonsProvider>().clearSelectedSeasonOfEvent();
+    context.read<SeasonsProvider>().stateOfFetchingSelectedSeason=StateOfSeasons.initial;
     moveToEventInfoPage(context, model, eventDocId);
   }
 
