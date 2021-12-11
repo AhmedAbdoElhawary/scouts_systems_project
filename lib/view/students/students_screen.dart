@@ -1,12 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 import 'package:scouts_system/common_ui/circular_progress.dart';
 import 'package:scouts_system/common_ui/primary_container.dart';
 import 'package:scouts_system/common_ui/empty_message.dart';
+import 'package:scouts_system/common_ui/show_dialog_image.dart';
 import 'package:scouts_system/view_model/students.dart';
-
-import 'add_student.dart';
+import 'student_info.dart';
 
 class StudentsPage extends StatelessWidget {
   const StudentsPage({Key? key}) : super(key: key);
@@ -43,10 +44,17 @@ class StudentsPage extends StatelessWidget {
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          title: studentItem(studentsList[index], index, context),
-        );
+            leading: circleAvatarOfImage(context, studentsList, index),
+            title: studentItem(studentsList[index], index, context));
       },
     );
+  }
+
+  InkWell circleAvatarOfImage(
+      BuildContext context, List<Student> studentsList, int index) {
+    return InkWell(
+        onTap: () => showDialogImage(context, studentsList[index].imageUrl),
+        child: circleAvatarNumber(index, true, studentsList[index].imageUrl));
   }
 
   FloatingActionButton floatingActionButton(BuildContext context) {
@@ -71,21 +79,24 @@ class StudentsPage extends StatelessWidget {
 
   InkWell studentItem(Student studentInfo, int index, BuildContext context) {
     return InkWell(
-      onTap: () => onTapItem(context, studentInfo),
+      onTap: () => onTapItem(context, studentInfo, index),
       child: studentListItem(index, studentInfo),
     );
   }
 
   PrimaryListItem studentListItem(int index, Student studentInfo) {
     return PrimaryListItem(
-        index: index,
-        rightTopText: studentInfo.name,
-        rightBottomText: studentInfo.description,
-        leftTopText: studentInfo.volunteeringHours,
-        leftBottomText: studentInfo.birthdate);
+      index: index,
+      rightTopText: studentInfo.name,
+      rightBottomText: studentInfo.description,
+      leftTopText: studentInfo.volunteeringHours,
+      leftBottomText: studentInfo.birthdate,
+      isStudentSelected: false,
+      studentImageUrl: studentInfo.imageUrl,
+    );
   }
 
-  onTapItem(BuildContext context, Student studentInfo) {
+  onTapItem(BuildContext context, Student studentInfo, int index) {
     return Navigator.push(
         context,
         MaterialPageRoute(
@@ -101,6 +112,7 @@ class StudentsPage extends StatelessWidget {
         controllerOfHours:
             TextEditingController(text: studentInfo.volunteeringHours),
         studentDocId: studentInfo.docId,
-        checkForUpdate: true);
+        checkForUpdate: true,
+        imageUrl: studentInfo.imageUrl);
   }
 }
