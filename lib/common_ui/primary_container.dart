@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 // ignore: must_be_immutable
 class PrimaryListItem extends StatelessWidget {
   final String rightTopText, rightBottomText, leftTopText, leftBottomText;
   final int index;
-
+  final bool isStudentSelected;
+  final String studentImageUrl;
   const PrimaryListItem(
       {Key? key,
       required this.index,
       this.leftBottomText = "",
       this.leftTopText = "",
+      this.studentImageUrl = "",
+      this.isStudentSelected = false,
       required this.rightBottomText,
       required this.rightTopText})
       : super(key: key);
@@ -20,7 +24,8 @@ class PrimaryListItem extends StatelessWidget {
       width: double.infinity,
       child: Row(
         children: [
-          circleAvatarNumber(index),
+          if (isStudentSelected)
+            circleAvatarOfStudent(studentImageUrl),
           columnOfRightTexts(
               topText: rightTopText, bottomText: rightBottomText),
           columnOfLeftTexts(topText: leftTopText, bottomText: leftBottomText),
@@ -69,16 +74,11 @@ class PrimaryListItem extends StatelessWidget {
       ),
     );
   }
+}
 
-  CircleAvatar circleAvatarNumber(int index) {
-    return CircleAvatar(
+CircleAvatar circleAvatarOfStudent(String studentImageUrl) {
+  return CircleAvatar(
       radius: 25,
-      child: ClipOval(
-        child: Text(
-          "${index + 1}",
-          style: const TextStyle(fontSize: 25, color: Colors.white),
-        ),
-      ),
-    );
-  }
+      backgroundImage: NetworkImage(studentImageUrl),
+      backgroundColor: Colors.white);
 }

@@ -5,12 +5,12 @@ import 'package:scouts_system/common_ui/toast_show.dart';
 class FirestoreStudents {
   final _firestoreCollectionStudents =
       FirebaseFirestore.instance.collection('students');
-  addStudent({
-    required String name,
-    required String description,
-    required String date,
-    required String volunteeringHours,
-  }) {
+  addStudent(
+      {required String name,
+      required String description,
+      required String date,
+      required String volunteeringHours,
+      required String imageUrl}) {
     String studentRandomDocId = randomAlphaNumeric(20);
 
     _firestoreCollectionStudents
@@ -22,18 +22,22 @@ class FirestoreStudents {
           "docId": studentRandomDocId,
           'volunteeringHours': volunteeringHours,
           "memberships": [],
+          "imageUrl": imageUrl,
         })
         .then((value) => ToastShow().whiteToast("user added !"))
         .catchError(
             (error) => ToastShow().whiteToast("Failed to update user: $error"));
   }
 
+  addStudentImage(String imageUrl) {}
+
   updateStudent(
       {required String name,
       required String description,
       required String date,
       required String volunteeringHours,
-      required String studentDocId}) {
+      required String studentDocId,
+      required String studentImageUrl}) {
     _firestoreCollectionStudents
         .doc(studentDocId)
         .update({
@@ -41,10 +45,20 @@ class FirestoreStudents {
           "description": description,
           "date": date,
           'volunteeringHours': volunteeringHours,
+          "imageUrl": studentImageUrl
         })
         .then((value) {})
         .catchError(
             (error) => ToastShow().whiteToast("Failed to update user: $error"));
+  }
+
+  updateImageUrl({required String studentDocId, required String imageUrl}) {
+    _firestoreCollectionStudents
+        .doc(studentDocId)
+        .update({"imageUrl": imageUrl})
+        .then((value) {})
+        .catchError(
+            (error) => ToastShow().whiteToast("Failed to update user image: $error"));
   }
 
   addMembership({required String seasonDocId, required String studentDocId}) {

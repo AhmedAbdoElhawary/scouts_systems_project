@@ -57,12 +57,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
       return const CircularProgress();
     } else {
       return buildScaffold(
-          widget.checkForUpdate
-              ? (provider.selectedSeasonOfEvent == "nothing"
-                  ? ""
-                  : provider.selectedSeasonOfEvent)
-              : "",
-          context);
+          widget.checkForUpdate ? provider.selectedSeasonOfEvent : "", context);
     }
   }
 
@@ -80,16 +75,21 @@ class _EventInfoPageState extends State<EventInfoPage> {
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
-        child: SizedBox(
-          height: bodyHeight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              containerOfFields(selectedSeason),
-              containerOfButtons(context, selectedSeason)
-            ],
-          ),
-        ),
+        child: buildSizedBox(bodyHeight, selectedSeason, context),
+      ),
+    );
+  }
+
+  SizedBox buildSizedBox(
+      double bodyHeight, String selectedSeason, BuildContext context) {
+    return SizedBox(
+      height: bodyHeight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          containerOfFields(selectedSeason),
+          containerOfButtons(context, selectedSeason)
+        ],
       ),
     );
   }

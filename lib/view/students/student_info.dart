@@ -1,11 +1,18 @@
+import 'dart:ui';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
+import 'package:scouts_system/common_ui/show_dialog_image.dart';
+import 'package:scouts_system/model/firebase_storage.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
 import 'memberships_screen.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 
 // ignore: must_be_immutable
 class StudentInformationScreen extends StatefulWidget {
@@ -14,9 +21,12 @@ class StudentInformationScreen extends StatefulWidget {
       controllerOfHours;
   String birthdate, studentDocId;
   bool checkForUpdate;
+  String imageUrl;
   StudentInformationScreen(
       {Key? key,
       this.studentDocId = "",
+      this.imageUrl =
+          "https://3znvnpy5ek52a26m01me9p1t-wpengine.netdna-ssl.com/wp-content/uploads/2017/07/noimage_person.png",
       required this.birthdate,
       required this.controllerOfDescription,
       required this.controllerOfHours,
@@ -33,6 +43,41 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   bool userDescriptionValidate = false;
   bool userHoursValidate = false;
   DateTime? date;
+  File? _imageFile;
+  final picker = ImagePicker();
+  bool isImageUploaded = true;
+
+  Future pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      try {
+        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      } catch (e) {}
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      uploadImageToFirebase();
+    }
+  }
+
+  Future uploadImageToFirebase() async {
+    setState(() {
+      isImageUploaded = false;
+    });
+
+    String fileName =
+        _imageFile != null ? _imageFile!.path : "No image selected";
+    Reference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('uploads/$fileName');
+    UploadTask uploadTask = firebaseStorageRef.putFile(_imageFile!);
+    await uploadTask.then((taskSnapshot) =>
+        taskSnapshot.ref.getDownloadURL().then((String value) {
+          widget.imageUrl = value;
+          setState(() {
+            isImageUploaded = true;
+          });
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +86,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
           title: Text(widget.controllerOfName.text), actions: actionsWidgets()),
       body: Column(
         children: [
-          textFields(),
+          circleAvatarAndTextFields(),
           saveAndCancelButtons(context),
         ],
       ),
@@ -87,8 +132,18 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   Expanded buttonOfCancel(BuildContext context) {
     return Expanded(
       child: TextButton(
-          child: textOfCancel(), onPressed: () => Navigator.pop(context)),
+          child: textOfCancel(), onPressed: () => onPressedCancelButton()),
     );
+  }
+
+  onPressedCancelButton() async {
+    try {
+      FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+    }
+    updatePreviousScreenData();
   }
 
   Text textOfCancel() {
@@ -146,27 +201,27 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   updateStudent() {
     FirestoreStudents().updateStudent(
-      name: widget.controllerOfName.text,
-      description: widget.controllerOfDescription.text,
-      volunteeringHours: widget.controllerOfHours.text,
-      date: getBirthdate(),
-      studentDocId: widget.studentDocId,
-    );
+        name: widget.controllerOfName.text,
+        description: widget.controllerOfDescription.text,
+        volunteeringHours: widget.controllerOfHours.text,
+        date: getBirthdate(),
+        studentDocId: widget.studentDocId,
+        studentImageUrl: widget.imageUrl);
   }
 
   addStudent() {
     FirestoreStudents().addStudent(
-      name: widget.controllerOfName.text,
-      description: widget.controllerOfDescription.text,
-      volunteeringHours: widget.controllerOfHours.text,
-      date: getBirthdate(),
-    );
+        name: widget.controllerOfName.text,
+        description: widget.controllerOfDescription.text,
+        volunteeringHours: widget.controllerOfHours.text,
+        date: getBirthdate(),
+        imageUrl: widget.imageUrl);
   }
 
-  Expanded textFields() {
+  Expanded circleAvatarAndTextFields() {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8, right: 8),
         child: SingleChildScrollView(
           child: textFieldsColumn(),
         ),
@@ -178,6 +233,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     return Column(
       //I can't replace divider with (space between) or any something else
       children: [
+        SizedBox(height: 8),
+        imageCircleAvatar(),
         const Divider(),
         textFormField(widget.controllerOfName, "Name"),
         const Divider(),
@@ -189,6 +246,110 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
             : const Divider(),
         widget.checkForUpdate ? membershipsButton() : emptyMessage(),
       ],
+    );
+  }
+
+  Center imageCircleAvatar() {
+    return Center(
+        child: Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        studentCircleAvatarImage(),
+        Positioned(
+            right: 5,
+            bottom: 5,
+            child: InkWell(
+              onTap: () => showBottomSheet(),
+              child: circleAvatarOfCamera(),
+            )),
+      ],
+    ));
+  }
+
+  InkWell studentCircleAvatarImage() {
+    return InkWell(
+      onTap: () => showDialogImage(context, widget.imageUrl),
+      child: isImageUploaded
+          ? (_imageFile == null
+              ? circleAvatar(NetworkImage(widget.imageUrl))
+              : circleAvatar(FileImage(File(_imageFile!.path))))
+          : progressCircleAvatar(),
+    );
+  }
+
+  CircleAvatar circleAvatar(ImageProvider<Object>? image) {
+    return CircleAvatar(
+      backgroundColor: Colors.black12,
+      radius: 80,
+      backgroundImage: image,
+    );
+  }
+
+  CircleAvatar progressCircleAvatar() {
+    return CircleAvatar(
+      backgroundColor: Colors.black12,
+      radius: 80,
+      child: CircularProgressIndicator(color: Colors.white),
+    );
+  }
+
+  showBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 100,
+          child: deleteAndEditButtons(),
+        );
+      },
+    );
+  }
+
+  Row deleteAndEditButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        deleteImageButton(),
+        editImageButton(),
+      ],
+    );
+  }
+
+  ElevatedButton deleteImageButton() {
+    return ElevatedButton(
+      child: const Text('Delete'),
+      onPressed: () => deleteImageFromFirebase(),
+    );
+  }
+
+  deleteImageFromFirebase() {
+    try {
+      FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      setState(() {
+        widget.imageUrl =
+            "https://3znvnpy5ek52a26m01me9p1t-wpengine.netdna-ssl.com/wp-content/uploads/2017/07/noimage_person.png";
+      });
+      FirestoreStudents().updateImageUrl(
+          studentDocId: widget.studentDocId, imageUrl: widget.imageUrl);
+    } catch (e) {}
+  }
+
+  ElevatedButton editImageButton() {
+    return ElevatedButton(
+      child: const Text('Edit'),
+      onPressed: () {
+        pickImage();
+      },
+    );
+  }
+
+  CircleAvatar circleAvatarOfCamera() {
+    return CircleAvatar(
+      backgroundColor: Colors.blueAccent,
+      child: Icon(Icons.edit, color: Colors.white),
+      radius: 20,
     );
   }
 
