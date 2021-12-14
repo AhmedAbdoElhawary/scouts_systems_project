@@ -10,6 +10,9 @@ class Student {
   final String volunteeringHours;
   final String docId;
   final String imageUrl;
+  final String reportUrl;
+  final String theReportName;
+  final String stateOfTheReport;
   Student(
       {this.name = "",
       this.imageUrl =
@@ -17,7 +20,10 @@ class Student {
       this.docId = "",
       this.description = "",
       this.birthdate = "",
-      this.volunteeringHours = ""});
+      this.volunteeringHours = "",
+      this.reportUrl = "",
+      this.stateOfTheReport = "Not started",
+      this.theReportName = ""});
 }
 
 enum StateOfStudents { initial, loaded, loading }
@@ -65,7 +71,10 @@ class StudentsProvider extends ChangeNotifier {
         birthdate: data["date"],
         volunteeringHours: data["volunteeringHours"],
         docId: data["docId"],
-        imageUrl: data["imageUrl"]);
+        imageUrl: data["imageUrl"],
+        reportUrl: data["reportUrl"],
+        stateOfTheReport: data["stateOfTheReport"],
+        theReportName: data["theReportName"]);
   }
 
   preparingNeededStudents(
@@ -133,7 +142,10 @@ class StudentsProvider extends ChangeNotifier {
         description: snap.get("description"),
         docId: snap.get("docId"),
         volunteeringHours: snap.get("volunteeringHours"),
-        imageUrl: snap.get("imageUrl"));
+        imageUrl: snap.get("imageUrl"),
+        reportUrl: snap.get("reportUrl"),
+        stateOfTheReport: snap.get("stateOfTheReport"),
+        theReportName: snap.get("theReportName"));
   }
 
   Future<List<dynamic>> studentsDocIdsInSeason(String seasonDocId) async {
