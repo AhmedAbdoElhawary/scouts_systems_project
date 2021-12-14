@@ -1,4 +1,7 @@
+import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +13,10 @@ import 'package:scouts_system/model/firebase_storage.dart';
 import 'package:scouts_system/model/firestore/add_students.dart';
 import 'package:scouts_system/view_model/seasons.dart';
 import 'package:scouts_system/view_model/students.dart';
+import 'package:uuid/uuid.dart';
 import 'memberships_screen.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // ignore: must_be_immutable
 class StudentInformationScreen extends StatefulWidget {
@@ -22,6 +26,9 @@ class StudentInformationScreen extends StatefulWidget {
   String birthdate, studentDocId;
   bool checkForUpdate;
   String imageUrl;
+  String theReportName;
+  String stateOfTheReport;
+  String reportUrl;
   StudentInformationScreen(
       {Key? key,
       this.studentDocId = "",
@@ -30,7 +37,10 @@ class StudentInformationScreen extends StatefulWidget {
       required this.birthdate,
       required this.controllerOfDescription,
       required this.controllerOfHours,
+      this.reportUrl = "",
       required this.controllerOfName,
+      this.theReportName = "",
+      this.stateOfTheReport = "Not started",
       this.checkForUpdate = false})
       : super(key: key);
   @override
@@ -46,38 +56,8 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   File? _imageFile;
   final picker = ImagePicker();
   bool isImageUploaded = true;
-
-  Future pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      try {
-        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
-      } catch (e) {}
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      uploadImageToFirebase();
-    }
-  }
-
-  Future uploadImageToFirebase() async {
-    setState(() {
-      isImageUploaded = false;
-    });
-
-    String fileName =
-        _imageFile != null ? _imageFile!.path : "No image selected";
-    Reference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('uploads/$fileName');
-    UploadTask uploadTask = firebaseStorageRef.putFile(_imageFile!);
-    await uploadTask.then((taskSnapshot) =>
-        taskSnapshot.ref.getDownloadURL().then((String value) {
-          widget.imageUrl = value;
-          setState(() {
-            isImageUploaded = true;
-          });
-        }));
-  }
+  bool isReportUploaded = true;
+  bool? selectedFlag;
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +186,10 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         volunteeringHours: widget.controllerOfHours.text,
         date: getBirthdate(),
         studentDocId: widget.studentDocId,
-        studentImageUrl: widget.imageUrl);
+        studentImageUrl: widget.imageUrl,
+        stateOfTheReport: widget.stateOfTheReport,
+        theReportName: widget.theReportName,
+        reportUrl: widget.reportUrl);
   }
 
   addStudent() {
@@ -215,7 +198,10 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         description: widget.controllerOfDescription.text,
         volunteeringHours: widget.controllerOfHours.text,
         date: getBirthdate(),
-        imageUrl: widget.imageUrl);
+        imageUrl: widget.imageUrl,
+        stateOfTheReport: widget.stateOfTheReport,
+        theReportName: widget.theReportName,
+        reportUrl: widget.reportUrl);
   }
 
   Expanded circleAvatarAndTextFields() {
@@ -233,8 +219,14 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     return Column(
       //I can't replace divider with (space between) or any something else
       children: [
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         imageCircleAvatar(),
+        const SizedBox(height: 8),
+        Center(
+            child: Text(
+          widget.stateOfTheReport,
+          style: const TextStyle(fontSize: 22, color: Colors.black38),
+        )),
         const Divider(),
         textFormField(widget.controllerOfName, "Name"),
         const Divider(),
@@ -244,8 +236,42 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         widget.checkForUpdate
             ? textFormField(widget.controllerOfHours, "Volunteering Hours")
             : const Divider(),
+        attachFileButtons(),
+        listTile(),
         widget.checkForUpdate ? membershipsButton() : emptyMessage(),
       ],
+    );
+  }
+
+  ListTile listTile() {
+    selectedFlag = selectedFlag ??
+        (widget.stateOfTheReport == "Finished without report" ||
+                widget.stateOfTheReport == "Finished with report"
+            ? true
+            : false);
+
+    return ListTile(
+      onTap: () => onTapTitle(),
+      trailing: _selectIcon(),
+      leading: const Text("Mark as finished"),
+    );
+  }
+
+  void onTapTitle() {
+    setState(() {
+      selectedFlag = selectedFlag! ? false : true;
+      widget.stateOfTheReport = selectedFlag!
+          ? (widget.theReportName.isEmpty
+              ? "Finished without report"
+              : "Finished with report")
+          : "Not Started";
+    });
+  }
+
+  Widget _selectIcon() {
+    return Icon(
+      selectedFlag! ? Icons.check_box : Icons.check_box_outline_blank,
+      color: Colors.blue,
     );
   }
 
@@ -286,7 +312,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
   }
 
   CircleAvatar progressCircleAvatar() {
-    return CircleAvatar(
+    return const CircleAvatar(
       backgroundColor: Colors.black12,
       radius: 80,
       child: CircularProgressIndicator(color: Colors.white),
@@ -340,13 +366,166 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     return ElevatedButton(
       child: const Text('Edit'),
       onPressed: () {
-        pickImage();
+        if (kIsWeb) {
+          pickImageForWeb();
+        } else {
+          pickImageForMobile();
+        }
       },
     );
   }
 
+  Padding attachFileButtons() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              nameOfTheReport(),
+              addReportButton(),
+              deleteReportButton()
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Expanded nameOfTheReport() {
+    return Expanded(
+      child: isReportUploaded
+          ? Text(
+              widget.theReportName,
+              softWrap: false,
+              overflow: TextOverflow.fade,
+            )
+          : const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Align addReportButton() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: IconButton(
+        icon: const Icon(Icons.attach_file),
+        onPressed: () {
+          if (kIsWeb) {
+            onPickerFile(true);
+          } else {
+            onPickerFile(false);
+          }
+        },
+      ),
+    );
+  }
+
+  IconButton deleteReportButton() {
+    return IconButton(
+      icon: const Icon(Icons.remove_circle),
+      onPressed: () {
+        setState(() {
+          widget.theReportName = "";
+          selectedFlag!
+              ? (widget.stateOfTheReport = widget.theReportName.isEmpty
+                  ? "Finished without report"
+                  : "Finished with report")
+              : "Not Started";
+          try {
+            FirebaseStorageImage().deleteImageFromStorage(widget.reportUrl);
+          } catch (e) {}
+        });
+      },
+    );
+  }
+
+// ignore: todo
+//TODO make it more readable
+
+  onPickerFile(bool isWebSelected) async {
+    final pickedFile = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+    if (pickedFile != null) {
+      setState(() {
+        isReportUploaded = false;
+        widget.theReportName = pickedFile.files.single.name;
+        selectedFlag!
+            ? (widget.stateOfTheReport = widget.theReportName.isEmpty
+                ? "Finished without report"
+                : "Finished with report")
+            : "Not Started";
+      });
+      try {
+        FirebaseStorageImage().deleteImageFromStorage(widget.reportUrl);
+      } catch (e) {}
+      Reference reference =
+          FirebaseStorage.instance.ref().child("${const Uuid().v1()}.pdf");
+      final UploadTask uploadTask = isWebSelected
+          ? reference.putData(pickedFile.files.single.bytes!)
+          : reference.putFile(File(pickedFile.files.single.path!));
+
+      await uploadTask.then((taskSnapshot) =>
+          taskSnapshot.ref.getDownloadURL().then((String value) {
+            widget.reportUrl = value;
+            setState(() {
+              isReportUploaded = true;
+            });
+          }));
+    }
+  }
+
+  void pickImageForWeb() async {
+    FilePickerResult result;
+    result = (await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png']))!;
+    if (result != null) {
+      try {
+        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      } catch (e) {}
+      setState(() {
+        isImageUploaded = false;
+      });
+      Uint8List uploadFile = result.files.single.bytes!;
+      uploadImageToFirebase(uploadFile);
+    }
+  }
+
+  Future pickImageForMobile() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      try {
+        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      } catch (e) {}
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      uploadImageToFirebase(_imageFile!);
+    }
+  }
+
+  Future uploadImageToFirebase(dynamic file) async {
+    if (file != null) {
+      setState(() {
+        isImageUploaded = false;
+      });
+      Reference reference =
+          FirebaseStorage.instance.ref().child("${const Uuid().v1()}.png");
+      final UploadTask uploadTask = file == _imageFile
+          ? reference.putFile(_imageFile!)
+          : reference.putData(file);
+
+      await uploadTask.then((taskSnapshot) =>
+          taskSnapshot.ref.getDownloadURL().then((String value) {
+            widget.imageUrl = value;
+            setState(() {
+              isImageUploaded = true;
+            });
+          }));
+    }
+  }
+
   CircleAvatar circleAvatarOfCamera() {
-    return CircleAvatar(
+    return const CircleAvatar(
       backgroundColor: Colors.blueAccent,
       child: Icon(Icons.edit, color: Colors.white),
       radius: 20,
