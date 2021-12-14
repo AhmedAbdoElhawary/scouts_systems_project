@@ -118,7 +118,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   onPressedCancelButton() async {
     try {
-      FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      FirebaseStorageFile().deleteFileFromStorage(widget.imageUrl);
       Navigator.pop(context);
     } catch (e) {
       Navigator.pop(context);
@@ -352,7 +352,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
 
   deleteImageFromFirebase() {
     try {
-      FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+      FirebaseStorageFile().deleteFileFromStorage(widget.imageUrl);
       setState(() {
         widget.imageUrl =
             "https://3znvnpy5ek52a26m01me9p1t-wpengine.netdna-ssl.com/wp-content/uploads/2017/07/noimage_person.png";
@@ -432,7 +432,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
                   : "Finished with report")
               : "Not Started";
           try {
-            FirebaseStorageImage().deleteImageFromStorage(widget.reportUrl);
+            FirebaseStorageFile().deleteFileFromStorage(widget.reportUrl);
           } catch (e) {}
         });
       },
@@ -456,7 +456,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
             : "Not Started";
       });
       try {
-        FirebaseStorageImage().deleteImageFromStorage(widget.reportUrl);
+        FirebaseStorageFile().deleteFileFromStorage(widget.reportUrl);
       } catch (e) {}
       Reference reference =
           FirebaseStorage.instance.ref().child("${const Uuid().v1()}.pdf");
@@ -480,7 +480,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
         .pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png']))!;
     if (result != null) {
       try {
-        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+        FirebaseStorageFile().deleteFileFromStorage(widget.imageUrl);
       } catch (e) {}
       setState(() {
         isImageUploaded = false;
@@ -494,7 +494,7 @@ class _StudentInformationScreenState extends State<StudentInformationScreen> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       try {
-        FirebaseStorageImage().deleteImageFromStorage(widget.imageUrl);
+        FirebaseStorageFile().deleteFileFromStorage(widget.imageUrl);
       } catch (e) {}
       setState(() {
         _imageFile = File(pickedFile.path);
