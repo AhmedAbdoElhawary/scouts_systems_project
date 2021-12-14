@@ -10,7 +10,10 @@ class FirestoreStudents {
       required String description,
       required String date,
       required String volunteeringHours,
-      required String imageUrl}) {
+      required String imageUrl,
+      required String reportUrl,
+      required String theReportName,
+      required String stateOfTheReport}) {
     String studentRandomDocId = randomAlphaNumeric(20);
 
     _firestoreCollectionStudents
@@ -23,6 +26,9 @@ class FirestoreStudents {
           'volunteeringHours': volunteeringHours,
           "memberships": [],
           "imageUrl": imageUrl,
+          "reportUrl": reportUrl,
+          "stateOfTheReport": stateOfTheReport,
+          "theReportName": theReportName
         })
         .then((value) => ToastShow().whiteToast("user added !"))
         .catchError(
@@ -37,6 +43,9 @@ class FirestoreStudents {
       required String date,
       required String volunteeringHours,
       required String studentDocId,
+      required String reportUrl,
+      required String theReportName,
+      required String stateOfTheReport,
       required String studentImageUrl}) {
     _firestoreCollectionStudents
         .doc(studentDocId)
@@ -45,7 +54,10 @@ class FirestoreStudents {
           "description": description,
           "date": date,
           'volunteeringHours': volunteeringHours,
-          "imageUrl": studentImageUrl
+          "imageUrl": studentImageUrl,
+          "reportUrl": reportUrl,
+          "theReportName": theReportName,
+          "stateOfTheReport": stateOfTheReport
         })
         .then((value) {})
         .catchError(
@@ -57,8 +69,8 @@ class FirestoreStudents {
         .doc(studentDocId)
         .update({"imageUrl": imageUrl})
         .then((value) {})
-        .catchError(
-            (error) => ToastShow().whiteToast("Failed to update user image: $error"));
+        .catchError((error) =>
+            ToastShow().whiteToast("Failed to update user image: $error"));
   }
 
   addMembership({required String seasonDocId, required String studentDocId}) {

@@ -105,14 +105,18 @@ class StudentsPage extends StatelessWidget {
 
   StudentInformationScreen studentInfoScreenItem(Student studentInfo) {
     return StudentInformationScreen(
-        controllerOfName: TextEditingController(text: studentInfo.name),
-        controllerOfDescription:
-            TextEditingController(text: studentInfo.description),
-        birthdate: studentInfo.birthdate,
-        controllerOfHours:
-            TextEditingController(text: studentInfo.volunteeringHours),
-        studentDocId: studentInfo.docId,
-        checkForUpdate: true,
-        imageUrl: studentInfo.imageUrl);
+      controllerOfName: TextEditingController(text: studentInfo.name),
+      controllerOfDescription:
+          TextEditingController(text: studentInfo.description),
+      birthdate: studentInfo.birthdate,
+      controllerOfHours:
+          TextEditingController(text: studentInfo.volunteeringHours),
+      studentDocId: studentInfo.docId,
+      checkForUpdate: true,
+      imageUrl: studentInfo.imageUrl,
+      reportUrl: studentInfo.reportUrl,
+      stateOfTheReport: studentInfo.stateOfTheReport,
+      theReportName: studentInfo.theReportName,
+    );
   }
 }
